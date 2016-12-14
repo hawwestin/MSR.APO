@@ -1,0 +1,5 @@
+.idea/
+.sync/
+#files
+*.jpg
+__pycache__/
