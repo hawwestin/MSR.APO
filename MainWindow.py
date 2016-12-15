@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter import filedialog
 import ComputerVision
+import os
 from PIL import Image
 import matplotlib.pyplot as plt
 
@@ -39,12 +40,11 @@ class Window(Frame):
         # reference to the master widget, which is the tk window
         self.master = master
 
+        self.statusmsg = None
+
         #init a CV instance
         self.image = ComputerVision.Vision()
-        # Panel is a box to display an image
-        self.panelA = None
-        # Panel to preview changed image
-        self.panelB = None
+
         # with that, we want to then run init_window, which doesn't yet exist
         self.init_window()
 
@@ -53,9 +53,18 @@ class Window(Frame):
         # changing the title of our master widget
         self.master.title("APO")
 
-        # allowing the widget to take the full space of the root window
-        self.pack(fill=BOTH, expand=1)
+        # Panel is a box to display an image
+        self.panelA = None
+        # Panel to preview changed image
+        self.panelB = None
 
+        # allowing the widget to take the full space of the root window
+        # self.pack(fill=BOTH, expand=1)
+        self.menubar()
+
+        self.statusbar()
+
+    def menubar(self):
         # creating a menu instance
         menu = Menu(self.master)
         self.master.config(menu=menu)
@@ -103,9 +112,21 @@ class Window(Frame):
 
         self.master.config(menu=menu)
 
+    def statusbar(self):
+        self.statusmsg = Label(self.master, text=self.statusmsg, bd=1, relief=SUNKEN, anchor=W)
+        self.statusmsg.pack(side=BOTTOM, fill=X)
+
     def client_exit(self):
         exit()
 
+    def treelist(self):
+        """
+        Lista obrazkowu przechowywana w tree liscie plikow po lewej stronie ekranu
+        z mozliwoscia rozszerzenia .
+        :return:
+        """
+        # todo https://docs.python.org/3.5/library/tkinter.ttk.html?highlight=ttk#treeview
+        self.not_implemented()
 
     def show_img(self):
         """
@@ -118,33 +139,31 @@ class Window(Frame):
         # plt.imshow(self.image, cmap='Greys', interpolation='bicubic')
         # plt.show()
         # if the panels are None, initialize them
-        if self.panelA is None or self.panelB is None:
-            # the first panel will store our original image
+        if self.panelA is None:
             self.panelA = Label(image=self.image.tkImage)
-            self.panelA.image = self.image.tkImage
+            # self.panelA.image = self.image.tkImage
             self.panelA.pack(side="left", padx=10, pady=10)
-
-            # while the second panel will store the edge map
-            # panelB = Label(image=edged)
-            # panelB.image = edged
-            # panelB.pack(side="right", padx=10, pady=10)
-
         # otherwise, update the image panels
         else:
             # update the pannels
             self.panelA.configure(image=self.image.tkImage)
-            # panelB.configure(image=edged)
-            self.panelA.image = self.image.tkImage
-            # panelB.image = edged
-
+            # self.panelA.image = self.image.tkImage
 
     def select_image(self):
         # open a file chooser dialog and allow the user to select an input
         # image
+        # todo potrzeba blokowac i sprawdzac czy wybrany plik jest obrazkiem o dozwolonym typie
         path = filedialog.askopenfilename()
+        # self.statusbar()
+        self.statusmsg.configure(text=os.path.splitext(path)[0])
 
         # ensure a file path was selected
         if len(path) > 0:
             # load the image from disk and init CV
             # nowy obiekt ? okno ? jak wiele okien ?
             self.image.open_img(path)
+            self.show_img()
+
+    def not_implemented(self):
+        print("not implemented")
+

@@ -14,17 +14,19 @@ class Vision:
 
     """
 
-    def __init__(self, ):
+    def __init__(self ):
         self.cvImage = None
         self.tkImage = None
 
 
     def open_img(self, path):
         # 0 - gray , 1 color
-        self.cvImage = cv2.imread(path, 1)
+        # todo kopia dla obrazkow szarych
+        self.cvImage = cv2.imread(path, cv2.IMREAD_COLOR)
         # cv2.cvtColor(self.tkImage, cv2.COLOR_BGR2RGB, self.cvImage)
         # OpenCV represents images in BGR order; however PIL represents
         # images in RGB order, so we need to swap the channels
+        # TODO sa problemy przy otwieraniu obrazkow o jakims rozszerzeniu. gify i svg .
         image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
         image = Image.fromarray(image)
         self.tkImage = ImageTk.PhotoImage(image)
@@ -32,14 +34,7 @@ class Vision:
 
 
     def show(self):
-        img = cv2.imread('Auto_3.jpg', cv2.IMREAD_COLOR)
-
-        # img = cv2.cv2.imread('Auto_3.jpg',cv2.cv2.IMREAD_COLOR)
-        # cv2.imshow('image', img)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
-
-        plt.imshow(img, cmap='Greys', interpolation='bicubic')
+        plt.imshow(self.cvImage, cmap='Greys', interpolation='bicubic')
         plt.show()
 
     def show_hist(self):
