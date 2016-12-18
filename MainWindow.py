@@ -1,37 +1,24 @@
 # coding=utf-8
 from tkinter import *
 from tkinter import filedialog
-import ComputerVision
+#my py
+from ComputerVision import *
+from imgtree import *
+from menubar import *
 import os
+import MainGui
 from PIL import Image
 import matplotlib.pyplot as plt
 
-
-""" # Old version of Shit
-
-class Application(Frame):
-    def __init__(self, master=None):
-        Frame.__init__(self, master)
-        self.pack()
-        self.createWidgets()
-
-
-    def createWidgets(self):
-        self.QUIT = Button(self)
-        self.QUIT["text"] = "QUIT"
-        self.QUIT["fg"]   = "red"
-        self.QUIT["command"] =  self.quit
-        self.QUIT.pack({"side": "right"})
-
-"""
 
 # Here, we are creating our class, Window, and inheriting from the Frame
 # class. Frame is a class from the tkinter module. (see Lib/tkinter/__init__)
 class Window(Frame):
     # Define settings upon initialization. Here you can specify
-    panelA = None
-    panelB = None
-    image = None
+    # panelA = None
+    # panelB = None
+    # image = None
+    # statusmsg = None
 
     def __init__(self, master=None):
         # parameters that you want to send through the Frame class.
@@ -40,10 +27,11 @@ class Window(Frame):
         # reference to the master widget, which is the tk window
         self.master = master
 
-        self.statusmsg = None
+        # self.statusmsg = None
 
-        #init a CV instance
-        self.image = ComputerVision.Vision()
+        # init a CV instance
+        MainGui.image = Vision()
+        self.imgtree = img_tree(master)
 
         # with that, we want to then run init_window, which doesn't yet exist
         self.init_window()
@@ -54,15 +42,21 @@ class Window(Frame):
         self.master.title("APO")
 
         # Panel is a box to display an image
-        self.panelA = None
+        # MainGui.panelA = None
         # Panel to preview changed image
-        self.panelB = None
+        # MainGui.panelB = None
 
         # allowing the widget to take the full space of the root window
         # self.pack(fill=BOTH, expand=1)
-        self.menubar()
+        # self.menubar()
 
-        self.statusbar()
+        mainmenu(self.master)
+
+        # self.statusbar()
+
+    # def statusbar(self):
+    #     self.statusmsg = Label(self.master, text=self.statusmsg, bd=1, relief=SUNKEN, anchor=W)
+    #     self.statusmsg.pack(side=BOTTOM, fill=X)
 
     def menubar(self):
         # creating a menu instance
@@ -105,16 +99,12 @@ class Window(Frame):
         operation.add_command(label="Sąsiedztwa")
         operation.add_command(label="Korekcja")
         operation.add_cascade(label="Segmentacja")
-        #operation.add_cascade(label="Stegangorafia")
-        #operation.add_cascade(label="Kompresja")
-        #operation.add_cascade(label="Opis kszztałtu")
+        # operation.add_cascade(label="Stegangorafia")
+        # operation.add_cascade(label="Kompresja")
+        # operation.add_cascade(label="Opis kszztałtu")
         menu.add_cascade(label="Operation", menu=operation)
 
         self.master.config(menu=menu)
-
-    def statusbar(self):
-        self.statusmsg = Label(self.master, text=self.statusmsg, bd=1, relief=SUNKEN, anchor=W)
-        self.statusmsg.pack(side=BOTTOM, fill=X)
 
     def client_exit(self):
         exit()
@@ -166,4 +156,5 @@ class Window(Frame):
 
     def not_implemented(self):
         print("not implemented")
+
 

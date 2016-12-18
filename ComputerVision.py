@@ -6,8 +6,6 @@ from PIL import ImageTk
 import matplotlib.pyplot as plt
 
 
-
-
 class Vision:
     """
     Przechowuje instancje otwartego pliku i pozwala wykonywac na nim operacje
