@@ -19,7 +19,7 @@ class Vision(tk.Frame):
         self.tkImage = None
 
 
-    def open_img(self, path):
+    def open_color_img(self, path):
         # 0 - gray , 1 color
         # todo kopia dla obrazkow szarych
         self.cvImage = cv2.imread(path, cv2.IMREAD_COLOR)
@@ -44,6 +44,7 @@ class Vision(tk.Frame):
 
                 :return:
                 """
+        # todo wyczyszczenie grafu przed zaladowaniem kolejnego , jak zaladowac kilka instancji do kilku obrazkow ?
         plt.hist(self.cvImage.ravel(), 256, [0, 256])
         plt.show()
 

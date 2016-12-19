@@ -21,7 +21,8 @@ class Window(tk.Tk):
 
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
-        self.geometry("400x300")
+
+        # self.geometry("400x300")
 
         # reference to the master widget, which is the tk window
         # self.master = master

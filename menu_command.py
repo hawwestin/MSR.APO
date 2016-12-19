@@ -1,18 +1,26 @@
-from tkinter import *
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.figure import Figure
+import matplotlib.animation as animation
+from matplotlib import style
+# tk
+import tkinter as tk
+# from tkinter import *
+from tkinter import ttk
 from tkinter import filedialog
-import MainGui
+# my py
 import os
+import MainGui
 
-class menucmd(Frame):
+
+class MenuCmd(tk.Frame):
     def __init__(self, master):
-        Frame.__init__(self, master)
+        tk.Frame.__init__(self, master)
         self.master = master
-        self.statusmsg= None
-        # self.image = None
-        # Panel is a box to display an image
-        self.panelA = None # todo przenieść do MainWindow
 
-    def client_exit(self):
+    @staticmethod
+    def client_exit():
         exit()
 
     def treelist(self):
@@ -36,7 +44,7 @@ class menucmd(Frame):
         # plt.show()
         # if the panels are None, initialize them
         if MainGui.panelA is None:
-            MainGui.panelA = Label(image=MainGui.image.tkImage)
+            MainGui.panelA = tk.Label(image=MainGui.image.tkImage)
             # self.panelA.image = self.image.tkImage
             MainGui.panelA.pack(side="left", padx=10, pady=10)
         # otherwise, update the image panels
@@ -45,10 +53,11 @@ class menucmd(Frame):
             MainGui.panelA.configure(image=MainGui.image.tkImage)
             # self.panelA.image = self.image.tkImage
 
-    def select_image(self):
+    def load_image(self):
         # open a file chooser dialog and allow the user to select an input
         # image
         # todo potrzeba blokowac i sprawdzac czy wybrany plik jest obrazkiem o dozwolonym typie
+        # todo path do obrazka powinien byc storowany by moc go zapisac
         path = filedialog.askopenfilename()
         # self.statusbar()
         MainGui.statusmsg.configure(text=os.path.splitext(path)[0])
@@ -57,8 +66,9 @@ class menucmd(Frame):
         if len(path) > 0:
             # load the image from disk and init CV
             # nowy obiekt ? okno ? jak wiele okien ?
-            MainGui.image.open_img(path)
+            MainGui.image.open_color_img(path)
             self.show_img()
 
-    def not_implemented(self):
+    @staticmethod
+    def not_implemented():
         print("not implemented")
