@@ -1,18 +1,20 @@
 import cv2
-from tkinter import *
+import tkinter as tk
 import numpy as np
 from PIL import Image
 from PIL import ImageTk
 import matplotlib.pyplot as plt
 
 
-class Vision:
+class Vision(tk.Frame):
     """
     Przechowuje instancje otwartego pliku i pozwala wykonywac na nim operacje
 
     """
 
-    def __init__(self ):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
         self.cvImage = None
         self.tkImage = None
 

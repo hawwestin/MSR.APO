@@ -3,11 +3,12 @@ from menu_command import *
 from ComputerVision import *
 
 class mainmenu(Frame):
-    def __init__(self, master=None):
-        Frame.__init__(self, master)
-        self.master = master
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+
+        self.master = controller
         self.menu = Menu(self.master)
-        self.image = Vision()
+        self.image = Vision(controller, self)
         self._menucmd = menucmd(self.master)
         self.menu_bar()
         self.statusbar()
