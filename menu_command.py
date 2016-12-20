@@ -13,6 +13,10 @@ from tkinter import filedialog
 import os
 import MainGui
 
+LARGE_FONT= ("Verdana", 12)
+NORM_FONT = ("Helvetica", 10)
+SMALL_FONT = ("Helvetica", 8)
+
 
 class MenuCmd(tk.Frame):
     def __init__(self, master):
@@ -72,3 +76,14 @@ class MenuCmd(tk.Frame):
     @staticmethod
     def not_implemented():
         print("not implemented")
+
+    def popupmsg(self, msg):
+        popup = tk.Tk()
+        popup.wm_title("Info")
+        popup.geometry("240x180")
+        label = ttk.Label(popup, text=msg, font=NORM_FONT)
+        label.pack()
+        B1 = ttk.Button(popup, text="ok", command=popup.destroy)
+        B1.pack(side=tk.BOTTOM, pady=20)
+        popup.mainloop()
+
