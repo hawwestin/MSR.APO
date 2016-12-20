@@ -55,7 +55,10 @@ class mainmenu(Frame):
 
         operation = Menu(self.menu)
         # todo rozbicie na 2 akcje , in popupwindow i w aplikacji
-        operation.add_command(label="Histogram", command=MainGui.image.show_hist)
+        histogram = Menu(self.menu)
+        histogram.add_command(label="Wewnatrz histogram", command=MainGui.image.load_hist)
+        histogram.add_command(label="Popup hist", command=MainGui.image.show_hist)
+        operation.add_cascade(label="Histogram", menu=histogram)
         operation.add_command(label="Punktowe")
         operation.add_command(label="Sąsiedztwa")
         operation.add_command(label="Korekcja")
@@ -64,6 +67,10 @@ class mainmenu(Frame):
         # operation.add_cascade(label="Kompresja")
         # operation.add_cascade(label="Opis kszztałtu")
         self.menu.add_cascade(label="Operation", menu=operation)
+
+        help = Menu(self.menu)
+        help.add_command(label="Info", command=lambda: self._menucmd.popupmsg("APO Made by Michal R"))
+        self.menu.add_cascade(label="Help", menu=help)
 
         self.controller.config(menu=self.menu)
 

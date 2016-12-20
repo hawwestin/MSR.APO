@@ -1,9 +1,20 @@
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.figure import Figure
+from tkinter import ttk
+import matplotlib.animation as animation
+from matplotlib import style
+# old
 import cv2
 import tkinter as tk
 import numpy as np
 from PIL import Image
 from PIL import ImageTk
 import matplotlib.pyplot as plt
+
+f = Figure()
+a = f.add_subplot(111)
 
 
 class Vision(tk.Frame):
@@ -45,7 +56,7 @@ class Vision(tk.Frame):
                 :return:
                 """
         # todo wyczyszczenie grafu przed zaladowaniem kolejnego , jak zaladowac kilka instancji do kilku obrazkow ?
-        plt.hist(self.cvImage.ravel(), 256, [0, 256])
+        plt.hist(self.cvImage.ravel(), 256, [0, 255])
         plt.show()
 
 
@@ -59,3 +70,17 @@ class Vision(tk.Frame):
         # Rearrang the color channel
         b, g, r = cv2.split(img) # not optimal TODO change to numpay array
         return cv2.merge((r, g, b))
+
+    def load_hist(self):
+        # todo how to close histogram ?
+        a.clear()
+        histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
+        a.plot(histr)
+
+        canvas = FigureCanvasTkAgg(f, self.controller)
+        canvas.show()
+        canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+
+        toolbar = NavigationToolbar2TkAgg(canvas, self.controller)
+        toolbar.update()
+        canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
