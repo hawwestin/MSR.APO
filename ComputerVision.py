@@ -1,3 +1,4 @@
+import MainGui
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
@@ -26,6 +27,7 @@ class Vision(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        self.path = None
         self.cvImage = None
         self.tkImage = None
 
@@ -33,7 +35,8 @@ class Vision(tk.Frame):
     def open_color_img(self, path):
         # 0 - gray , 1 color
         # todo kopia dla obrazkow szarych
-        self.cvImage = cv2.imread(path, cv2.IMREAD_COLOR)
+        self.path = path
+        self.cvImage = cv2.imread(self.path, cv2.IMREAD_COLOR)
         # cv2.cvtColor(self.tkImage, cv2.COLOR_BGR2RGB, self.cvImage)
         # OpenCV represents images in BGR order; however PIL represents
         # images in RGB order, so we need to swap the channels
@@ -58,6 +61,7 @@ class Vision(tk.Frame):
         # todo wyczyszczenie grafu przed zaladowaniem kolejnego , jak zaladowac kilka instancji do kilku obrazkow ?
         plt.hist(self.cvImage.ravel(), 256, [0, 255])
         plt.show()
+        print(MainGui.cwi)
 
 
     def color_convertion(self, img):
@@ -73,14 +77,29 @@ class Vision(tk.Frame):
 
     def load_hist(self):
         # todo how to close histogram ?
+        global a
+        global f
+
+        print(MainGui.cwi)
+
         a.clear()
+        # f.clear()
         histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
         a.plot(histr)
 
-        canvas = FigureCanvasTkAgg(f, self.controller)
-        canvas.show()
-        canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        if MainGui.canvas is None:
+            MainGui.canvas = FigureCanvasTkAgg(f, self.controller)
+            MainGui.canvas.show()
+            MainGui.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
-        toolbar = NavigationToolbar2TkAgg(canvas, self.controller)
-        toolbar.update()
-        canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        else:
+            MainGui.canvas.show()
+            MainGui.toolbar.update()
+
+        if MainGui.toolbar is None:
+            MainGui.toolbar = NavigationToolbar2TkAgg(MainGui.canvas, self.controller)
+            MainGui.toolbar.update()
+        else:
+            MainGui.toolbar.update()
+
+        MainGui.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)

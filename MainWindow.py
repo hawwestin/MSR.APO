@@ -10,6 +10,8 @@ from menubar import *
 # class. Frame is a class from the tkinter module. (see Lib/tkinter/__init__)
 class Window(tk.Tk):
 
+
+
     # parameters that you want to send through the Frame class.
     def __init__(self, *args, **kwargs):
         """
@@ -17,19 +19,16 @@ class Window(tk.Tk):
         :param args:
         :param kwargs:
         """
+        # reference to the master widget, which is the tk window
         tk.Tk.__init__(self, *args, **kwargs)
 
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
 
-        # self.geometry("400x300")
-
-        # reference to the master widget, which is the tk window
-        # self.master = master
-        # init a CV instance
-        # Todo przeniesc do miejsca otwierajacego obrazki i ladowac na slownik
-        MainGui.image = Vision(container, self)
-
         self.title("APO")
         mainmenu(container, self)
-        self.imgtree = img_tree(container, self)
+
+        # self.imgtree = img_tree(container, self)
+
+    def __del__(self):
+        self.destroy()

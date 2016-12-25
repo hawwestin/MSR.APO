@@ -13,15 +13,19 @@ from tkinter import filedialog
 import os
 import MainGui
 
+from ComputerVision import *
+
 LARGE_FONT= ("Verdana", 12)
 NORM_FONT = ("Helvetica", 10)
 SMALL_FONT = ("Helvetica", 8)
 
 
 class MenuCmd(tk.Frame):
-    def __init__(self, master):
-        tk.Frame.__init__(self, master)
-        self.master = master
+    def __init__(self, parentFrame, tkController):
+        tk.Frame.__init__(self, parentFrame)
+        # just self
+        # self.parentFrame = parentFrame
+        self.tkController = tkController
 
     @staticmethod
     def client_exit():
@@ -48,13 +52,13 @@ class MenuCmd(tk.Frame):
         # plt.show()
         # if the panels are None, initialize them
         if MainGui.panelA is None:
-            MainGui.panelA = tk.Label(image=MainGui.image.tkImage)
+            MainGui.panelA = tk.Label(image=MainGui.gallery[MainGui.cwi].tkImage)
             # self.panelA.image = self.image.tkImage
             MainGui.panelA.pack(side="left", padx=10, pady=10)
         # otherwise, update the image panels
         else:
             # update the pannels
-            MainGui.panelA.configure(image=MainGui.image.tkImage)
+            MainGui.panelA.configure(image=MainGui.gallery[MainGui.cwi].tkImage)
             # self.panelA.image = self.image.tkImage
 
     def load_image(self):
@@ -64,13 +68,17 @@ class MenuCmd(tk.Frame):
         # todo path do obrazka powinien byc storowany by moc go zapisac
         path = filedialog.askopenfilename()
         # self.statusbar()
-        MainGui.statusmsg.configure(text=os.path.splitext(path)[0])
+
 
         # ensure a file path was selected
         if len(path) > 0:
             # load the image from disk and init CV
             # nowy obiekt ? okno ? jak wiele okien ?
-            MainGui.image.open_color_img(path)
+            MainGui.statusmsg.configure(text=os.path.splitext(path)[0])
+            index = MainGui.add_img(Vision(self, self.tkController))
+
+            # teraz Open po dodaniu
+            MainGui.gallery[index].open_color_img(path)
             self.show_img()
 
     @staticmethod
@@ -80,10 +88,23 @@ class MenuCmd(tk.Frame):
     def popupmsg(self, msg):
         popup = tk.Tk()
         popup.wm_title("Info")
-        popup.geometry("240x180")
+        # popup.geometry("240x180")
         label = ttk.Label(popup, text=msg, font=NORM_FONT)
-        label.pack()
+        label.pack(pady=20, padx=20)
         B1 = ttk.Button(popup, text="ok", command=popup.destroy)
         B1.pack(side=tk.BOTTOM, pady=20)
         popup.mainloop()
+
+
+    def imgList(self):
+        self.popupmsg(sorted(MainGui.gallery))
+
+    def inHist(self):
+        MainGui.gallery[MainGui.cwi].load_hist()
+
+    def outHist(self):
+        MainGui.gallery[MainGui.cwi].show_hist()
+
+    def info(self):
+        self.popupmsg("APO Made by\nMichał Robaszewski\n2016/2017")
 
