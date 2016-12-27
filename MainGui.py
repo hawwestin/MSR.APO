@@ -10,8 +10,8 @@ statusmsg = None
 canvas = None
 toolbar = None
 gallery = {}
-#current working image
-cwi = None
+#current working tab
+cwt = None
 
 
 def add_img(img):
@@ -20,19 +20,19 @@ def add_img(img):
     :param img:  Vision(frame, controller, path)
     :return:
     """
-    global cwi
+    global cwt
     global gallery
 
     # frame = Vision(frame, controller, path)
 
     if gallery.__len__() is 0:
-        cwi = 0
+        cwt = 0
     else:
-        cwi = sorted(gallery)[-1] + 1
+        cwt = sorted(gallery)[-1] + 1
     # print("\nitem : %d" % cwi)
-    gallery[cwi] = img
+    gallery[cwt] = img
 
-    return cwi
+    return cwt
 
 
 def close_img(img):

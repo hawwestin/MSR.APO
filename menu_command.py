@@ -40,27 +40,6 @@ class MenuCmd(tk.Frame):
         # todo https://docs.python.org/3.5/library/tkinter.ttk.html?highlight=ttk#treeview
         self.not_implemented()
 
-    def show_img(self):
-        """
-        Logic : odpalenie okna z obrazkiem ktore  ma wlasne Menu do operacji.
-        Kazde okienko to nowy obiekt.
-        Undowanie na tablicach ? może pod spodem baze danych machnac
-
-        :return:
-        """
-        # plt.imshow(self.image, cmap='Greys', interpolation='bicubic')
-        # plt.show()
-        # if the panels are None, initialize them
-        if MainGui.panelA is None:
-            MainGui.panelA = tk.Label(image=MainGui.gallery[MainGui.cwi].tkImage)
-            # self.panelA.image = self.image.tkImage
-            MainGui.panelA.pack(side="left", padx=10, pady=10)
-        # otherwise, update the image panels
-        else:
-            # update the pannels
-            MainGui.panelA.configure(image=MainGui.gallery[MainGui.cwi].tkImage)
-            # self.panelA.image = self.image.tkImage
-
     def load_image(self):
         # open a file chooser dialog and allow the user to select an input
         # image
@@ -72,14 +51,14 @@ class MenuCmd(tk.Frame):
 
         # ensure a file path was selected
         if len(path) > 0:
-            # load the image from disk and init CV
-            # nowy obiekt ? okno ? jak wiele okien ?
-            MainGui.statusmsg.configure(text=os.path.splitext(path)[0])
-            index = MainGui.add_img(Vision(self, self.tkController))
+            tab = self.tkController.new_tab(os.path.splitext(path)[0])
 
-            # teraz Open po dodaniu
+            # MainGui.statusmsg.configure(text=os.path.splitext(path)[0])
+            index = MainGui.add_img(Vision(tab, self.tkController))
+            MainGui.gallery[index].id = index
+
             MainGui.gallery[index].open_color_img(path)
-            self.show_img()
+            MainGui.gallery[index].show_img()
 
     @staticmethod
     def not_implemented():
@@ -89,7 +68,7 @@ class MenuCmd(tk.Frame):
         popup = tk.Tk()
         popup.wm_title("Info")
         # popup.geometry("240x180")
-        label = ttk.Label(popup, text=msg, font=NORM_FONT)
+        label = ttk.Label(popup, text=msg, font=NORM_FONT, justify=tk.CENTER)
         label.pack(pady=20, padx=20)
         B1 = ttk.Button(popup, text="ok", command=popup.destroy)
         B1.pack(side=tk.BOTTOM, pady=20)
@@ -97,13 +76,15 @@ class MenuCmd(tk.Frame):
 
 
     def imgList(self):
-        self.popupmsg(sorted(MainGui.gallery))
+        self.popupmsg(self.tkController.notebook.tabs())
 
     def inHist(self):
-        MainGui.gallery[MainGui.cwi].load_hist()
+        id = self.tkController.notebook.index("current")
+        MainGui.gallery[id].load_hist()
 
     def outHist(self):
-        MainGui.gallery[MainGui.cwi].show_hist()
+        id = self.tkController.notebook.index("current")
+        MainGui.gallery[id].show_hist()
 
     def info(self):
         self.popupmsg("APO Made by\nMichał Robaszewski\n2016/2017")

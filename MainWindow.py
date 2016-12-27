@@ -4,10 +4,9 @@ import MainGui
 import tkinter as tk
 from imgtree import *
 from menubar import *
+from tkinter import ttk
 
 
-# Here, we are creating our class, Window, and inheriting from the Frame
-# class. Frame is a class from the tkinter module. (see Lib/tkinter/__init__)
 class Window(tk.Tk):
 
 
@@ -23,12 +22,44 @@ class Window(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         container = tk.Frame(self)
-        container.pack(side="top", fill="both", expand=True)
+        container.pack()
 
         self.title("APO")
         mainmenu(container, self)
 
-        # self.imgtree = img_tree(container, self)
+        self.statusbar()
 
-    def __del__(self):
-        self.destroy()
+        # self.imgtree = img_tree(container, self)
+        self.notebook = ttk.Notebook(self)
+        self.notebook.pack(side="top", fill="both", expand=True)
+
+    # def __del__(self):
+    #     self.destroy()
+
+    # def tabs(self):
+        # notebook = ttk.Notebook(self)
+
+    def new_tab(self, name):
+        frame = ttk.Frame(self.notebook)
+        self.notebook.add(frame, text=name)
+        # panel = tk.Label(frame)
+        # panel.pack()
+        return frame
+
+    def statusbar(self):
+        MainGui.statusmsg = Label(self, text=MainGui.statusmsg, bd=1, relief=SUNKEN, anchor=W)
+        MainGui.statusmsg.pack(side=BOTTOM, fill=X)
+
+    def tags(self):
+        print (self.notebook.tabs())
+
+    def tab_index(self):
+        print(self.notebook.index("end"))
+
+    def close_Current_tab(self):
+        id = self.notebook.index("current")
+        self.notebook.forget("current")
+        print(id)
+        # MainGui.gallery[id].__del__()
+        # todo to zamyka tylko kartę potrzeba sksaować również obiekt by zwolnic pamiec
+
