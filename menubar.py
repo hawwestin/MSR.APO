@@ -26,11 +26,17 @@ class mainmenu(Frame):
         self.tkController.config(menu=self.menu)
 
         # create the file object
+
+        open = Menu(self.menu, tearoff=0)
+        open.add_command(label="Open in Color", command=self._menucmd.open_color_image)
+        open.add_command(label="Open in Grey Scale", command=self._menucmd.open_grey_image)
+
         file = Menu(self.menu, tearoff=0)
 
         file.add_command(label="New")
         # todo przerobic na otwarcie kolorowego obrazka i szarego
-        file.add_command(label="Open", command=self._menucmd.load_image)
+        file.add_cascade(label="Open", menu=open)
+        file.add_command(label="Reload", command=self._menucmd.load_image)
         file.add_command(label="Save")
         file.add_command(label="Save as")
         file.add_separator()
@@ -47,23 +53,31 @@ class mainmenu(Frame):
         edit.add_command(label="Redo")
         edit.add_separator()
         edit.add_command(label="Duplicate")
+        edit.add_command(label="Color picker", command=self._menucmd.picker)
         # added "file" to our menu
         self.menu.add_cascade(label="Edit", menu=edit)
 
         view = Menu(self.menu, tearoff=0)
         view.add_command(label="Full screen")
-        view.add_command(label="List of tab", command=self._menucmd.imgList)
+        view.add_command(label="tab num", command=self._menucmd.imgList)
         self.menu.add_cascade(label="View", menu=view)
+
+        arithmetic = Menu(self.menu, tearoff=0)
+        arithmetic.add_command(label="Image Addition", command=self._menucmd.not_implemented)
+        arithmetic.add_command(label="Image Blending", command=self._menucmd.not_implemented)
+        arithmetic.add_command(label="Bitwise", command=self._menucmd.not_implemented)
 
         histogram = Menu(self.menu, tearoff=0)
         histogram.add_command(label="Wewnatrz histogram", command=self._menucmd.inHist)
         histogram.add_command(label="Popup hist", command=self._menucmd.outHist)
+        histogram.add_command(label="Hist Equalization", command=self._menucmd.hist_Equ)
+
         operation = Menu(self.menu, tearoff=0)
         operation.add_cascade(label="Histogram", menu=histogram)
-        operation.add_command(label="Punktowe")
-        operation.add_command(label="Sąsiedztwa")
-        operation.add_command(label="Korekcja")
-        operation.add_cascade(label="Segmentacja")
+        operation.add_cascade(label="Arithmetic Operations", menu=arithmetic)
+        # operation.add_command(label="Sąsiedztwa")
+        # operation.add_command(label="Korekcja")
+        # operation.add_cascade(label="Segmentacja")
         # operation.add_cascade(label="Stegangorafia")
         # operation.add_cascade(label="Kompresja")
         # operation.add_cascade(label="Opis kszztałtu")

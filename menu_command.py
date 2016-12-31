@@ -15,9 +15,9 @@ import MainGui
 
 from ComputerVision import *
 
-LARGE_FONT= ("Verdana", 12)
-NORM_FONT = ("Helvetica", 10)
-SMALL_FONT = ("Helvetica", 8)
+LARGE_FONT = MainGui.LARGE_FONT
+NORM_FONT = MainGui.NORM_FONT
+SMALL_FONT = MainGui.SMALL_FONT
 
 
 class MenuCmd(tk.Frame):
@@ -40,25 +40,49 @@ class MenuCmd(tk.Frame):
         # todo https://docs.python.org/3.5/library/tkinter.ttk.html?highlight=ttk#treeview
         self.not_implemented()
 
-    def load_image(self):
+
+    def open_color_image(self):
         # open a file chooser dialog and allow the user to select an input
-        # image
         # todo potrzeba blokowac i sprawdzac czy wybrany plik jest obrazkiem o dozwolonym typie
-        # todo path do obrazka powinien byc storowany by moc go zapisac
+
         path = filedialog.askopenfilename()
-        # self.statusbar()
-
-
-        # ensure a file path was selected
         if len(path) > 0:
             tab = self.tkController.new_tab(os.path.splitext(path)[0])
 
-            # MainGui.statusmsg.configure(text=os.path.splitext(path)[0])
-            index = MainGui.add_img(Vision(tab, self.tkController))
-            MainGui.gallery[index].id = index
+            index = MainGui.add_img(tab._w, Vision(tab, self.tkController))
+            MainGui.gallery[tab._w].id = index
 
-            MainGui.gallery[index].open_color_img(path)
-            MainGui.gallery[index].show_img()
+            MainGui.gallery[tab._w].open_color_img(path)
+            MainGui.gallery[tab._w].show_img()
+
+
+    def open_grey_image(self):
+        # open a file chooser dialog and allow the user to select an input
+        # todo potrzeba blokowac i sprawdzac czy wybrany plik jest obrazkiem o dozwolonym typie
+        path = filedialog.askopenfilename()
+        if len(path) > 0:
+            tab = self.tkController.new_tab(os.path.splitext(path)[0])
+
+            index = MainGui.add_img(tab._w, Vision(tab, self.tkController))
+            MainGui.gallery[tab._w].id = index
+
+            MainGui.gallery[tab._w].open_grey_scale_img(path)
+            MainGui.gallery[tab._w].show_img()
+
+
+    def load_image(self):
+        path = filedialog.askopenfilename()
+        if path > 0:
+            tab = self.tkController.notebook.index("current")
+            # MainGui.statusmsg.configure(text=os.path.splitext(path)[0])
+            self.tkController.rename_tab(os.path.splitext(path)[0])
+
+            MainGui.gallery[tab].open_color_img(path)
+            MainGui.gallery[tab].show_img()
+
+            return tab
+        else:
+            return 0
 
     @staticmethod
     def not_implemented():
@@ -76,16 +100,37 @@ class MenuCmd(tk.Frame):
 
 
     def imgList(self):
-        self.popupmsg(self.tkController.notebook.tabs())
+        print(self.tkController.notebook.index("current"))
+        print(self.tkController.notebook.index("end"))
+        print(self.tkController.notebook.tab(self.tkController.notebook.index("current")))
+        print(self.tkController.notebook.tabs())
+        print(self.tkController.notebook.select())
 
     def inHist(self):
-        id = self.tkController.notebook.index("current")
-        MainGui.gallery[id].load_hist()
+        tab_id = self.tkController.notebook.select()
+        print(tab_id)
+        # id = self.tkController.notebook.index("current")
+        MainGui.gallery[tab_id].load_hist()
 
     def outHist(self):
-        id = self.tkController.notebook.index("current")
-        MainGui.gallery[id].show_hist()
+        tab_id = self.tkController.notebook.select()
+        print(tab_id)
+        # id = self.tkController.notebook.index("current")
+        MainGui.gallery[tab_id].show_hist()
 
     def info(self):
         self.popupmsg("APO Made by\nMichał Robaszewski\n2016/2017")
+
+    def picker(self):
+        tab_id = self.tkController.notebook.select()
+        print(tab_id)
+        # id = self.tkController.notebook.index("current")
+        MainGui.gallery[tab_id].color_picker()
+
+    def hist_Equ(self):
+        tab_id = self.tkController.notebook.select()
+        print(tab_id)
+        # tab_id = self.tkController.notebook.index("current")
+        MainGui.Hist_Equalization(tab_id)
+
 

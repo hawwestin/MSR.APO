@@ -14,8 +14,8 @@ from PIL import Image
 from PIL import ImageTk
 import matplotlib.pyplot as plt
 
-f = Figure()
-a = f.add_subplot(111)
+# f = Figure()
+# a = f.add_subplot(111)
 
 
 class Vision(tk.Frame):
@@ -28,8 +28,12 @@ class Vision(tk.Frame):
         tk.Frame.__init__(self, master=parent)
         self.controller = controller
         self.path = None
+        # Actual
         self.cvImage = None
         self.tkImage = None
+        # temp
+        self.cvImage_tmp = None
+        self.tkImage_tmp = None
         self.id = None
         # Panele
         self.panel = None
@@ -38,12 +42,13 @@ class Vision(tk.Frame):
         # self.panel = tk.Label(parent)
         # self.panel.pack()
         self.f = Figure()
-        self.a = f.add_subplot(111)
+        self.a = self.f.add_subplot(111)
 
+    def __del__(self):
+        self.destroy()
 
     def open_color_img(self, path):
         # 0 - gray , 1 color
-        # todo kopia dla obrazkow szarych
         self.path = path
         self.cvImage = cv2.imread(self.path, cv2.IMREAD_COLOR)
         # cv2.cvtColor(self.tkImage, cv2.COLOR_BGR2RGB, self.cvImage)
@@ -54,6 +59,20 @@ class Vision(tk.Frame):
         image = Image.fromarray(image)
         self.tkImage = ImageTk.PhotoImage(image)
 
+    def open_grey_scale_img(self, path):
+        # 0 - gray , 1 color
+        self.path = path
+        self.cvImage = cv2.imread(self.path, 0)
+        # TODO sa problemy przy otwieraniu obrazkow o jakims rozszerzeniu. gify i svg .
+        image = cv2.cvtColor(self.cvImage, cv2.COLOR_GRAY2RGB)
+        image = Image.fromarray(image)
+        self.tkImage = ImageTk.PhotoImage(image)
+
+
+    def assign_tkimage(self):
+        image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
+        image = Image.fromarray(image)
+        self.tkImage = ImageTk.PhotoImage(image)
 
 
     def show(self):
@@ -96,7 +115,7 @@ class Vision(tk.Frame):
         self.a.plot(histr)
 
         if self.canvas is None:
-            self.canvas = FigureCanvasTkAgg(f, self.master)
+            self.canvas = FigureCanvasTkAgg(self.f, self.master)
             self.canvas.show()
             self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
@@ -125,10 +144,72 @@ class Vision(tk.Frame):
         # if the panels are None, initialize them
         if self.panel is None:
             self.panel = ttk.Label(self.master, image=self.tkImage)
-            # self.panelA.image = self.image.tkImage
+            # self.panel.configure(image=self.tkImage)
+            # self.panel.image = self.tkImage
             self.panel.pack(side="left", padx=10, pady=10)
         # otherwise, update the image panels
         else:
             # update the pannels
             self.panel.configure(image=self.tkImage)
             self.panel.image = self.tkImage
+
+    def show_tmp_img(self):
+        self.panel.configure(image=self.tkImage_tmp)
+        self.panel.image = self.tkImage_tmp
+
+    def color_picker(self):
+        # Create a black image, a window
+        def nothing(x):
+            pass
+
+        img = np.zeros((300, 512, 3), np.uint8)
+        cv2.namedWindow('image')
+
+        # create trackbars for color change
+        cv2.createTrackbar('R', 'image', 0, 255, nothing)
+        cv2.createTrackbar('G', 'image', 0, 255, nothing)
+        cv2.createTrackbar('B', 'image', 0, 255, nothing)
+
+        # create switch for ON/OFF functionality
+        # switch = '0 : OFF \n1 : ON'
+        # cv2.createTrackbar(switch, 'image', 0, 1, nothing)
+
+        while (1):
+            cv2.imshow('image', img)
+            k = cv2.waitKey(1) & 0xFF
+            if k == 27:
+                break
+
+            # get current positions of four trackbars
+            r = cv2.getTrackbarPos('R', 'image')
+            g = cv2.getTrackbarPos('G', 'image')
+            b = cv2.getTrackbarPos('B', 'image')
+            # s = cv2.getTrackbarPos(switch, 'image')
+
+            # if s == 0:
+                # img[:] = 0
+            # else:
+            img[:] = [b, g, r]
+
+        cv2.destroyAllWindows()
+
+    def Hist_1(self):
+        hist, bins = np.histogram(self.cvImage.flatten(), 256, [0, 256])
+
+        cdf = hist.cumsum()
+        cdf_normalized = cdf * hist.max() / cdf.max()
+
+        cdf_m = np.ma.masked_equal(cdf, 0)
+        cdf_m = (cdf_m - cdf_m.min()) * 255 / (cdf_m.max() - cdf_m.min())
+        cdf = np.ma.filled(cdf_m, 0).astype('uint8')
+
+        self.cvImage_tmp = cdf[self.cvImage]
+        # plt.imshow(huk.cvImage_tmp)
+
+        self.show_tmp_img()
+
+        plt.plot(cdf_normalized, color='b')
+        plt.hist(self.cvImage.flatten(), 256, [0, 256], color='r')
+        plt.xlim([0, 256])
+        plt.legend(('cdf', 'histogram'), loc='upper left')
+        plt.show()
