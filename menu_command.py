@@ -133,4 +133,18 @@ class MenuCmd(tk.Frame):
         # tab_id = self.tkController.notebook.index("current")
         MainGui.Hist_Equalization(tab_id)
 
+    def save(self):
+        tab_id = self.tkController.notebook.select()
+        print(tab_id)
+        # id = self.tkController.notebook.index("current")
+        MainGui.gallery[tab_id].save()
+
+    def save_as(self):
+        tab_id = self.tkController.notebook.select()
+        print(tab_id)
+        title = filedialog.asksaveasfilename()
+        # TODO jakis dialog box do podania ścieżki.
+        # id = self.tkController.notebook.index("current")
+        MainGui.gallery[tab_id].save(title)
+
 

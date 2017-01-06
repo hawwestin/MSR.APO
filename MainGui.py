@@ -76,25 +76,46 @@ def Hist_Equalization(tab_id):
     container = tk.Frame(master=popup)
     container.pack()
 
-    huk = Vision(parent=container, controller=popup)
+    # TODO jezeli wybrana to opcje z kolorowego obrazka powinna byc informacja ze nastapi konwersja na szary .
+    # jezeli ktos sie nie zgodzi to zamyka okno.
 
+    huk = Vision(parent=container, controller=popup)
+    labelframe = tk.LabelFrame(popup, text="Original")
+    labelframe.pack(fill="both", expand="yes", side=tk.LEFT)
+
+    labelframe_tmp = tk.LabelFrame(popup, text="Equalised")
+    labelframe_tmp.pack(fill="both", expand="yes", side=tk.LEFT)
+
+    huk.panel = tk.Label(labelframe)
+    huk.panel.pack(side=tk.TOP)
+    huk.panel_tmp = tk.Label(labelframe_tmp)
+    huk.panel_tmp.pack(side=tk.TOP)
     # huk.tkImage = gallery[tab_id].tkImage
     # huk.cvImage = gallery[tab_id].cvImage
-    huk.open_grey_scale_img(gallery[tab_id].path)
-    # huk.assign_tkimage()
-    # huk.show()
-    huk.show_img()
-    huk.load_hist()
+    # huk.open_grey_scale_img(gallery[tab_id].path)
+
+    huk.cvImage = gallery[tab_id].cvImage
+
+    huk.tkImage = gallery[tab_id].tkImage
+
+    # huk.load_hist()
 
     # img = cv2.imread('wiki.jpg', 0)
     huk.cvImage_tmp = cv2.equalizeHist(huk.cvImage)
-    res = np.hstack((huk.cvImage, huk.cvImage_tmp))  # stacking images side-by-side
-    cv2.imwrite('res.png', res)
+    # res = np.hstack((huk.cvImage, huk.cvImage_tmp))  # stacking images side-by-side
+    # cv2.imwrite('res.png', res)
+    # cv2.imwrite('HE.png', huk.cvImage_tmp)
+    huk.assign_tkimage_tmp()
 
-    huk.show_tmp_img()
+    huk.show_both_img()
+    huk.load_hist_tmp()
 
-    label = ttk.Label(container, text="aaa", font=NORM_FONT)
-    label.pack(pady=20, padx=20)
+    label = ttk.Label(container, text="Equalisation Method", font=NORM_FONT)
+    label.pack(side=tk.TOP, pady=20, padx=20)
+
+
     B1 = ttk.Button(container, text="Odrzuć zmiany", command=popup.destroy)
     B1.pack(side=tk.BOTTOM, pady=20)
+
+
     popup.mainloop()

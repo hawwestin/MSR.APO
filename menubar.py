@@ -37,8 +37,8 @@ class mainmenu(Frame):
         # todo przerobic na otwarcie kolorowego obrazka i szarego
         file.add_cascade(label="Open", menu=open)
         file.add_command(label="Reload", command=self._menucmd.load_image)
-        file.add_command(label="Save")
-        file.add_command(label="Save as")
+        file.add_command(label="Save", command=self._menucmd.save)
+        file.add_command(label="Save as", command=self._menucmd.save_as)
         file.add_separator()
         # Tabs Options
         file.add_command(label="Close Current Tab", command=self.tkController.close_Current_tab)

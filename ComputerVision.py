@@ -37,6 +37,7 @@ class Vision(tk.Frame):
         self.id = None
         # Panele
         self.panel = None
+        self.panel_tmp = None
         self.canvas = None
         self.toolbar = None
         # self.panel = tk.Label(parent)
@@ -70,9 +71,16 @@ class Vision(tk.Frame):
 
 
     def assign_tkimage(self):
-        image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
+        image = cv2.cvtColor(self.cvImage, cv2.COLOR_GRAY2RGB)
+                             # cv2.COLOR_BGR2RGB)
         image = Image.fromarray(image)
         self.tkImage = ImageTk.PhotoImage(image)
+
+    def assign_tkimage_tmp(self):
+        image = cv2.cvtColor(self.cvImage_tmp, cv2.COLOR_GRAY2RGB)
+                             # cv2.COLOR_BGR2RGB)
+        image = Image.fromarray(image)
+        self.tkImage_tmp = ImageTk.PhotoImage(image)
 
 
     def show(self):
@@ -117,6 +125,36 @@ class Vision(tk.Frame):
         if self.canvas is None:
             self.canvas = FigureCanvasTkAgg(self.f, self.master)
             self.canvas.show()
+            self.canvas.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+        else:
+            self.canvas = FigureCanvasTkAgg(self.f, self.master)
+            self.canvas.show()
+            self.toolbar.update()
+
+        if self.toolbar is None:
+            self.toolbar = NavigationToolbar2TkAgg(self.canvas, self.master)
+            self.toolbar.update()
+        else:
+            self.toolbar.update()
+
+        self.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+
+    def load_hist_tmp(self):
+        # todo how to close histogram ?
+        # global a
+        # global f
+
+
+        self.a.clear()
+        # f.clear()
+        histr = cv2.calcHist([self.cvImage_tmp], [0], None, [256], [0, 256])
+        self.a.plot(histr)
+
+        if self.canvas is None:
+            self.canvas = FigureCanvasTkAgg(self.f, self.master)
+            self.canvas.show()
             self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
         else:
@@ -129,7 +167,7 @@ class Vision(tk.Frame):
         else:
             self.toolbar.update()
 
-        self.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        # self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
     def show_img(self):
         """
@@ -153,9 +191,24 @@ class Vision(tk.Frame):
             self.panel.configure(image=self.tkImage)
             self.panel.image = self.tkImage
 
-    def show_tmp_img(self):
-        self.panel.configure(image=self.tkImage_tmp)
-        self.panel.image = self.tkImage_tmp
+    def show_both_img(self):
+        if self.panel_tmp is None or self.panel is None:
+            self.panel_tmp = ttk.Label(self.master, image=self.tkImage_tmp)
+            self.panel_tmp.image = self.tkImage_tmp
+            self.panel_tmp.pack(side="left", padx=10, pady=10)
+
+            self.panel = ttk.Label(self.master, image=self.tkImage)
+            self.panel.image = self.tkImage
+            self.panel.pack(side="left", padx=10, pady=10)
+
+        # otherwise, update the image panels
+        else:
+            # update the pannels
+            self.panel_tmp.configure(image=self.tkImage_tmp)
+            self.panel.configure(image=self.tkImage)
+            self.panel_tmp.image = self.tkImage_tmp
+            self.panel.image = self.tkImage
+        # self.panel.image = self.tkImage_tmp
 
     def color_picker(self):
         # Create a black image, a window
@@ -206,10 +259,16 @@ class Vision(tk.Frame):
         self.cvImage_tmp = cdf[self.cvImage]
         # plt.imshow(huk.cvImage_tmp)
 
-        self.show_tmp_img()
+        self.show_both_img()
 
         plt.plot(cdf_normalized, color='b')
         plt.hist(self.cvImage.flatten(), 256, [0, 256], color='r')
         plt.xlim([0, 256])
         plt.legend(('cdf', 'histogram'), loc='upper left')
         plt.show()
+
+    def save(self, path=None):
+        if path is None:
+            cv2.imwrite(self.path, self.cvImage)
+        else:
+            cv2.imwrite(path, self.cvImage)
