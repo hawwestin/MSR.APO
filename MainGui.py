@@ -110,8 +110,8 @@ def Hist_Equalization(tab_id):
     # huk.load_hist_tmp()
 
     def confirm(flag=None):
-        gallery[tab_id].cvImage = huk.cvImage
-        gallery[tab_id].tkImage = huk.tkImage
+        gallery[tab_id].cvImage = huk.cvImage_tmp
+        gallery[tab_id].tkImage = huk.tkImage_tmp
         gallery[tab_id].show_img()
         if gallery[tab_id].histCanvas is not None:
             gallery[tab_id].load_hist()
@@ -119,8 +119,8 @@ def Hist_Equalization(tab_id):
             popup.destroy()
 
     def cofnij():
-        gallery[tab_id].cvImage = huk.cvImage_tmp
-        gallery[tab_id].tkImage = huk.tkImage_tmp
+        gallery[tab_id].cvImage = huk.cvImage
+        gallery[tab_id].tkImage = huk.tkImage
         gallery[tab_id].show_img()
         if gallery[tab_id].histCanvas is not None:
             gallery[tab_id].load_hist()
