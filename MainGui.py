@@ -80,42 +80,59 @@ def Hist_Equalization(tab_id):
     # jezeli ktos sie nie zgodzi to zamyka okno.
 
     huk = Vision(parent=container, controller=popup)
-    labelframe = tk.LabelFrame(popup, text="Original")
+    labelframe = tk.LabelFrame(popup, text="Original", labelanchor='nw')
     labelframe.pack(fill="both", expand="yes", side=tk.LEFT)
 
-    labelframe_tmp = tk.LabelFrame(popup, text="Equalised")
+    labelframe_tmp = tk.LabelFrame(popup, text="Equalised", labelanchor='nw')
     labelframe_tmp.pack(fill="both", expand="yes", side=tk.LEFT)
 
     huk.panel = tk.Label(labelframe)
     huk.panel.pack(side=tk.TOP)
     huk.panel_tmp = tk.Label(labelframe_tmp)
     huk.panel_tmp.pack(side=tk.TOP)
-    # huk.tkImage = gallery[tab_id].tkImage
-    # huk.cvImage = gallery[tab_id].cvImage
+
     # huk.open_grey_scale_img(gallery[tab_id].path)
-
     huk.cvImage = gallery[tab_id].cvImage
-
     huk.tkImage = gallery[tab_id].tkImage
 
     # huk.load_hist()
 
     # img = cv2.imread('wiki.jpg', 0)
-    huk.cvImage_tmp = cv2.equalizeHist(huk.cvImage)
+
+    # huk.cvImage_tmp = cv2.equalizeHist(huk.cvImage)
+
     # res = np.hstack((huk.cvImage, huk.cvImage_tmp))  # stacking images side-by-side
     # cv2.imwrite('res.png', res)
     # cv2.imwrite('HE.png', huk.cvImage_tmp)
-    huk.assign_tkimage_tmp()
+    # huk.assign_tkimage_tmp()
+    #
+    # huk.show_both_img()
+    # huk.load_hist_tmp()
 
-    huk.show_both_img()
-    huk.load_hist_tmp()
+    def confirm(flag=None):
+        gallery[tab_id].cvImage = huk.cvImage_tmp
+        gallery[tab_id].tkImage = huk.tkImage_tmp
+        gallery[tab_id].show_img()
+        if gallery[tab_id].histCanvas is not None:
+            gallery[tab_id].load_hist()
+        if flag is not None:
+            popup.destroy()
+
 
     label = ttk.Label(container, text="Equalisation Method", font=NORM_FONT)
     label.pack(side=tk.TOP, pady=20, padx=20)
 
-
-    B1 = ttk.Button(container, text="Odrzuć zmiany", command=popup.destroy)
-    B1.pack(side=tk.BOTTOM, pady=20)
-
+    B1 = ttk.Button(container, text="Wyjdź", command=popup.destroy)
+    B1.pack(side=tk.BOTTOM, padx=2)
+    B2 = ttk.Button(container, text="Zatwierdz zmiany", command=confirm)
+    B2.pack(side=tk.BOTTOM, padx=2)
+    B3 = ttk.Button(container, text="Zapisz i wyjdz", command=lambda: confirm(1))
+    B3.pack(side=tk.BOTTOM, padx=2)
+    B4 = ttk.Button(container, text="Hist EQ", command=huk.hist_eq)
+    B4.pack(side=tk.LEFT, padx=2)
+    B5 = ttk.Button(container, text="Hist num", command=huk.hist_num)
+    B5.pack(side=tk.LEFT, padx=2)
+    B6 = ttk.Button(container, text="Hist Clahe", command=huk.hist_CLAHE)
+    B6.pack(side=tk.LEFT, padx=2)
 
     popup.mainloop()

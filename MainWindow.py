@@ -39,14 +39,13 @@ class Window(tk.Tk):
 
         self.style.configure('TNotebook.Tab', background=_bgcolor)
         self.style.configure('TNotebook.Tab', foreground=_fgcolor)
-        self.style.map('TNotebook.Tab', background=
-        [('selected', _compcolor), ('active', _ana2color)])
+        self.style.map('TNotebook.Tab', background=[('selected', _compcolor), ('active', _ana2color)])
 
         # self.configure(background='grey')
 
         container = tk.Frame(self)
         container.pack()
-        container.configure(background='grey')
+        # container.configure(background='grey')
 
         self.title("APO")
         mainmenu(container, self)

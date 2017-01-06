@@ -38,7 +38,7 @@ class Vision(tk.Frame):
         # Panele
         self.panel = None
         self.panel_tmp = None
-        self.canvas = None
+        self.histCanvas = None
         self.toolbar = None
         # self.panel = tk.Label(parent)
         # self.panel.pack()
@@ -111,58 +111,66 @@ class Vision(tk.Frame):
         b, g, r = cv2.split(img) # not optimal TODO change to numpay array
         return cv2.merge((r, g, b))
 
+    def close_hist(self):
+        self.a.clear()
+        # self.f.clear()
+
     def load_hist(self):
         # todo how to close histogram ?
-        # global a
-        # global f
 
+        self.close_hist()
+        # self.a.clear()
+        # self.f.clear()
+        # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
+        # TODO przerobic na bar plot
 
-        self.a.clear()
-        # f.clear()
-        histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
-        self.a.plot(histr)
+        self.a.hist(self.cvImage.ravel(), bins=256, range=[0.0, 256.0])
+        self.a.set_xlim([0, 256])
 
-        if self.canvas is None:
-            self.canvas = FigureCanvasTkAgg(self.f, self.master)
-            self.canvas.show()
-            self.canvas.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        # self.a.hist(histr)
+
+        if self.histCanvas is None:
+            self.histCanvas = FigureCanvasTkAgg(self.f, self.master)
+            self.histCanvas.show()
+            self.histCanvas.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
         else:
-            self.canvas = FigureCanvasTkAgg(self.f, self.master)
-            self.canvas.show()
+            # self.canvas = FigureCanvasTkAgg(self.f, self.master)
+            self.histCanvas.show()
             self.toolbar.update()
 
         if self.toolbar is None:
-            self.toolbar = NavigationToolbar2TkAgg(self.canvas, self.master)
+            self.toolbar = NavigationToolbar2TkAgg(self.histCanvas, self.master)
             self.toolbar.update()
         else:
             self.toolbar.update()
 
-        self.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.histCanvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
 
     def load_hist_tmp(self):
         # todo how to close histogram ?
-        # global a
-        # global f
-
+        self.close_hist()
 
         self.a.clear()
         # f.clear()
-        histr = cv2.calcHist([self.cvImage_tmp], [0], None, [256], [0, 256])
-        self.a.plot(histr)
+        # histr = cv2.calcHist([self.cvImage_tmp], [0], None, [256], [0, 256])
+        # self.a.plot(histr)
 
-        if self.canvas is None:
-            self.canvas = FigureCanvasTkAgg(self.f, self.master)
-            self.canvas.show()
-            self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        self.a.hist(self.cvImage_tmp.ravel(), bins=256, range=[0, 256])
+        self.a.set_xlim([0, 256])
+
+        if self.histCanvas is None:
+            self.histCanvas = FigureCanvasTkAgg(self.f, self.master)
+            self.histCanvas.show()
+            self.histCanvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
         else:
-            self.canvas.show()
+            self.histCanvas.show()
             self.toolbar.update()
 
         if self.toolbar is None:
-            self.toolbar = NavigationToolbar2TkAgg(self.canvas, self.master)
+            self.toolbar = NavigationToolbar2TkAgg(self.histCanvas, self.master)
             self.toolbar.update()
         else:
             self.toolbar.update()
@@ -246,26 +254,47 @@ class Vision(tk.Frame):
 
         cv2.destroyAllWindows()
 
-    def Hist_1(self):
+    def hist_num(self):
         hist, bins = np.histogram(self.cvImage.flatten(), 256, [0, 256])
 
         cdf = hist.cumsum()
-        cdf_normalized = cdf * hist.max() / cdf.max()
+        # cdf_normalized = cdf * hist.max() / cdf.max()
 
         cdf_m = np.ma.masked_equal(cdf, 0)
         cdf_m = (cdf_m - cdf_m.min()) * 255 / (cdf_m.max() - cdf_m.min())
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
 
         self.cvImage_tmp = cdf[self.cvImage]
+
+        self.assign_tkimage_tmp()
+        self.show_both_img()
+        self.load_hist_tmp()
+
+
         # plt.imshow(huk.cvImage_tmp)
 
-        self.show_both_img()
+        # self.show_both_img()
 
-        plt.plot(cdf_normalized, color='b')
-        plt.hist(self.cvImage.flatten(), 256, [0, 256], color='r')
-        plt.xlim([0, 256])
-        plt.legend(('cdf', 'histogram'), loc='upper left')
-        plt.show()
+        # plt.plot(cdf_normalized, color='b')
+        # plt.hist(self.cvImage.flatten(), 256, [0, 256], color='r')
+        # plt.xlim([0, 256])
+        # plt.legend(('cdf', 'histogram'), loc='upper left')
+        # plt.show()
+
+    def hist_eq(self):
+        self.cvImage_tmp = cv2.equalizeHist(self.cvImage)
+
+        self.assign_tkimage_tmp()
+        self.show_both_img()
+        self.load_hist_tmp()
+
+    def hist_CLAHE(self):
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(3, 3))
+        self.cvImage_tmp = clahe.apply(self.cvImage)
+
+        self.assign_tkimage_tmp()
+        self.show_both_img()
+        self.load_hist_tmp()
 
     def save(self, path=None):
         if path is None:

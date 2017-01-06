@@ -72,8 +72,8 @@ class MenuCmd(tk.Frame):
 
     def load_image(self):
         path = filedialog.askopenfilename()
-        if path > 0:
-            tab = self.tkController.notebook.index("current")
+        if len(path) > 0:
+            tab = self.tkController.notebook.select()
             # MainGui.statusmsg.configure(text=os.path.splitext(path)[0])
             self.tkController.rename_tab(os.path.splitext(path)[0])
 
@@ -132,6 +132,10 @@ class MenuCmd(tk.Frame):
         print(tab_id)
         # tab_id = self.tkController.notebook.index("current")
         MainGui.Hist_Equalization(tab_id)
+        MainGui.gallery[tab_id].show_img()
+        if MainGui.gallery[tab_id].histCanvas is not None:
+            MainGui.gallery[tab_id].load_hist()
+
 
     def save(self):
         tab_id = self.tkController.notebook.select()
@@ -147,4 +151,8 @@ class MenuCmd(tk.Frame):
         # id = self.tkController.notebook.index("current")
         MainGui.gallery[tab_id].save(title)
 
-
+    def clear_hist(self):
+        tab_id = self.tkController.notebook.select()
+        print(tab_id)
+        # id = self.tkController.notebook.index("current")
+        MainGui.gallery[tab_id].close_hist()
