@@ -110,13 +110,20 @@ def Hist_Equalization(tab_id):
     # huk.load_hist_tmp()
 
     def confirm(flag=None):
-        gallery[tab_id].cvImage = huk.cvImage_tmp
-        gallery[tab_id].tkImage = huk.tkImage_tmp
+        gallery[tab_id].cvImage = huk.cvImage
+        gallery[tab_id].tkImage = huk.tkImage
         gallery[tab_id].show_img()
         if gallery[tab_id].histCanvas is not None:
             gallery[tab_id].load_hist()
         if flag is not None:
             popup.destroy()
+
+    def cofnij():
+        gallery[tab_id].cvImage = huk.cvImage_tmp
+        gallery[tab_id].tkImage = huk.tkImage_tmp
+        gallery[tab_id].show_img()
+        if gallery[tab_id].histCanvas is not None:
+            gallery[tab_id].load_hist()
 
 
     label = ttk.Label(container, text="Equalisation Method", font=NORM_FONT)
@@ -128,6 +135,9 @@ def Hist_Equalization(tab_id):
     B2.pack(side=tk.BOTTOM, padx=2)
     B3 = ttk.Button(container, text="Zapisz i wyjdz", command=lambda: confirm(1))
     B3.pack(side=tk.BOTTOM, padx=2)
+    B7 = ttk.Button(container, text="Cofnij", command=cofnij)
+    B7.pack(side=tk.BOTTOM, padx=2)
+
     B4 = ttk.Button(container, text="Hist EQ", command=huk.hist_eq)
     B4.pack(side=tk.LEFT, padx=2)
     B5 = ttk.Button(container, text="Hist num", command=huk.hist_num)
