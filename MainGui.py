@@ -114,7 +114,8 @@ def Hist_Equalization(tab_id):
         gallery[tab_id].tkImage = huk.tkImage_tmp
         gallery[tab_id].show_img()
         if gallery[tab_id].histCanvas is not None:
-            gallery[tab_id].load_hist()
+            gallery[tab_id].set_hist()
+            gallery[tab_id].load_hist_geometry().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         if flag is not None:
             popup.destroy()
 
@@ -123,7 +124,8 @@ def Hist_Equalization(tab_id):
         gallery[tab_id].tkImage = huk.tkImage
         gallery[tab_id].show_img()
         if gallery[tab_id].histCanvas is not None:
-            gallery[tab_id].load_hist()
+            gallery[tab_id].set_hist()
+            gallery[tab_id].load_hist_geometry().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
 
     label = ttk.Label(container, text="Equalisation Method", font=NORM_FONT)

@@ -110,7 +110,8 @@ class MenuCmd(tk.Frame):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        MainGui.gallery[tab_id].load_hist()
+        MainGui.gallery[tab_id].set_hist()
+        MainGui.gallery[tab_id].load_hist_geometry().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
     def outHist(self):
         tab_id = self.tkController.notebook.select()
@@ -132,9 +133,6 @@ class MenuCmd(tk.Frame):
         print(tab_id)
         # tab_id = self.tkController.notebook.index("current")
         MainGui.Hist_Equalization(tab_id)
-        MainGui.gallery[tab_id].show_img()
-        if MainGui.gallery[tab_id].histCanvas is not None:
-            MainGui.gallery[tab_id].load_hist()
 
 
     def save(self):

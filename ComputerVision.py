@@ -115,24 +115,22 @@ class Vision(tk.Frame):
         self.a.clear()
         # self.f.clear()
 
-    def load_hist(self):
-        # todo how to close histogram ?
+    def load_hist_geometry(self):
+        return self.histCanvas.get_tk_widget()
+
+    def set_hist(self):
+        # todo how close histogram ?
 
         self.close_hist()
-        # self.a.clear()
-        # self.f.clear()
         # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
-        # TODO przerobic na bar plot
 
         self.a.hist(self.cvImage.ravel(), bins=256, range=[0.0, 256.0])
         self.a.set_xlim([0, 256])
 
-        # self.a.hist(histr)
-
         if self.histCanvas is None:
             self.histCanvas = FigureCanvasTkAgg(self.f, self.master)
             self.histCanvas.show()
-            self.histCanvas.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+            # self.histCanvas.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
         else:
             # self.canvas = FigureCanvasTkAgg(self.f, self.master)
@@ -145,7 +143,7 @@ class Vision(tk.Frame):
         else:
             self.toolbar.update()
 
-        self.histCanvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        # self.histCanvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
 
     def load_hist_tmp(self):
