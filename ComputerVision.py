@@ -38,15 +38,25 @@ class Vision(tk.Frame):
         # Panele
         self.panel = None
         self.panel_tmp = None
+        self.display = tk.Canvas(self, bd=0, highlightthickness=0)
+        self.fCanvas = tk.Frame(master=parent)
         self.histCanvas = None
         self.toolbar = None
         # self.panel = tk.Label(parent)
         # self.panel.pack()
         self.f = Figure()
         self.a = self.f.add_subplot(111)
+        # ToDO po tym resize nie widac histogramu po prawej stronie.
+        parent.bind("<Configure>", self.resize)
 
-    def __del__(self):
-        self.destroy()
+    # def __del__(self):
+    #     self.destroy()
+
+    def set_geometry_hist_frame(self):
+        # self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        return self.fCanvas
+
+#################################
 
     def open_color_img(self, path):
         # 0 - gray , 1 color
@@ -69,7 +79,7 @@ class Vision(tk.Frame):
         image = Image.fromarray(image)
         self.tkImage = ImageTk.PhotoImage(image)
 
-
+################################
     def assign_tkimage(self):
         image = cv2.cvtColor(self.cvImage, cv2.COLOR_GRAY2RGB)
                              # cv2.COLOR_BGR2RGB)
@@ -77,11 +87,15 @@ class Vision(tk.Frame):
         self.tkImage = ImageTk.PhotoImage(image)
 
     def assign_tkimage_tmp(self):
-        image = cv2.cvtColor(self.cvImage_tmp, cv2.COLOR_GRAY2RGB)
+        # TODO sprawdzic czy try sie sprawdzi
+        try:
+            image = cv2.cvtColor(self.cvImage_tmp, cv2.COLOR_GRAY2RGB)
+        except Exception:
+            image = cv2.cvtColor(self.cvImage_tmp, cv2.COLOR_BGR2RGB)
                              # cv2.COLOR_BGR2RGB)
         image = Image.fromarray(image)
         self.tkImage_tmp = ImageTk.PhotoImage(image)
-
+################################
 
     def show(self):
         plt.imshow(self.cvImage, cmap='Greys', interpolation='bicubic')
@@ -115,73 +129,49 @@ class Vision(tk.Frame):
         self.a.clear()
         # self.f.clear()
 
-    def load_hist_geometry(self):
-        return self.histCanvas.get_tk_widget()
+    def set_hist_geometry(self):
+        # self.histCanvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        # self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.fCanvas.pack(side=tk.RIGHT, expand=True)
 
-    def set_hist(self):
+    def set_hist(self, tmp= None):
         # todo how close histogram ?
+
+        if tmp is None:
+            source = self.cvImage
+        else:
+            source = self.cvImage_tmp
 
         self.close_hist()
         # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
 
-        self.a.hist(self.cvImage.ravel(), bins=256, range=[0.0, 256.0])
+        self.a.hist(source.ravel(), bins=256, range=[0.0, 256.0])
         self.a.set_xlim([0, 256])
 
         if self.histCanvas is None:
-            self.histCanvas = FigureCanvasTkAgg(self.f, self.master)
+            self.histCanvas = FigureCanvasTkAgg(self.f, self.fCanvas)
             self.histCanvas.show()
-            # self.histCanvas.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-
         else:
-            # self.canvas = FigureCanvasTkAgg(self.f, self.master)
             self.histCanvas.show()
-            self.toolbar.update()
-
+    ###################
+        #     ToolBAR
+    ###################
         if self.toolbar is None:
-            self.toolbar = NavigationToolbar2TkAgg(self.histCanvas, self.master)
+            self.toolbar = NavigationToolbar2TkAgg(self.histCanvas,
+                                                   self.fCanvas)
             self.toolbar.update()
         else:
             self.toolbar.update()
 
-        # self.histCanvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.histCanvas.get_tk_widget().pack(side=tk.TOP,
+                                             fill=tk.BOTH,
+                                             expand=True)
 
-
-    def load_hist_tmp(self):
-        # todo how to close histogram ?
-        self.close_hist()
-
-        self.a.clear()
-        # f.clear()
-        # histr = cv2.calcHist([self.cvImage_tmp], [0], None, [256], [0, 256])
-        # self.a.plot(histr)
-
-        self.a.hist(self.cvImage_tmp.ravel(), bins=256, range=[0, 256])
-        self.a.set_xlim([0, 256])
-
-        if self.histCanvas is None:
-            self.histCanvas = FigureCanvasTkAgg(self.f, self.master)
-            self.histCanvas.show()
-            self.histCanvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-
-        else:
-            self.histCanvas.show()
-            self.toolbar.update()
-
-        if self.toolbar is None:
-            self.toolbar = NavigationToolbar2TkAgg(self.histCanvas, self.master)
-            self.toolbar.update()
-        else:
-            self.toolbar.update()
-
-        # self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-
-    def show_img(self):
+    def set_panel_img(self):
         """
         Logic : odpalenie okna z obrazkiem ktore  ma wlasne Menu do operacji.
         Kazde okienko to nowy obiekt.
         Undowanie na tablicach ? może pod spodem baze danych machnac
-
-        :return:
         """
         # plt.imshow(self.image, cmap='Greys', interpolation='bicubic')
         # plt.show()
@@ -193,7 +183,6 @@ class Vision(tk.Frame):
             self.panel.pack(side="left", padx=10, pady=10)
         # otherwise, update the image panels
         else:
-            # update the pannels
             self.panel.configure(image=self.tkImage)
             self.panel.image = self.tkImage
 
@@ -215,6 +204,19 @@ class Vision(tk.Frame):
             self.panel_tmp.image = self.tkImage_tmp
             self.panel.image = self.tkImage
         # self.panel.image = self.tkImage_tmp
+
+    def resize(self, event):
+        size = (event.width, event.height)
+        # image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
+        # cv2.COLOR_BGR2RGB)
+        print(size)
+        image = Image.fromarray(self.cvImage)
+        resized = image.resize(size, Image.ANTIALIAS)
+        self.tkImage = ImageTk.PhotoImage(resized)
+        self.set_panel_img()
+        #         For Canvas
+        # self.display.delete("IMG")
+        # self.display.create_image(0, 0, image=self.tkImage, anchor='nw', tags="IMG")
 
     def color_picker(self):
         # Create a black image, a window
@@ -265,8 +267,9 @@ class Vision(tk.Frame):
         self.cvImage_tmp = cdf[self.cvImage]
 
         self.assign_tkimage_tmp()
+        # TODO zmieniac tylko _tmp obraz nie potrzeba przeladowywac orginalnego jezeli go nie modyfikujemy.
         self.show_both_img()
-        self.load_hist_tmp()
+        self.set_hist(tmp=1)
 
 
         # plt.imshow(huk.cvImage_tmp)
@@ -283,16 +286,18 @@ class Vision(tk.Frame):
         self.cvImage_tmp = cv2.equalizeHist(self.cvImage)
 
         self.assign_tkimage_tmp()
+        # TODO zmieniac tylko _tmp obraz nie potrzeba przeladowywac orginalnego jezeli go nie modyfikujemy.
         self.show_both_img()
-        self.load_hist_tmp()
+        self.set_hist(tmp=1)
 
     def hist_CLAHE(self):
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(3, 3))
         self.cvImage_tmp = clahe.apply(self.cvImage)
 
         self.assign_tkimage_tmp()
+        # TODO zmieniac tylko _tmp obraz nie potrzeba przeladowywac orginalnego jezeli go nie modyfikujemy.
         self.show_both_img()
-        self.load_hist_tmp()
+        self.set_hist(tmp=1)
 
     def save(self, path=None):
         if path is None:

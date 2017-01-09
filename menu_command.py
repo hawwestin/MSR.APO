@@ -53,7 +53,10 @@ class MenuCmd(tk.Frame):
             MainGui.gallery[tab._w].id = index
 
             MainGui.gallery[tab._w].open_color_img(path)
-            MainGui.gallery[tab._w].show_img()
+            MainGui.gallery[tab._w].set_panel_img()
+            # MainGui.gallery[tab._w].panel.pack(side="left",
+            #                                    padx=10,
+            #                                    pady=10)
 
 
     def open_grey_image(self):
@@ -67,22 +70,28 @@ class MenuCmd(tk.Frame):
             MainGui.gallery[tab._w].id = index
 
             MainGui.gallery[tab._w].open_grey_scale_img(path)
-            MainGui.gallery[tab._w].show_img()
+            MainGui.gallery[tab._w].set_panel_img()
+            # MainGui.gallery[tab._w].panel.pack(side="left",
+            #                                    padx=10,
+            #                                    pady=10)
+
 
 
     def load_image(self):
         path = filedialog.askopenfilename()
         if len(path) > 0:
-            tab = self.tkController.notebook.select()
+            tab_id = self.tkController.notebook.select()
             # MainGui.statusmsg.configure(text=os.path.splitext(path)[0])
             self.tkController.rename_tab(os.path.splitext(path)[0])
 
-            MainGui.gallery[tab].open_color_img(path)
-            MainGui.gallery[tab].show_img()
-
-            return tab
-        else:
-            return 0
+            MainGui.gallery[tab_id].open_color_img(path)
+            MainGui.gallery[tab_id].set_panel_img()
+            # MainGui.gallery[tab._w].panel.pack(side="left",
+            #                                    padx=10,
+            #                                    pady=10)
+            if MainGui.gallery[tab_id].histCanvas is not None:
+                MainGui.gallery[tab_id].set_hist()
+                MainGui.gallery[tab_id].set_hist_geometry()
 
     @staticmethod
     def not_implemented():
@@ -111,7 +120,7 @@ class MenuCmd(tk.Frame):
         print(tab_id)
         # id = self.tkController.notebook.index("current")
         MainGui.gallery[tab_id].set_hist()
-        MainGui.gallery[tab_id].load_hist_geometry().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        MainGui.gallery[tab_id].set_hist_geometry()
 
     def outHist(self):
         tab_id = self.tkController.notebook.select()

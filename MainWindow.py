@@ -65,6 +65,7 @@ class Window(tk.Tk):
 
     def new_tab(self, name):
         frame = ttk.Frame(self.notebook)
+        frame.pack(fill=BOTH, expand=1)
         self.notebook.add(frame, text=name)
         return frame
 

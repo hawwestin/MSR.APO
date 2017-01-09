@@ -71,20 +71,28 @@ def Hist_Equalization(tab_id):
 
     popup = tk.Toplevel()
     popup.wm_title("Histogram Equalization")
-    # popup.geometry("240x180")
+    popup.geometry("1024x720")
 
     container = tk.Frame(master=popup)
-    container.pack()
+    # container.pack()
+    container.grid()
+    # tk.Grid.rowconfigure(popup, 0, weight=1)
+    # tk.Grid.columnconfigure(popup, 0, weight=1)
 
     # TODO jezeli wybrana to opcje z kolorowego obrazka powinna byc informacja ze nastapi konwersja na szary .
     # jezeli ktos sie nie zgodzi to zamyka okno.
 
     huk = Vision(parent=container, controller=popup)
+    huk.fCanvas = tk.Frame(master=popup)
+    huk.fCanvas.grid(row=4, column=5, columnspan=5, rowspan=2, sticky='nsew', padx=10)
+
     labelframe = tk.LabelFrame(popup, text="Original", labelanchor='nw')
-    labelframe.pack(fill="both", expand="yes", side=tk.LEFT)
+    # labelframe.pack(fill="both", expand="yes", side=tk.LEFT)
+    labelframe.grid(row=4, column=0, columnspan=4, sticky='nsew')
 
     labelframe_tmp = tk.LabelFrame(popup, text="Equalised", labelanchor='nw')
-    labelframe_tmp.pack(fill="both", expand="yes", side=tk.LEFT)
+    # labelframe_tmp.pack(fill="both", expand="yes", side=tk.LEFT)
+    labelframe_tmp.grid(row=5, column=0,columnspan=4, sticky='nsew')
 
     huk.panel = tk.Label(labelframe)
     huk.panel.pack(side=tk.TOP)
@@ -112,39 +120,67 @@ def Hist_Equalization(tab_id):
     def confirm(flag=None):
         gallery[tab_id].cvImage = huk.cvImage_tmp
         gallery[tab_id].tkImage = huk.tkImage_tmp
-        gallery[tab_id].show_img()
+        gallery[tab_id].set_panel_img()
+        gallery[tab_id].panel.pack(side="left",
+                                   padx=10,
+                                   pady=10)
+
         if gallery[tab_id].histCanvas is not None:
             gallery[tab_id].set_hist()
-            gallery[tab_id].load_hist_geometry().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+            gallery[tab_id].set_hist_geometry()
         if flag is not None:
             popup.destroy()
 
     def cofnij():
         gallery[tab_id].cvImage = huk.cvImage
         gallery[tab_id].tkImage = huk.tkImage
-        gallery[tab_id].show_img()
+        gallery[tab_id].set_panel_img()
+        gallery[tab_id].panel.pack(side="left",
+                                   padx=10,
+                                   pady=10)
+
         if gallery[tab_id].histCanvas is not None:
             gallery[tab_id].set_hist()
-            gallery[tab_id].load_hist_geometry().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+            gallery[tab_id].set_hist_geometry()
 
 
-    label = ttk.Label(container, text="Equalisation Method", font=NORM_FONT)
-    label.pack(side=tk.TOP, pady=20, padx=20)
+    label = ttk.Label(popup, text="Equalisation Method", font=NORM_FONT)
+    # label.pack(side=tk.TOP, pady=20, padx=20)
+    label.grid(row=0, column=5, sticky='nsew')
 
-    B1 = ttk.Button(container, text="Wyjdź", command=popup.destroy)
-    B1.pack(side=tk.BOTTOM, padx=2)
-    B2 = ttk.Button(container, text="Zatwierdz zmiany", command=confirm)
-    B2.pack(side=tk.BOTTOM, padx=2)
-    B3 = ttk.Button(container, text="Zapisz i wyjdz", command=lambda: confirm(1))
-    B3.pack(side=tk.BOTTOM, padx=2)
-    B7 = ttk.Button(container, text="Cofnij", command=cofnij)
-    B7.pack(side=tk.BOTTOM, padx=2)
+    B1 = ttk.Button(popup, text="Wyjdź", command=popup.destroy)
+    # B1.pack(side=tk.BOTTOM, padx=2)
+    B1.grid(row=1, column=0, sticky='nsew')
+    B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=confirm)
+    # B2.pack(side=tk.BOTTOM, padx=2)
+    B2.grid(row=1, column=1, sticky='nsew')
+    B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: confirm(1))
+    # B3.pack(side=tk.BOTTOM, padx=2)
+    B3.grid(row=1, column=2, sticky='nsew')
+    B7 = ttk.Button(popup, text="Cofnij", command=cofnij)
+    # B7.pack(side=tk.BOTTOM, padx=2)
+    B7.grid(row=1, column=3, sticky='nsew')
 
-    B4 = ttk.Button(container, text="Hist EQ", command=huk.hist_eq)
-    B4.pack(side=tk.LEFT, padx=2)
-    B5 = ttk.Button(container, text="Hist num", command=huk.hist_num)
-    B5.pack(side=tk.LEFT, padx=2)
-    B6 = ttk.Button(container, text="Hist Clahe", command=huk.hist_CLAHE)
-    B6.pack(side=tk.LEFT, padx=2)
+    def he():
+        huk.hist_eq()
+        # huk.set_geometry_hist_frame().grid(row=5, column=5)
+
+    def hn():
+        huk.hist_num()
+        # huk.set_geometry_hist_frame().grid(row=4, column=2)
+
+    def hc():
+        huk.hist_CLAHE()
+        # huk.set_geometry_hist_frame().grid(row=4, column=2)
+
+    B4 = ttk.Button(popup, text="Hist EQ", command=he)
+    # B4.pack(side=tk.LEFT, padx=2)
+    B4.grid(row=0, column=0, sticky='nsew')
+    B5 = ttk.Button(popup, text="Hist num", command=hn)
+    # B5.pack(side=tk.LEFT, padx=2)
+    B5.grid(row=0, column=1, sticky='nsew')
+    B6 = ttk.Button(popup, text="Hist Clahe", command=hc)
+    # B6.pack(side=tk.LEFT, padx=2)
+    B6.grid(row=0, column=2, sticky='nsew')
 
     popup.mainloop()
