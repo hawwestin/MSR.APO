@@ -78,7 +78,7 @@ class Window(tk.Tk):
         MainGui.statusmsg.pack(side=BOTTOM, fill=X)
 
     def tags(self):
-        print (self.notebook.tabs())
+        print(self.notebook.tabs())
 
     def tab_index(self):
         print(self.notebook.index("end"))

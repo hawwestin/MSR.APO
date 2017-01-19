@@ -14,8 +14,6 @@ statusmsg = None
 canvas = None
 toolbar = None
 gallery = {}
-#current working tab
-cwt = None
 
 LARGE_FONT= ("Verdana", 12)
 NORM_FONT = ("Helvetica", 10)
@@ -25,25 +23,12 @@ SMALL_FONT = ("Helvetica", 8)
 def add_img(tab, img):
     """
 
+    :param tab:  value of tkController.notebook.select() for that new tab. its frame._w
     :param img:  Vision(frame, controller, path)
     :return:
     """
-    global cwt
     global gallery
-
-    # frame = Vision(frame, controller, path)
-
-    # if gallery.__len__() is 0:
-    #     cwt = 0
-    # else:
-    #     cwt = sorted(gallery)[-1] + 1
-    # # print("\nitem : %d" % cwi)
-
     gallery[tab] = img
-
-    # zapychacz
-    cwt = 0
-    return cwt
 
 def close_img(img):
     """
@@ -61,6 +46,39 @@ def get_path():
     # todo potrzeba blokowac i sprawdzac czy wybrany plik jest obrazkiem o dozwolonym typie
     # todo path do obrazka powinien byc storowany by moc go zapisac
     return filedialog.askopenfilename()
+
+
+def confirm(tab_id, huk, window=None):
+    global gallery
+
+    gallery[tab_id].cvImage = huk.cvImage_tmp
+    gallery[tab_id].tkImage = huk.tkImage_tmp
+    gallery[tab_id].set_panel_img()
+    gallery[tab_id].panel.pack(side="left",
+                               padx=10,
+                               pady=10)
+
+    if gallery[tab_id].histCanvas is not None:
+        gallery[tab_id].set_hist()
+        gallery[tab_id].set_hist_geometry()
+    if window is not None:
+        window.destroy()
+
+
+def cofnij(tab_id, huk):
+    global gallery
+
+    gallery[tab_id].cvImage = huk.cvImage
+    gallery[tab_id].tkImage = huk.tkImage
+    gallery[tab_id].set_panel_img()
+    gallery[tab_id].panel.pack(side="left",
+                               padx=10,
+                               pady=10)
+
+    if gallery[tab_id].histCanvas is not None:
+        gallery[tab_id].set_hist()
+        gallery[tab_id].set_hist_geometry()
+
 
 
 def Hist_Equalization(tab_id):
@@ -86,22 +104,28 @@ def Hist_Equalization(tab_id):
     huk.fCanvas = tk.Frame(master=popup)
     huk.fCanvas.grid(row=4, column=5, columnspan=5, rowspan=2, sticky='nsew', padx=10)
 
+
     labelframe = tk.LabelFrame(popup, text="Original", labelanchor='nw')
     # labelframe.pack(fill="both", expand="yes", side=tk.LEFT)
-    labelframe.grid(row=4, column=0, columnspan=4, sticky='nsew')
+    labelframe.grid(row=4, column=0, columnspan=4, sticky='nsew', ipadx=0, ipady=0)
+
+
+
 
     labelframe_tmp = tk.LabelFrame(popup, text="Equalised", labelanchor='nw')
     # labelframe_tmp.pack(fill="both", expand="yes", side=tk.LEFT)
     labelframe_tmp.grid(row=5, column=0,columnspan=4, sticky='nsew')
 
     huk.panel = tk.Label(labelframe)
-    huk.panel.pack(side=tk.TOP)
+    huk.panel.grid(sticky='nsew')
     huk.panel_tmp = tk.Label(labelframe_tmp)
-    huk.panel_tmp.pack(side=tk.TOP)
+    huk.panel_tmp.grid(sticky='nsew')
 
     # huk.open_grey_scale_img(gallery[tab_id].path)
     huk.cvImage = gallery[tab_id].cvImage
     huk.tkImage = gallery[tab_id].tkImage
+    huk.set_panel_img()
+
 
     # huk.load_hist()
 
@@ -117,32 +141,6 @@ def Hist_Equalization(tab_id):
     # huk.show_both_img()
     # huk.load_hist_tmp()
 
-    def confirm(flag=None):
-        gallery[tab_id].cvImage = huk.cvImage_tmp
-        gallery[tab_id].tkImage = huk.tkImage_tmp
-        gallery[tab_id].set_panel_img()
-        gallery[tab_id].panel.pack(side="left",
-                                   padx=10,
-                                   pady=10)
-
-        if gallery[tab_id].histCanvas is not None:
-            gallery[tab_id].set_hist()
-            gallery[tab_id].set_hist_geometry()
-        if flag is not None:
-            popup.destroy()
-
-    def cofnij():
-        gallery[tab_id].cvImage = huk.cvImage
-        gallery[tab_id].tkImage = huk.tkImage
-        gallery[tab_id].set_panel_img()
-        gallery[tab_id].panel.pack(side="left",
-                                   padx=10,
-                                   pady=10)
-
-        if gallery[tab_id].histCanvas is not None:
-            gallery[tab_id].set_hist()
-            gallery[tab_id].set_hist_geometry()
-
 
     label = ttk.Label(popup, text="Equalisation Method", font=NORM_FONT)
     # label.pack(side=tk.TOP, pady=20, padx=20)
@@ -151,36 +149,46 @@ def Hist_Equalization(tab_id):
     B1 = ttk.Button(popup, text="Wyjdź", command=popup.destroy)
     # B1.pack(side=tk.BOTTOM, padx=2)
     B1.grid(row=1, column=0, sticky='nsew')
-    B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=confirm)
+    B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=lambda: confirm(tab_id, huk))
     # B2.pack(side=tk.BOTTOM, padx=2)
     B2.grid(row=1, column=1, sticky='nsew')
-    B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: confirm(1))
+    B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: confirm(tab_id, huk, popup))
     # B3.pack(side=tk.BOTTOM, padx=2)
     B3.grid(row=1, column=2, sticky='nsew')
-    B7 = ttk.Button(popup, text="Cofnij", command=cofnij)
+    B7 = ttk.Button(popup, text="Cofnij", command=lambda: cofnij(tab_id, huk))
     # B7.pack(side=tk.BOTTOM, padx=2)
     B7.grid(row=1, column=3, sticky='nsew')
 
     def he():
         huk.hist_eq()
+        # w, h = labelframe.winfo_width(), labelframe.winfo_height()
+        # print(w, h)
+        # w, h = labelframe_tmp.winfo_width(), labelframe_tmp.winfo_height()
+        # print(w, h)
         # huk.set_geometry_hist_frame().grid(row=5, column=5)
 
     def hn():
         huk.hist_num()
         # huk.set_geometry_hist_frame().grid(row=4, column=2)
 
-    def hc():
-        huk.hist_CLAHE()
-        # huk.set_geometry_hist_frame().grid(row=4, column=2)
-
-    B4 = ttk.Button(popup, text="Hist EQ", command=he)
+    B4 = ttk.Button(popup, text="Hist EQ", command=huk.hist_eq)
     # B4.pack(side=tk.LEFT, padx=2)
     B4.grid(row=0, column=0, sticky='nsew')
-    B5 = ttk.Button(popup, text="Hist num", command=hn)
+    B5 = ttk.Button(popup, text="Hist num", command=huk.hist_num)
     # B5.pack(side=tk.LEFT, padx=2)
     B5.grid(row=0, column=1, sticky='nsew')
-    B6 = ttk.Button(popup, text="Hist Clahe", command=hc)
+    B6 = ttk.Button(popup, text="Sąsiedztwa 3x3", command=lambda: huk.hist_CLAHE(3, 3))
     # B6.pack(side=tk.LEFT, padx=2)
     B6.grid(row=0, column=2, sticky='nsew')
+    B7 = ttk.Button(popup, text="Sąsiedztwa 8x8", command=lambda: huk.hist_CLAHE(8, 8))
+    # B6.pack(side=tk.LEFT, padx=2)
+    B7.grid(row=0, column=3, sticky='nsew')
+
+
+    # w, h = labelframe.winfo_width(), labelframe.winfo_height()
+    # print("w i h", w,h)
+    # huk.resize(w, h)
+
+    # labelframe.bind("<Configure>", huk.resize_event)
 
     popup.mainloop()

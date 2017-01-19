@@ -47,7 +47,9 @@ class Vision(tk.Frame):
         self.f = Figure()
         self.a = self.f.add_subplot(111)
         # ToDO po tym resize nie widac histogramu po prawej stronie.
-        parent.bind("<Configure>", self.resize)
+        # parent.bind("<Configure>", self.resize)
+        # Bad Idea Dont do that again
+        # self.fCanvas.bind("<Configure>", self.resize)
 
     # def __del__(self):
     #     self.destroy()
@@ -139,14 +141,19 @@ class Vision(tk.Frame):
 
         if tmp is None:
             source = self.cvImage
+            self.close_hist()
+            # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
+
+            self.a.hist(source.ravel(), bins=256, range=[0.0, 256.0])
+            self.a.set_xlim([0, 256])
+
         else:
-            source = self.cvImage_tmp
+            self.close_hist()
+            # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
 
-        self.close_hist()
-        # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
-
-        self.a.hist(source.ravel(), bins=256, range=[0.0, 256.0])
-        self.a.set_xlim([0, 256])
+            self.a.hist(self.cvImage_tmp.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
+            self.a.hist(self.cvImage.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
+            self.a.set_xlim([0, 256])
 
         if self.histCanvas is None:
             self.histCanvas = FigureCanvasTkAgg(self.f, self.fCanvas)
@@ -186,6 +193,22 @@ class Vision(tk.Frame):
             self.panel.configure(image=self.tkImage)
             self.panel.image = self.tkImage
 
+        if self.panel_tmp is None and self.tkImage_tmp is not None:
+            self.panel_tmp = ttk.Label(self.master, image=self.tkImage_tmp)
+            # self.panel.configure(image=self.tkImage)
+            # self.panel.image = self.tkImage
+            self.panel_tmp.pack(side="left", padx=10, pady=10)
+        # otherwise, update the image panels
+        elif self.panel_tmp is not None:
+            self.panel_tmp.configure(image=self.tkImage_tmp)
+            self.panel_tmp.image = self.tkImage_tmp
+
+
+
+    def set_display_img(self):
+        self.display.create_image(0, 0, image=self.tkImage, anchor="nw", tags="IMG")
+        self.display.pack(side="left", padx=10, pady=10)
+
     def show_both_img(self):
         if self.panel_tmp is None or self.panel is None:
             self.panel_tmp = ttk.Label(self.master, image=self.tkImage_tmp)
@@ -194,7 +217,7 @@ class Vision(tk.Frame):
 
             self.panel = ttk.Label(self.master, image=self.tkImage)
             self.panel.image = self.tkImage
-            self.panel.pack(side="left", padx=10, pady=10)
+            self.panel.pack(side="left")
 
         # otherwise, update the image panels
         else:
@@ -205,8 +228,9 @@ class Vision(tk.Frame):
             self.panel.image = self.tkImage
         # self.panel.image = self.tkImage_tmp
 
-    def resize(self, event):
-        size = (event.width, event.height)
+    def resize(self, width, height):
+        # TODO store the original value to save image in original size.
+        size = (width, height)
         # image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
         # cv2.COLOR_BGR2RGB)
         print(size)
@@ -214,9 +238,40 @@ class Vision(tk.Frame):
         resized = image.resize(size, Image.ANTIALIAS)
         self.tkImage = ImageTk.PhotoImage(resized)
         self.set_panel_img()
+
+    def resize_event(self, event):
+        # TODO store the original value to save image in original size.
+        size = (event.width, event.height)
+        # image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
+        # cv2.COLOR_BGR2RGB)
+        print(size)
+        image = Image.fromarray(self.cvImage)
+        resized = image.resize_event(size, Image.ANTIALIAS)
+        self.tkImage = ImageTk.PhotoImage(resized)
+        self.set_panel_img()
         #         For Canvas
         # self.display.delete("IMG")
         # self.display.create_image(0, 0, image=self.tkImage, anchor='nw', tags="IMG")
+        #
+    def resize_event_tmp(self, event):
+        # TODO store the original value to save image in original size.
+        size = (event.width-20, event.height-25)
+        # image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
+        # cv2.COLOR_BGR2RGB)
+        print(size)
+        image = Image.fromarray(self.cvImage_tmp)
+        resized = image.resize_event(size, Image.ANTIALIAS)
+        self.tkImage_tmp = ImageTk.PhotoImage(resized)
+        self.set_panel_img()
+        #         For Canvas
+        # self.display.delete("IMG")
+        # self.display.create_image(0, 0, image=self.tkImage, anchor='nw', tags="IMG")
+
+    def global_prog(self, thresh):
+
+
+        self.cvImage_tmp = cv2.threshold(self.cvImage, thresh, 255, cv2.THRESH_BINARY)
+
 
     def color_picker(self):
         # Create a black image, a window
@@ -254,6 +309,22 @@ class Vision(tk.Frame):
 
         cv2.destroyAllWindows()
 
+    def negation(self):
+        # cv2.invert(self.cvImage, self.cvImage_tmp)
+
+        hist, bins = np.histogram(self.cvImage.flatten(), 256, [0, 256])
+        cdf = hist.cumsum()
+        cdf_m = (255-bins)
+        cdf = np.ma.filled(cdf_m, 0).astype('uint8')
+        print("cdf Lut: ", cdf)
+        # LUT Table cdf
+        self.cvImage_tmp = cdf[self.cvImage]
+
+        self.assign_tkimage_tmp()
+        self.show_both_img()
+        self.set_hist(tmp=1)
+
+
     def hist_num(self):
         hist, bins = np.histogram(self.cvImage.flatten(), 256, [0, 256])
 
@@ -263,7 +334,7 @@ class Vision(tk.Frame):
         cdf_m = np.ma.masked_equal(cdf, 0)
         cdf_m = (cdf_m - cdf_m.min()) * 255 / (cdf_m.max() - cdf_m.min())
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
-
+        # LUT Table cdf
         self.cvImage_tmp = cdf[self.cvImage]
 
         self.assign_tkimage_tmp()
@@ -290,8 +361,8 @@ class Vision(tk.Frame):
         self.show_both_img()
         self.set_hist(tmp=1)
 
-    def hist_CLAHE(self):
-        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(3, 3))
+    def hist_CLAHE(self, x=8, y=8):
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(x, y))
         self.cvImage_tmp = clahe.apply(self.cvImage)
 
         self.assign_tkimage_tmp()
@@ -304,3 +375,34 @@ class Vision(tk.Frame):
             cv2.imwrite(self.path, self.cvImage)
         else:
             cv2.imwrite(path, self.cvImage)
+
+    def hist_lab1(self, metoda=None):
+        hist, levels = np.histogram(self.cvImage.flatten(), 256, [0, 256])
+
+        print(hist)
+        print(levels)
+
+        H = hist.cumsum()
+        cdf_m = np.ma.masked_equal(H, 0)
+
+        hAvg = cdf_m.max()/levels
+
+
+#       avg do obliczenia
+
+
+if __name__ == '__main__':
+    popup = tk.Tk()
+
+    container = tk.Frame(master=popup)
+
+    container.pack()
+
+    huk = Vision(parent=container, controller=popup)
+
+    huk.open_grey_scale_img("Auto_3.jpg")
+    huk.set_panel_img()
+
+    huk.negation()
+
+    popup.mainloop()

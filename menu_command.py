@@ -49,8 +49,7 @@ class MenuCmd(tk.Frame):
         if len(path) > 0:
             tab = self.tkController.new_tab(os.path.splitext(path)[0])
 
-            index = MainGui.add_img(tab._w, Vision(tab, self.tkController))
-            MainGui.gallery[tab._w].id = index
+            MainGui.add_img(tab._w, Vision(tab, self.tkController))
 
             MainGui.gallery[tab._w].open_color_img(path)
             MainGui.gallery[tab._w].set_panel_img()
@@ -66,8 +65,7 @@ class MenuCmd(tk.Frame):
         if len(path) > 0:
             tab = self.tkController.new_tab(os.path.splitext(path)[0])
 
-            index = MainGui.add_img(tab._w, Vision(tab, self.tkController))
-            MainGui.gallery[tab._w].id = index
+            MainGui.add_img(tab._w, Vision(tab, self.tkController))
 
             MainGui.gallery[tab._w].open_grey_scale_img(path)
             MainGui.gallery[tab._w].set_panel_img()
