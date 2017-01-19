@@ -90,5 +90,6 @@ class Window(tk.Tk):
         self.notebook.forget("current")
         print(id)
         MainGui.gallery[id].__del__()
+        MainGui.gallery.pop(id)
         # todo to zamyka tylko kartę potrzeba sksaować również obiekt by zwolnic pamiec
 

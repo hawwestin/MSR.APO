@@ -12,6 +12,7 @@ from tkinter import filedialog
 # my py
 import os
 import MainGui
+import histEq
 
 from ComputerVision import *
 
@@ -139,7 +140,7 @@ class MenuCmd(tk.Frame):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # tab_id = self.tkController.notebook.index("current")
-        MainGui.Hist_Equalization(tab_id)
+        histEq.Hist_Equalization(tab_id)
 
 
     def save(self):
