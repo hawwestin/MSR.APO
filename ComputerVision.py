@@ -113,7 +113,6 @@ class Vision(tk.Frame):
         # todo wyczyszczenie grafu przed zaladowaniem kolejnego , jak zaladowac kilka instancji do kilku obrazkow ?
         plt.hist(self.cvImage.ravel(), 256, [0, 255])
         plt.show()
-        print(MainGui.cwt)
 
 
     def color_convertion(self, img):
@@ -268,9 +267,11 @@ class Vision(tk.Frame):
         # self.display.create_image(0, 0, image=self.tkImage, anchor='nw', tags="IMG")
 
     def global_prog(self, thresh):
+        ret, self.cvImage_tmp = cv2.threshold(self.cvImage, thresh, 255, cv2.THRESH_BINARY)
+        self.assign_tkimage_tmp()
+        self.show_both_img()
+        # self.set_hist(tmp=1)
 
-
-        self.cvImage_tmp = cv2.threshold(self.cvImage, thresh, 255, cv2.THRESH_BINARY)
 
 
     def color_picker(self):
@@ -313,16 +314,16 @@ class Vision(tk.Frame):
         # cv2.invert(self.cvImage, self.cvImage_tmp)
 
         hist, bins = np.histogram(self.cvImage.flatten(), 256, [0, 256])
-        cdf = hist.cumsum()
+        # cdf = hist.cumsum()
         cdf_m = (255-bins)
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
-        print("cdf Lut: ", cdf)
+        # print("cdf Lut: ", cdf)
         # LUT Table cdf
-        self.cvImage_tmp = cdf[self.cvImage]
+        self.cvImage = cdf[self.cvImage]
+        self.assign_tkimage()
 
-        self.assign_tkimage_tmp()
-        self.show_both_img()
-        self.set_hist(tmp=1)
+        # self.show_both_img()
+        # self.set_hist(tmp=1)
 
 
     def hist_num(self):
@@ -403,6 +404,9 @@ if __name__ == '__main__':
     huk.open_grey_scale_img("Auto_3.jpg")
     huk.set_panel_img()
 
-    huk.negation()
+    sl = tk.Scale(container, orient=tk.HORIZONTAL, to=255)
+    sl.configure(command=lambda x: huk.global_prog(float(x)))
+    sl.pack()
+
 
     popup.mainloop()

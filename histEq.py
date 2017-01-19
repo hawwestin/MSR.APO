@@ -95,9 +95,9 @@ def Hist_Equalization(tab_id):
     B6 = ttk.Button(popup, text="Sąsiedztwa 3x3", command=lambda: huk.hist_CLAHE(3, 3))
     # B6.pack(side=tk.LEFT, padx=2)
     B6.grid(row=0, column=2, sticky='nsew')
-    B7 = ttk.Button(popup, text="Sąsiedztwa 8x8", command=lambda: huk.hist_CLAHE(8, 8))
+    B8 = ttk.Button(popup, text="Sąsiedztwa 8x8", command=lambda: huk.hist_CLAHE(8, 8))
     # B6.pack(side=tk.LEFT, padx=2)
-    B7.grid(row=0, column=3, sticky='nsew')
+    B8.grid(row=0, column=3, sticky='nsew')
 
     # w, h = labelframe.winfo_width(), labelframe.winfo_height()
     # print("w i h", w,h)

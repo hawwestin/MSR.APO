@@ -73,15 +73,22 @@ class mainmenu(Frame):
         histogram.add_command(label="Hist Equalization", command=self._menucmd.hist_Equ)
         histogram.add_command(label="Clear hist", command=self._menucmd.clear_hist)
 
+        punktowe = Menu(self.menu, tearoff=0)
+        punktowe.add_command(label="Negacja", command=self._menucmd.negacja)
+        punktowe.add_command(label="Progowanie", command=self._menucmd.progowanie)
+
         operation = Menu(self.menu, tearoff=0)
         operation.add_cascade(label="Histogram", menu=histogram)
         operation.add_cascade(label="Arithmetic Operations", menu=arithmetic)
+        operation.add_cascade(label="Punktowe", menu=punktowe)
+
         # operation.add_command(label="Sąsiedztwa")
         # operation.add_command(label="Korekcja")
         # operation.add_cascade(label="Segmentacja")
         # operation.add_cascade(label="Stegangorafia")
         # operation.add_cascade(label="Kompresja")
         # operation.add_cascade(label="Opis kszztałtu")
+
         self.menu.add_cascade(label="Operation", menu=operation)
 
         help = Menu(self.menu, tearoff=0)

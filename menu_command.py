@@ -13,6 +13,7 @@ from tkinter import filedialog
 import os
 import MainGui
 import histEq
+import prog
 
 from ComputerVision import *
 
@@ -162,3 +163,18 @@ class MenuCmd(tk.Frame):
         print(tab_id)
         # id = self.tkController.notebook.index("current")
         MainGui.gallery[tab_id].close_hist()
+
+    def negacja(self):
+        tab_id = self.tkController.notebook.select()
+        print(tab_id)
+        # id = self.tkController.notebook.index("current")
+        MainGui.gallery[tab_id].negation()
+        MainGui.gallery[tab_id].set_panel_img()
+        if MainGui.gallery[tab_id].histCanvas is not None:
+            MainGui.gallery[tab_id].set_hist()
+
+    def progowanie(self):
+        tab_id = self.tkController.notebook.select()
+        print(tab_id)
+        # tab_id = self.tkController.notebook.index("current")
+        prog.progowanie(tab_id)
