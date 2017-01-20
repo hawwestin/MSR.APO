@@ -266,12 +266,35 @@ class Vision(tk.Frame):
         # self.display.delete("IMG")
         # self.display.create_image(0, 0, image=self.tkImage, anchor='nw', tags="IMG")
 
-    def global_prog(self, thresh):
-        ret, self.cvImage_tmp = cv2.threshold(self.cvImage, thresh, 255, cv2.THRESH_BINARY)
+    def global_prog(self, thresh, thresholdType=cv2.THRESH_BINARY):
+        ret, self.cvImage_tmp = cv2.threshold(self.cvImage, thresh, 255, thresholdType)
         self.assign_tkimage_tmp()
         self.show_both_img()
         # self.set_hist(tmp=1)
 
+    def adaptive_prog(self,adaptiveMethod=cv2.ADAPTIVE_THRESH_MEAN_C, thresholdType=cv2.THRESH_BINARY, blockSize=11, C=2):
+        """
+        Adaptive Thresholding
+
+        :param adaptiveMethod: cv2.ADAPTIVE_THRESH_GAUSSIAN_C or cv2.ADAPTIVE_THRESH_MEAN_C,
+        :param thresholdType: types are :
+                            cv2.THRESH_BINARY
+                            cv2.THRESH_BINARY_INV
+                            cv2.THRESH_TRUNC
+                            cv2.THRESH_TOZERO
+                            cv2.THRESH_TOZERO_INV
+
+        :param blockSize: It decides the size of neighbourhood area.
+        :param C: It is just a constant which is subtracted from the mean or weighted mean calculated.
+        :return:
+        """
+        self.cvImage_tmp = cv2.adaptiveThreshold(self.cvImage, 255,
+                                                 adaptiveMethod,
+                                                 thresholdType,
+                                                 blockSize,
+                                                 C)
+        self.assign_tkimage_tmp()
+        self.show_both_img()
 
 
     def color_picker(self):
@@ -391,7 +414,9 @@ class Vision(tk.Frame):
 
 #       avg do obliczenia
 
-
+"""
+Testing
+"""
 if __name__ == '__main__':
     popup = tk.Tk()
 

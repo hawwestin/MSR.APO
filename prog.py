@@ -1,7 +1,9 @@
 import MainGui
 import tkinter as tk
+import cv2
 from tkinter import ttk
 from ComputerVision import Vision
+
 
 def progowanie(tab_id):
     """
@@ -41,8 +43,23 @@ def progowanie(tab_id):
     huk.tkImage = MainGui.gallery[tab_id].tkImage
     huk.set_panel_img()
 
+    adaptiveMethodOptions = {'Gaussion': cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                             'Mean': cv2.ADAPTIVE_THRESH_MEAN_C}
+    thresholdTypeOptions = {'Binary': cv2.THRESH_BINARY,
+                            'Binary inv': cv2.THRESH_BINARY_INV,
+                            'Trunc': cv2.THRESH_TRUNC,
+                            'Tozero': cv2.THRESH_TOZERO,
+                            'Tozero inv': cv2.THRESH_TOZERO_INV}
+
+    amo_v = tk.StringVar()
+    amo_v.set('Mean')
+
+    tto_v = tk.StringVar()
+    tto_v.set('Binary')
+
+
     label = ttk.Label(popup, text="Progowanie", font=MainGui.NORM_FONT)
-    label.grid(row=1, column=5, sticky='nsew')
+    label.grid(row=2, column=5, sticky='nsew')
 
     B1 = ttk.Button(popup, text="Wyjdź", command=popup.destroy)
     B1.grid(row=1, column=0, sticky='nsew')
@@ -57,16 +74,29 @@ def progowanie(tab_id):
     slider.grid(row=2, column=0, columnspan=4, sticky='nsew')
 
     sl = tk.Scale(slider, orient=tk.HORIZONTAL, to=255, length=300)
-    sl.configure(command=lambda x: huk.global_prog(float(x)))
+    sl.configure(command=lambda x: huk.global_prog(float(x), thresholdTypeOptions[tto_v.get()]))
     sl.pack(expand=1)
 
-    # B4 = ttk.Button(popup, text="Hist EQ", command=huk.hist_eq)
-    # B4.grid(row=0, column=0, sticky='nsew')
-    # B5 = ttk.Button(popup, text="Hist num", command=huk.hist_num)
-    # B5.grid(row=0, column=1, sticky='nsew')
-    # B6 = ttk.Button(popup, text="Sąsiedztwa 3x3", command=lambda: huk.hist_CLAHE(3, 3))
-    # B6.grid(row=0, column=2, sticky='nsew')
-    # B8 = ttk.Button(popup, text="Sąsiedztwa 8x8", command=lambda: huk.hist_CLAHE(8, 8))
-    # B8.grid(row=0, column=3, sticky='nsew')
 
+    amo_l = tk.Label(popup, text="Metoda progowania")
+    amo_l.grid(row=0, column=0, sticky='nsew')
+
+    amo = tk.OptionMenu(popup, amo_v, *adaptiveMethodOptions.keys())
+    amo.grid(row=0, column=1, sticky='nsew')
+
+    tto_l = tk.Label(popup, text="Typ progowania")
+    tto_l.grid(row=0, column=2, sticky='nsew')
+
+    def xyz(*args):
+        print(args)
+        huk.global_prog(float(sl.get()), thresholdTypeOptions[tto_v.get()])
+
+    tto = tk.OptionMenu(popup, tto_v, *thresholdTypeOptions.keys())
+    tto.bind('<Deactivate>', huk.global_prog(float(sl.get()), thresholdTypeOptions[tto_v.get()]))
+    # tto.configure(command=lambda: huk.global_prog(float(sl.get()), thresholdTypeOptions[tto_v.get()]))
+    tto.grid(row=0, column=3, sticky='nsew')
+
+    tto_v.trace("w", lambda *args:huk.global_prog(float(sl.get()), thresholdTypeOptions[tto_v.get()]))
+    # TODO jakos to potrzeba podizelic , pomiedzy adaptive i global ? Chackbox ?
+    # amo_v.trace("w", lambda *args: huk.adaptive_prog(adaptiveMethodOptions[amo_v.get()], thresholdTypeOptions[tto_v.get()]))
     popup.mainloop()
