@@ -7,7 +7,7 @@ from tkinter import ttk
 import matplotlib.animation as animation
 from matplotlib import style
 # old
-import cv2
+import cv2.cv2
 import tkinter as tk
 import numpy as np
 from PIL import Image

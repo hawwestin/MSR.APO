@@ -43,13 +43,13 @@ def progowanie(tab_id):
     huk.tkImage = MainGui.gallery[tab_id].tkImage
     huk.set_panel_img()
 
-    # adaptiveMethodOptions = {'Gaussion': cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-    #                          'Mean': cv2.ADAPTIVE_THRESH_MEAN_C}
+    adaptiveMethodOptions = {'Gaussion': cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                             'Mean': cv2.ADAPTIVE_THRESH_MEAN_C}
     thresholdTypeOptions = {'Binary': cv2.THRESH_BINARY,
-                            'Binary inv': cv2.THRESH_BINARY_INV,
-                            'Trunc': cv2.THRESH_TRUNC,
-                            'Tozero': cv2.THRESH_TOZERO,
-                            'Tozero inv': cv2.THRESH_TOZERO_INV}
+                            'Binary inv': cv2.THRESH_BINARY_INV}
+                            # 'Trunc': cv2.THRESH_TRUNC,
+                            # 'Tozero': cv2.THRESH_TOZERO,
+                            # 'Tozero inv': cv2.THRESH_TOZERO_INV}
 
     amo_v = tk.StringVar()
     amo_v.set('Mean')
@@ -60,37 +60,32 @@ def progowanie(tab_id):
     label = ttk.Label(popup, text="Progowanie", font=MainGui.NORM_FONT)
     label.grid(row=2, column=5, sticky='nsew')
 
+    menurow = 1
+
     B1 = ttk.Button(popup, text="Wyjdź", command=popup.destroy)
-    B1.grid(row=1, column=0, sticky='nsew')
+    B1.grid(row=menurow, column=0, sticky='nsew')
     B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=lambda: MainGui.confirm(tab_id, huk))
-    B2.grid(row=1, column=1, sticky='nsew')
+    B2.grid(row=menurow, column=1, sticky='nsew')
     B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: MainGui.confirm(tab_id, huk, popup))
-    B3.grid(row=1, column=2, sticky='nsew')
+    B3.grid(row=menurow, column=2, sticky='nsew')
     B4 = ttk.Button(popup, text="Cofnij", command=lambda: MainGui.cofnij(tab_id, huk))
-    B4.grid(row=1, column=3, sticky='nsew')
+    B4.grid(row=menurow, column=3, sticky='nsew')
 
-    slider = tk.Frame(popup)
-    slider.grid(row=2, column=0, columnspan=4, sticky='nsew')
+    amo_l = tk.Label(popup, text="Metoda progowania")
+    amo_l.grid(row=0, column=0, sticky='nsew')
 
-    sl = tk.Scale(slider, orient=tk.HORIZONTAL, to=255, length=300)
-    sl.configure(command=lambda x: huk.global_prog(float(x), thresholdTypeOptions[tto_v.get()]))
-    sl.pack(expand=1)
-
-    #
-    # amo_l = tk.Label(popup, text="Metoda progowania")
-    # amo_l.grid(row=0, column=0, sticky='nsew')
-    #
-    # amo = tk.OptionMenu(popup, amo_v, *adaptiveMethodOptions.keys())
-    # amo.grid(row=0, column=1, sticky='nsew')
+    amo = tk.OptionMenu(popup, amo_v, *adaptiveMethodOptions.keys())
+    amo.grid(row=0, column=1, sticky='nsew')
 
     tto_l = tk.Label(popup, text="Typ progowania")
-    tto_l.grid(row=0, column=0, sticky='nsew')
+    tto_l.grid(row=0, column=2, sticky='nsew')
 
     tto = tk.OptionMenu(popup, tto_v, *thresholdTypeOptions.keys())
-    tto.grid(row=0, column=1, sticky='nsew')
+    tto.grid(row=0, column=3, sticky='nsew')
 
-    tto_v.trace("w", lambda *args: huk.global_prog(float(sl.get()),
-                                                   thresholdTypeOptions[tto_v.get()]))
-
+    amo_v.trace("w", lambda *args: huk.adaptive_prog(adaptiveMethodOptions[amo_v.get()],
+                                                     thresholdTypeOptions[tto_v.get()]))
+    tto_v.trace("w", lambda *args: huk.adaptive_prog(adaptiveMethodOptions[amo_v.get()],
+                                                     thresholdTypeOptions[tto_v.get()]))
 
     popup.mainloop()

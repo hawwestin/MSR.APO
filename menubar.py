@@ -76,6 +76,7 @@ class mainmenu(Frame):
         punktowe = Menu(self.menu, tearoff=0)
         punktowe.add_command(label="Negacja", command=self._menucmd.negacja)
         punktowe.add_command(label="Progowanie", command=self._menucmd.progowanie)
+        punktowe.add_command(label="Progowanie adaptacyjne", command=self._menucmd.adap_progowanie)
 
         operation = Menu(self.menu, tearoff=0)
         operation.add_cascade(label="Histogram", menu=histogram)

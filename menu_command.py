@@ -14,6 +14,7 @@ import os
 import MainGui
 import histEq
 import prog
+import adap_prog
 
 from ComputerVision import *
 
@@ -178,3 +179,9 @@ class MenuCmd(tk.Frame):
         print(tab_id)
         # tab_id = self.tkController.notebook.index("current")
         prog.progowanie(tab_id)
+
+    def adap_progowanie(self):
+        tab_id = self.tkController.notebook.select()
+        print(tab_id)
+        # tab_id = self.tkController.notebook.index("current")
+        adap_prog.progowanie(tab_id)
