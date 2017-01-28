@@ -1,6 +1,6 @@
 import MainGui
 import tkinter as tk
-import cv2.cv2
+import cv2
 from tkinter import ttk
 from ComputerVision import Vision
 

@@ -185,3 +185,12 @@ class MenuCmd(tk.Frame):
         print(tab_id)
         # tab_id = self.tkController.notebook.index("current")
         adap_prog.progowanie(tab_id)
+
+    def redukcja_p_s(self):
+        tab_id = self.tkController.notebook.select()
+        print(tab_id)
+        # id = self.tkController.notebook.index("current")
+        MainGui.gallery[tab_id].rps()
+        MainGui.gallery[tab_id].set_panel_img()
+        if MainGui.gallery[tab_id].histCanvas is not None:
+            MainGui.gallery[tab_id].set_hist()

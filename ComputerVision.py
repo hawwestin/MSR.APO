@@ -7,7 +7,7 @@ from tkinter import ttk
 import matplotlib.animation as animation
 from matplotlib import style
 # old
-import cv2.cv2
+import cv2
 import tkinter as tk
 import numpy as np
 from PIL import Image
@@ -333,10 +333,32 @@ class Vision(tk.Frame):
 
         cv2.destroyAllWindows()
 
+    def rps(self, num):
+        # redukcja poziomow szarosci
+        bins = np.arange(0,256,num)
+        l_bins = []
+        for i in range(num):
+            l_bins.append(bins)
+
+        print(l_bins)
+        print(bins)
+        cdf_m = [list(a) for a in zip(*l_bins)]
+        cdf_m = np.array(cdf_m).ravel()
+        print(cdf_m)
+        cdf = np.ma.filled(cdf_m, 0).astype('uint8')
+        # print("cdf Lut: ", cdf)
+        # LUT Table cdf
+        #  TODO przerobić to na  tempa i slidera
+        self.cvImage = cdf[self.cvImage]
+        self.assign_tkimage()
+
+        self.set_panel_img()
+
     def negation(self):
         # cv2.invert(self.cvImage, self.cvImage_tmp)
 
         hist, bins = np.histogram(self.cvImage.flatten(), 256, [0, 256])
+        print(bins)
         # cdf = hist.cumsum()
         cdf_m = (255-bins)
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
@@ -429,8 +451,13 @@ if __name__ == '__main__':
     huk.open_grey_scale_img("Auto_3.jpg")
     huk.set_panel_img()
 
-    sl = tk.Scale(container, orient=tk.HORIZONTAL, to=255)
-    sl.configure(command=lambda x: huk.global_prog(float(x)))
+    # huk.rps(255)
+    # huk.negation()
+
+    huk.set_panel_img()
+
+    sl = tk.Scale(container, orient=tk.HORIZONTAL,from_=1, to=255)
+    sl.configure(command=lambda x: huk.rps(int(x)))
     sl.pack()
 
 

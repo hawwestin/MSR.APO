@@ -77,10 +77,11 @@ class mainmenu(Frame):
         punktowe.add_command(label="Negacja", command=self._menucmd.negacja)
         punktowe.add_command(label="Progowanie", command=self._menucmd.progowanie)
         punktowe.add_command(label="Progowanie adaptacyjne", command=self._menucmd.adap_progowanie)
+        punktowe.add_command(label="Redukcja poziomów szarości", command=self._menucmd.redukcja_p_s)
 
         operation = Menu(self.menu, tearoff=0)
         operation.add_cascade(label="Histogram", menu=histogram)
-        operation.add_cascade(label="Arithmetic Operations", menu=arithmetic)
+        # operation.add_cascade(label="Arithmetic Operations", menu=arithmetic)
         operation.add_cascade(label="Punktowe", menu=punktowe)
 
         # operation.add_command(label="Sąsiedztwa")
