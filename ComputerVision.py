@@ -349,10 +349,11 @@ class Vision(tk.Frame):
         # print("cdf Lut: ", cdf)
         # LUT Table cdf
         #  TODO przerobić to na  tempa i slidera
-        self.cvImage = cdf[self.cvImage]
-        self.assign_tkimage()
-
-        self.set_panel_img()
+        self.cvImage_tmp = cdf[self.cvImage]
+        self.assign_tkimage_tmp()
+        self.show_both_img()
+        # TODO potrzeba zaoptymalizowac wyliczanie histogramu.
+        # self.set_hist(tmp=1)
 
     def negation(self):
         # cv2.invert(self.cvImage, self.cvImage_tmp)

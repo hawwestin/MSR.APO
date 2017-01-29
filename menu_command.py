@@ -15,6 +15,7 @@ import MainGui
 import histEq
 import prog
 import adap_prog
+import Red_poz_sza
 
 from ComputerVision import *
 
@@ -190,7 +191,8 @@ class MenuCmd(tk.Frame):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        MainGui.gallery[tab_id].rps()
-        MainGui.gallery[tab_id].set_panel_img()
-        if MainGui.gallery[tab_id].histCanvas is not None:
-            MainGui.gallery[tab_id].set_hist()
+        Red_poz_sza.rps(tab_id)
+        # MainGui.gallery[tab_id].rps()
+        # MainGui.gallery[tab_id].set_panel_img()
+        # if MainGui.gallery[tab_id].histCanvas is not None:
+        #     MainGui.gallery[tab_id].set_hist()
