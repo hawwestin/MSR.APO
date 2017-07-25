@@ -22,8 +22,8 @@ def Hist_Equalization(tab_id):
     # jezeli ktos sie nie zgodzi to zamyka okno.
 
     huk = Vision(parent=container, controller=popup)
-    huk.fCanvas = tk.Frame(master=popup)
-    huk.fCanvas.grid(row=4, column=5, columnspan=5, rowspan=2, sticky='nsew', padx=10)
+    huk.frame_for_Canvas = tk.Frame(master=popup)
+    huk.frame_for_Canvas.grid(row=4, column=5, columnspan=5, rowspan=2, sticky='nsew', padx=10)
 
     labelframe = tk.LabelFrame(popup, text="Original", labelanchor='nw')
     # labelframe.pack(fill="both", expand="yes", side=tk.LEFT)

@@ -39,13 +39,13 @@ class Vision(tk.Frame):
         self.panel = None
         self.panel_tmp = None
         self.display = tk.Canvas(self, bd=0, highlightthickness=0)
-        self.fCanvas = tk.Frame(master=parent)
+        self.frame_for_Canvas = tk.Frame(master=parent)
         self.histCanvas = None
         self.toolbar = None
         # self.panel = tk.Label(parent)
         # self.panel.pack()
         self.f = Figure()
-        self.a = self.f.add_subplot(111)
+        self.fig_subplot = self.f.add_subplot(111)
         # ToDO po tym resize nie widac histogramu po prawej stronie.
         # parent.bind("<Configure>", self.resize)
         # Bad Idea Dont do that again
@@ -56,7 +56,7 @@ class Vision(tk.Frame):
 
     def set_geometry_hist_frame(self):
         # self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        return self.fCanvas
+        return self.frame_for_Canvas
 
 #################################
 
@@ -127,13 +127,13 @@ class Vision(tk.Frame):
         return cv2.merge((r, g, b))
 
     def close_hist(self):
-        self.a.clear()
+        self.fig_subplot.clear()
         # self.f.clear()
 
     def set_hist_geometry(self):
         # self.histCanvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         # self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        self.fCanvas.pack(side=tk.RIGHT, expand=True)
+        self.frame_for_Canvas.pack(side=tk.RIGHT, expand=True)
 
     def set_hist(self, tmp= None):
         # todo how close histogram ?
@@ -143,19 +143,19 @@ class Vision(tk.Frame):
             self.close_hist()
             # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
 
-            self.a.hist(source.ravel(), bins=256, range=[0.0, 256.0])
-            self.a.set_xlim([0, 256])
+            self.fig_subplot.hist(source.ravel(), bins=256, range=[0.0, 256.0])
+            self.fig_subplot.set_xlim([0, 256])
 
         else:
             self.close_hist()
             # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
 
-            self.a.hist(self.cvImage_tmp.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
-            self.a.hist(self.cvImage.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
-            self.a.set_xlim([0, 256])
+            self.fig_subplot.hist(self.cvImage_tmp.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
+            self.fig_subplot.hist(self.cvImage.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
+            self.fig_subplot.set_xlim([0, 256])
 
         if self.histCanvas is None:
-            self.histCanvas = FigureCanvasTkAgg(self.f, self.fCanvas)
+            self.histCanvas = FigureCanvasTkAgg(self.f, self.frame_for_Canvas)
             self.histCanvas.show()
         else:
             self.histCanvas.show()
@@ -164,7 +164,7 @@ class Vision(tk.Frame):
     ###################
         if self.toolbar is None:
             self.toolbar = NavigationToolbar2TkAgg(self.histCanvas,
-                                                   self.fCanvas)
+                                                   self.frame_for_Canvas)
             self.toolbar.update()
         else:
             self.toolbar.update()
@@ -201,8 +201,6 @@ class Vision(tk.Frame):
         elif self.panel_tmp is not None:
             self.panel_tmp.configure(image=self.tkImage_tmp)
             self.panel_tmp.image = self.tkImage_tmp
-
-
 
     def set_display_img(self):
         self.display.create_image(0, 0, image=self.tkImage, anchor="nw", tags="IMG")
@@ -335,25 +333,18 @@ class Vision(tk.Frame):
 
     def rps(self, num):
         # redukcja poziomow szarosci
-        bins = np.arange(0,256,num)
+        bins = np.arange(0, 256, num)
         l_bins = []
         for i in range(num):
             l_bins.append(bins)
 
-        print(l_bins)
-        print(bins)
         cdf_m = [list(a) for a in zip(*l_bins)]
         cdf_m = np.array(cdf_m).ravel()
-        print(cdf_m)
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
-        # print("cdf Lut: ", cdf)
         # LUT Table cdf
-        #  TODO przerobić to na  tempa i slidera
         self.cvImage_tmp = cdf[self.cvImage]
         self.assign_tkimage_tmp()
         self.show_both_img()
-        # TODO potrzeba zaoptymalizowac wyliczanie histogramu.
-        # self.set_hist(tmp=1)
 
     def negation(self):
         # cv2.invert(self.cvImage, self.cvImage_tmp)
@@ -422,20 +413,6 @@ class Vision(tk.Frame):
             cv2.imwrite(self.path, self.cvImage)
         else:
             cv2.imwrite(path, self.cvImage)
-
-    def hist_lab1(self, metoda=None):
-        hist, levels = np.histogram(self.cvImage.flatten(), 256, [0, 256])
-
-        print(hist)
-        print(levels)
-
-        H = hist.cumsum()
-        cdf_m = np.ma.masked_equal(H, 0)
-
-        hAvg = cdf_m.max()/levels
-
-
-#       avg do obliczenia
 
 """
 Testing
