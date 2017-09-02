@@ -6,7 +6,7 @@ import cv2
 # panelA = None
 # panelB = None
 # images = None
-statusmsg = None
+status_message = None
 
 # canvas = None
 # toolbar = None

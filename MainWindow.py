@@ -22,12 +22,12 @@ class Window(tk.Tk):
 
         self.style = StyleGuide(self)
 
-        container = tk.Frame(self)
-        container.pack()
-        # container.configure(background='grey')
+        self.container = tk.Frame(self)
+        self.container.pack()
 
         self.title("APO")
-        mainmenu(container, self)
+        self.command = MenuCmd(self.container, self)
+        self.main_menu = MainMenu(self.container, self)
 
         self.statusbar()
 
@@ -36,11 +36,6 @@ class Window(tk.Tk):
         self.notebook.pack(side="top", fill="both", expand=True)
         # self.notebook.style.configure(bg='grey')
 
-    # def __del__(self):
-    #     self.destroy()
-
-    # def tabs(self):
-        # notebook = ttk.Notebook(self)
 
     def new_tab(self, name):
         frame = ttk.Frame(self.notebook)
@@ -53,8 +48,8 @@ class Window(tk.Tk):
         self.notebook.tab(tab, text=name)
 
     def statusbar(self):
-        MainGui.statusmsg = Label(self, text=MainGui.statusmsg, bd=1, relief=SUNKEN, anchor=W)
-        MainGui.statusmsg.pack(side=BOTTOM, fill=X)
+        MainGui.status_message = Label(self, text=MainGui.status_message, bd=1, relief=SUNKEN, anchor=W)
+        MainGui.status_message.pack(side=BOTTOM, fill=X)
 
     def tags(self):
         print(self.notebook.tabs())
