@@ -1,7 +1,7 @@
 from MainWindow import *
 
 # creation of an instance
-app = Window()
+app = MainWindow()
 
 app.geometry("1280x720")
 # mainloop

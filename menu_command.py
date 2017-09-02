@@ -1,21 +1,11 @@
 import matplotlib
 matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-from matplotlib.figure import Figure
-import matplotlib.animation as animation
-from matplotlib import style
 # tk
-import tkinter as tk
 # from tkinter import *
-from tkinter import ttk
 from tkinter import filedialog
 # my py
 import os
-import MainGui
-import histEq
-import prog
-import adap_prog
-import Red_poz_sza
+from Operations import adap_prog, histEq, Red_poz_sza, prog
 
 from ComputerVision import *
 

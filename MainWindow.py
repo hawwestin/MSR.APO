@@ -9,7 +9,7 @@ from tkinter import ttk
 from style import StyleGuide
 
 
-class Window(tk.Tk):
+class MainWindow(tk.Tk):
     # parameters that you want to send through the Frame class.
     def __init__(self, *args, **kwargs):
         """
