@@ -1,7 +1,4 @@
-.idea/*
-.sync/*
 #files
-*.jpg
 __pycache__/*
 
 
@@ -148,3 +145,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+.idea/
+doc/
+img/
