@@ -1,6 +1,6 @@
 # coding=utf-8
 #my py
-import MainGui
+import main_gui
 import tkinter as tk
 from imgtree import *
 from menubar import *
@@ -22,12 +22,12 @@ class MainWindow(tk.Tk):
 
         self.style = StyleGuide(self)
 
-        self.container = tk.Frame(self)
-        self.container.pack()
+        self.body = tk.Frame(self)
+        self.body.pack()
 
         self.title("APO")
-        self.command = MenuCmd(self.container, self)
-        self.main_menu = MainMenu(self.container, self)
+        self.command = MenuCmd(self.body, self)
+        self.main_menu = MainMenu(self.body, self)
 
         self.statusbar()
 
@@ -48,8 +48,8 @@ class MainWindow(tk.Tk):
         self.notebook.tab(tab, text=name)
 
     def statusbar(self):
-        MainGui.status_message = Label(self, text=MainGui.status_message, bd=1, relief=SUNKEN, anchor=W)
-        MainGui.status_message.pack(side=BOTTOM, fill=X)
+        main_gui.status_message = Label(self, text=main_gui.status_message, bd=1, relief=SUNKEN, anchor=W)
+        main_gui.status_message.pack(side=BOTTOM, fill=X)
 
     def tags(self):
         print(self.notebook.tabs())
@@ -63,7 +63,7 @@ class MainWindow(tk.Tk):
         id = self.notebook.index("current")
         self.notebook.forget("current")
         print(id)
-        MainGui.gallery[id].__del__()
-        MainGui.gallery.pop(id)
+        main_gui.gallery[id].__del__()
+        main_gui.gallery.pop(id)
         # todo to zamyka tylko kartę potrzeba sksaować również obiekt by zwolnic pamiec
 

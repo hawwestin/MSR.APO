@@ -1,8 +1,8 @@
-import MainGui
+import main_gui
 import tkinter as tk
 import cv2
 from tkinter import ttk
-from ComputerVision import Vision
+from computer_vision import Vision
 
 
 def progowanie(tab_id):
@@ -39,8 +39,8 @@ def progowanie(tab_id):
     huk.panel_tmp = tk.Label(labelframe_tmp)
     huk.panel_tmp.grid(sticky='nsew')
 
-    huk.cvImage = MainGui.gallery[tab_id].cvImage
-    huk.tkImage = MainGui.gallery[tab_id].tkImage
+    huk.cvImage = main_gui.gallery[tab_id].cvImage
+    huk.tkImage = main_gui.gallery[tab_id].tkImage
     huk.set_panel_img()
 
     # adaptiveMethodOptions = {'Gaussion': cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
@@ -57,16 +57,16 @@ def progowanie(tab_id):
     tto_v = tk.StringVar()
     tto_v.set('Binary')
 
-    label = ttk.Label(popup, text="Progowanie", font=MainGui.NORM_FONT)
+    label = ttk.Label(popup, text="Progowanie", font=main_gui.NORM_FONT)
     label.grid(row=2, column=5, sticky='nsew')
 
     B1 = ttk.Button(popup, text="Wyjdź", command=popup.destroy)
     B1.grid(row=1, column=0, sticky='nsew')
-    B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=lambda: MainGui.confirm(tab_id, huk))
+    B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=lambda: main_gui.confirm(tab_id, huk))
     B2.grid(row=1, column=1, sticky='nsew')
-    B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: MainGui.confirm(tab_id, huk, popup))
+    B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: main_gui.confirm(tab_id, huk, popup))
     B3.grid(row=1, column=2, sticky='nsew')
-    B4 = ttk.Button(popup, text="Cofnij", command=lambda: MainGui.cofnij(tab_id, huk))
+    B4 = ttk.Button(popup, text="Cofnij", command=lambda: main_gui.cofnij(tab_id, huk))
     B4.grid(row=1, column=3, sticky='nsew')
 
     slider = tk.Frame(popup)

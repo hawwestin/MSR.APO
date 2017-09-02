@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 from tkinter import filedialog
 import numpy as np
 import cv2
+
 # Panel is a box to display an image
 # panelA = None
 # panelB = None
@@ -13,7 +14,7 @@ status_message = None
 
 gallery = {}
 
-LARGE_FONT= ("Verdana", 12)
+LARGE_FONT = ("Verdana", 12)
 NORM_FONT = ("Helvetica", 10)
 SMALL_FONT = ("Helvetica", 8)
 
@@ -27,6 +28,7 @@ def add_img(tab, img):
     """
     global gallery
     gallery[tab] = img
+
 
 def close_img(img):
     """
@@ -76,5 +78,3 @@ def cofnij(tab_id, huk):
     if gallery[tab_id].histCanvas is not None:
         gallery[tab_id].set_hist()
         gallery[tab_id].set_hist_geometry()
-
-

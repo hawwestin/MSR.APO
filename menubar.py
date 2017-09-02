@@ -1,6 +1,6 @@
 import tkinter as tk
 from menu_command import *
-from ComputerVision import *
+from computer_vision import *
 
 
 class MainMenu(tk.Frame):

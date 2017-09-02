@@ -11,7 +11,7 @@ base = None
 if sys.platform == 'win32':
     base = "Win32GUI"
 
-executables = [cx_Freeze.Executable("APO_Main.py", base=base)]
+executables = [cx_Freeze.Executable("main.py", base=base)]
 
 cx_Freeze.setup(
     name="APO",

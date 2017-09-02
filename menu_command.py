@@ -5,13 +5,13 @@ matplotlib.use("TkAgg")
 from tkinter import filedialog
 # my py
 import os
-from Operations import adap_prog, histEq, Red_poz_sza, prog
+from Operations import adap_prog, histEq, red_poz_sza, prog
 
-from ComputerVision import *
+from computer_vision import *
 
-LARGE_FONT = MainGui.LARGE_FONT
-NORM_FONT = MainGui.NORM_FONT
-SMALL_FONT = MainGui.SMALL_FONT
+LARGE_FONT = main_gui.LARGE_FONT
+NORM_FONT = main_gui.NORM_FONT
+SMALL_FONT = main_gui.SMALL_FONT
 
 
 class MenuCmd(tk.Frame):
@@ -43,10 +43,10 @@ class MenuCmd(tk.Frame):
         if len(path) > 0:
             tab = self.tkController.new_tab(os.path.splitext(path)[0])
 
-            MainGui.add_img(tab._w, Vision(tab, self.tkController))
+            main_gui.add_img(tab._w, Vision(tab, self.tkController))
 
-            MainGui.gallery[tab._w].open_color_img(path)
-            MainGui.gallery[tab._w].set_panel_img()
+            main_gui.gallery[tab._w].open_color_img(path)
+            main_gui.gallery[tab._w].set_panel_img()
             # MainGui.gallery[tab._w].panel.pack(side="left",
             #                                    padx=10,
             #                                    pady=10)
@@ -59,10 +59,10 @@ class MenuCmd(tk.Frame):
         if len(path) > 0:
             tab = self.tkController.new_tab(os.path.splitext(path)[0])
 
-            MainGui.add_img(tab._w, Vision(tab, self.tkController))
+            main_gui.add_img(tab._w, Vision(tab, self.tkController))
 
-            MainGui.gallery[tab._w].open_grey_scale_img(path)
-            MainGui.gallery[tab._w].set_panel_img()
+            main_gui.gallery[tab._w].open_grey_scale_img(path)
+            main_gui.gallery[tab._w].set_panel_img()
             # MainGui.gallery[tab._w].panel.pack(side="left",
             #                                    padx=10,
             #                                    pady=10)
@@ -76,14 +76,14 @@ class MenuCmd(tk.Frame):
             # MainGui.statusmsg.configure(text=os.path.splitext(path)[0])
             self.tkController.rename_tab(os.path.splitext(path)[0])
 
-            MainGui.gallery[tab_id].open_color_img(path)
-            MainGui.gallery[tab_id].set_panel_img()
+            main_gui.gallery[tab_id].open_color_img(path)
+            main_gui.gallery[tab_id].set_panel_img()
             # MainGui.gallery[tab._w].panel.pack(side="left",
             #                                    padx=10,
             #                                    pady=10)
-            if MainGui.gallery[tab_id].histCanvas is not None:
-                MainGui.gallery[tab_id].set_hist()
-                MainGui.gallery[tab_id].set_hist_geometry()
+            if main_gui.gallery[tab_id].histCanvas is not None:
+                main_gui.gallery[tab_id].set_hist()
+                main_gui.gallery[tab_id].set_hist_geometry()
 
     @staticmethod
     def not_implemented():
@@ -111,14 +111,14 @@ class MenuCmd(tk.Frame):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        MainGui.gallery[tab_id].set_hist()
-        MainGui.gallery[tab_id].set_hist_geometry()
+        main_gui.gallery[tab_id].set_hist()
+        main_gui.gallery[tab_id].set_hist_geometry()
 
     def outHist(self):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        MainGui.gallery[tab_id].show_hist()
+        main_gui.gallery[tab_id].show_hist()
 
     def info(self):
         self.popupmsg("APO Made by\nMichał Robaszewski\n2016/2017")
@@ -127,7 +127,7 @@ class MenuCmd(tk.Frame):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        MainGui.gallery[tab_id].color_picker()
+        main_gui.gallery[tab_id].color_picker()
 
     def hist_Equ(self):
         tab_id = self.tkController.notebook.select()
@@ -140,7 +140,7 @@ class MenuCmd(tk.Frame):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        MainGui.gallery[tab_id].save()
+        main_gui.gallery[tab_id].save()
 
     def save_as(self):
         tab_id = self.tkController.notebook.select()
@@ -148,22 +148,22 @@ class MenuCmd(tk.Frame):
         title = filedialog.asksaveasfilename()
         # TODO jakis dialog box do podania ścieżki.
         # id = self.tkController.notebook.index("current")
-        MainGui.gallery[tab_id].save(title)
+        main_gui.gallery[tab_id].save(title)
 
     def clear_hist(self):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        MainGui.gallery[tab_id].close_hist()
+        main_gui.gallery[tab_id].close_hist()
 
     def negacja(self):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        MainGui.gallery[tab_id].negation()
-        MainGui.gallery[tab_id].set_panel_img()
-        if MainGui.gallery[tab_id].histCanvas is not None:
-            MainGui.gallery[tab_id].set_hist()
+        main_gui.gallery[tab_id].negation()
+        main_gui.gallery[tab_id].set_panel_img()
+        if main_gui.gallery[tab_id].histCanvas is not None:
+            main_gui.gallery[tab_id].set_hist()
 
     def progowanie(self):
         tab_id = self.tkController.notebook.select()
@@ -181,7 +181,7 @@ class MenuCmd(tk.Frame):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        Red_poz_sza.rps(tab_id)
+        red_poz_sza.rps(tab_id)
         # MainGui.gallery[tab_id].rps()
         # MainGui.gallery[tab_id].set_panel_img()
         # if MainGui.gallery[tab_id].histCanvas is not None:

@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter.ttk import *
 from tkinter.tix import *
-import MainGui
+import main_gui
 
 
 class img_tree(tk.Frame):
@@ -16,7 +16,7 @@ class img_tree(tk.Frame):
         # self.tw = HList()
 
     def show_frame(self, cont):
-        frame = MainGui.frames[cont]
+        frame = main_gui.frames[cont]
         frame.tkraise()
 
 

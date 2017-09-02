@@ -1,6 +1,10 @@
 from tkinter import ttk
 import sys
 
+LARGE_FONT = ("Verdana", 12)
+NORM_FONT = ("Helvetica", 10)
+SMALL_FONT = ("Helvetica", 8)
+
 
 class StyleGuide(ttk.Style):
     def __init__(self, master):
@@ -25,5 +29,3 @@ class StyleGuide(ttk.Style):
 
     def get_style(self):
         return self.style
-
-

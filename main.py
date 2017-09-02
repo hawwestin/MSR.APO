@@ -1,4 +1,4 @@
-from MainWindow import *
+from main_window import *
 
 # creation of an instance
 app = MainWindow()
