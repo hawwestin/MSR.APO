@@ -1,12 +1,11 @@
 import matplotlib
+
 matplotlib.use("TkAgg")
-# tk
 # from tkinter import *
 from tkinter import filedialog
-# my py
 import os
 from Operations import adap_prog, histEq, red_poz_sza, prog
-
+from tabpicture import TabColorPicture, TabGreyPicture
 from computer_vision import *
 
 LARGE_FONT = main_gui.LARGE_FONT
@@ -15,72 +14,58 @@ SMALL_FONT = main_gui.SMALL_FONT
 
 
 class MenuCmd(tk.Frame):
+    """
+    Class to communicate Main Menu with tab windows to perform desired actions on images inside.
+
+
+
+    """
+
     def __init__(self, parentFrame, tkController):
         tk.Frame.__init__(self, parentFrame)
-        # just self
-        # self.parentFrame = parentFrame
         self.tkController = tkController
 
     @staticmethod
     def client_exit():
         exit()
 
-    def treelist(self):
+    def open_img(self, color=True):
         """
-        Lista obrazkowu przechowywana w tree liscie plikow po lewej stronie ekranu
-        z mozliwoscia rozszerzenia .
+        Init new tab of color or gray image.
+
+        In future create dict of supported images.
+        :param color: bool
         :return:
         """
-        # todo https://docs.python.org/3.5/library/tkinter.ttk.html?highlight=ttk#treeview
-        self.not_implemented()
+        # todo potrzeba blokowac i sprawdzac czy wybrany plik jest obrazkiem o dozwolonym typie
+        path = filedialog.askopenfilename()
+        if len(path) > 0:
+            name = tk.StringVar()
+            name.set(os.path.split(path)[1])
+            tab_frame = self.tkController.new_tab(name.get())
+            if color is True:
+                pic = TabColorPicture(tab_frame, self.tkController, name.get())
+            else:
+                pic = TabGreyPicture(tab_frame, self.tkController, name.get())
+            pic.open_image(path)
+            main_gui.add_img(tab_frame._w, pic.vision)
 
+            pic.vision.set_panel_img()
 
     def open_color_image(self):
-        # open a file chooser dialog and allow the user to select an input
-        # todo potrzeba blokowac i sprawdzac czy wybrany plik jest obrazkiem o dozwolonym typie
-
-        path = filedialog.askopenfilename()
-        if len(path) > 0:
-            tab = self.tkController.new_tab(os.path.splitext(path)[0])
-
-            main_gui.add_img(tab._w, Vision(tab, self.tkController))
-
-            main_gui.gallery[tab._w].open_color_img(path)
-            main_gui.gallery[tab._w].set_panel_img()
-            # MainGui.gallery[tab._w].panel.pack(side="left",
-            #                                    padx=10,
-            #                                    pady=10)
-
+        self.open_img(True)
 
     def open_grey_image(self):
-        # open a file chooser dialog and allow the user to select an input
-        # todo potrzeba blokowac i sprawdzac czy wybrany plik jest obrazkiem o dozwolonym typie
-        path = filedialog.askopenfilename()
-        if len(path) > 0:
-            tab = self.tkController.new_tab(os.path.splitext(path)[0])
-
-            main_gui.add_img(tab._w, Vision(tab, self.tkController))
-
-            main_gui.gallery[tab._w].open_grey_scale_img(path)
-            main_gui.gallery[tab._w].set_panel_img()
-            # MainGui.gallery[tab._w].panel.pack(side="left",
-            #                                    padx=10,
-            #                                    pady=10)
-
-
+        self.open_img(False)
 
     def load_image(self):
         path = filedialog.askopenfilename()
         if len(path) > 0:
             tab_id = self.tkController.notebook.select()
-            # MainGui.statusmsg.configure(text=os.path.splitext(path)[0])
             self.tkController.rename_tab(os.path.splitext(path)[0])
 
             main_gui.gallery[tab_id].open_color_img(path)
             main_gui.gallery[tab_id].set_panel_img()
-            # MainGui.gallery[tab._w].panel.pack(side="left",
-            #                                    padx=10,
-            #                                    pady=10)
             if main_gui.gallery[tab_id].histCanvas is not None:
                 main_gui.gallery[tab_id].set_hist()
                 main_gui.gallery[tab_id].set_hist_geometry()
@@ -98,7 +83,6 @@ class MenuCmd(tk.Frame):
         B1 = ttk.Button(popup, text="ok", command=popup.destroy)
         B1.pack(side=tk.BOTTOM, pady=20)
         popup.mainloop()
-
 
     def imgList(self):
         print(self.tkController.notebook.index("current"))
@@ -135,10 +119,10 @@ class MenuCmd(tk.Frame):
         # tab_id = self.tkController.notebook.index("current")
         histEq.Hist_Equalization(tab_id)
 
-
     def save(self):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
+
         # id = self.tkController.notebook.index("current")
         main_gui.gallery[tab_id].save()
 

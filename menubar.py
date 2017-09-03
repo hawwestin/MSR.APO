@@ -1,31 +1,26 @@
 import tkinter as tk
-from menu_command import *
 from computer_vision import *
 
 
 class MainMenu(tk.Frame):
-    def __init__(self, parentFrame, tkController):
+    def __init__(self, parent_frame, main_window):
         """
 
-        :param parentFrame: Frame
-        :param tkController: Tk
+        :param parent_frame: Frame
+        :param main_window: Tk
         """
-        tk.Frame.__init__(self, parentFrame)
-        self.tkController = tkController
-        # Menu controller
+        tk.Frame.__init__(self, parent_frame)
+        self.tkController = main_window
         self.menu = tk.Menu(self.tkController)
-        # todo rename image
-        # self.image = Vision(controller, self)
+        self.tkController.config(menu=self.menu)
 
         self._menucmd = self.tkController.command
-            # MenuCmd(self, self.tkController)
         self.menu_bar()
-
 
     def menu_bar(self):
         # creating a menu instance
         # menu = Menu(self.master)
-        self.tkController.config(menu=self.menu)
+
 
         # create the file object
 
@@ -97,11 +92,7 @@ class MainMenu(tk.Frame):
 
         help = tk.Menu(self.menu, tearoff=0)
         help.add_command(label="Info", command=self._menucmd.info)
+        help.add_command(label="debug", command=self.tkController.tab_index)
         self.menu.add_cascade(label="Help", menu=help)
 
         self.tkController.config(menu=self.menu)
-
-
-    # def statusbar(self):
-    #     MainGui.statusmsg = Label(self.tkController, text=MainGui.statusmsg, bd=1, relief=SUNKEN, anchor=W)
-    #     MainGui.statusmsg.pack(side=BOTTOM, fill=X)

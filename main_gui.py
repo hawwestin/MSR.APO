@@ -1,23 +1,10 @@
-from matplotlib import pyplot as plt
-from tkinter import filedialog
-import numpy as np
-import cv2
-
-# Panel is a box to display an image
-# panelA = None
-# panelB = None
-# images = None
 status_message = None
-
-# canvas = None
-# toolbar = None
 
 gallery = {}
 
 LARGE_FONT = ("Verdana", 12)
 NORM_FONT = ("Helvetica", 10)
 SMALL_FONT = ("Helvetica", 8)
-
 
 def add_img(tab, img):
     """
@@ -28,6 +15,7 @@ def add_img(tab, img):
     """
     global gallery
     gallery[tab] = img
+    print(gallery.keys())
 
 
 def close_img(img):
@@ -40,12 +28,6 @@ def close_img(img):
     gallery.pop(img)
     # item = sorted(self.gallery)[-1] + 1
     # print("\nitem after close : %d"% item)
-
-
-def get_path():
-    # todo potrzeba blokowac i sprawdzac czy wybrany plik jest obrazkiem o dozwolonym typie
-    # todo path do obrazka powinien byc storowany by moc go zapisac
-    return filedialog.askopenfilename()
 
 
 def confirm(tab_id, huk, window=None):

@@ -1,5 +1,6 @@
 import main_gui
 import matplotlib
+
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
@@ -13,6 +14,7 @@ import numpy as np
 from PIL import Image
 from PIL import ImageTk
 import matplotlib.pyplot as plt
+
 
 # f = Figure()
 # a = f.add_subplot(111)
@@ -58,7 +60,16 @@ class Vision(tk.Frame):
         # self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         return self.frame_for_Canvas
 
-#################################
+    #################################
+
+    def open_image(self, color):
+        if color is True:
+            self.cvImage = cv2.imread(self.path, cv2.IMREAD_COLOR)
+            self.cvImage = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
+        else:
+            self.cvImage = cv2.imread(self.path, 0)
+        image = Image.fromarray(self.cvImage)
+        self.tkImage = ImageTk.PhotoImage(image)
 
     def open_color_img(self, path):
         # 0 - gray , 1 color
@@ -68,23 +79,23 @@ class Vision(tk.Frame):
         # OpenCV represents images in BGR order; however PIL represents
         # images in RGB order, so we need to swap the channels
         # TODO sa problemy przy otwieraniu obrazkow o jakims rozszerzeniu. gify i svg .
-        image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
-        image = Image.fromarray(image)
+        self.cvImage = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
+        image = Image.fromarray(self.cvImage)
         self.tkImage = ImageTk.PhotoImage(image)
 
     def open_grey_scale_img(self, path):
         # 0 - gray , 1 color
         self.path = path
-        self.cvImage = cv2.imread(self.path, 0)
+        self.cvImage = cv2.imread(path, 0)
         # TODO sa problemy przy otwieraniu obrazkow o jakims rozszerzeniu. gify i svg .
         image = cv2.cvtColor(self.cvImage, cv2.COLOR_GRAY2RGB)
         image = Image.fromarray(image)
         self.tkImage = ImageTk.PhotoImage(image)
 
-################################
+    ################################
     def assign_tkimage(self):
         image = cv2.cvtColor(self.cvImage, cv2.COLOR_GRAY2RGB)
-                             # cv2.COLOR_BGR2RGB)
+        # cv2.COLOR_BGR2RGB)
         image = Image.fromarray(image)
         self.tkImage = ImageTk.PhotoImage(image)
 
@@ -94,10 +105,11 @@ class Vision(tk.Frame):
             image = cv2.cvtColor(self.cvImage_tmp, cv2.COLOR_GRAY2RGB)
         except Exception:
             image = cv2.cvtColor(self.cvImage_tmp, cv2.COLOR_BGR2RGB)
-                             # cv2.COLOR_BGR2RGB)
+            # cv2.COLOR_BGR2RGB)
         image = Image.fromarray(image)
         self.tkImage_tmp = ImageTk.PhotoImage(image)
-################################
+
+    ################################
 
     def show(self):
         plt.imshow(self.cvImage, cmap='Greys', interpolation='bicubic')
@@ -114,7 +126,6 @@ class Vision(tk.Frame):
         plt.hist(self.cvImage.ravel(), 256, [0, 255])
         plt.show()
 
-
     def color_convertion(self, img):
         """
         chalupnicza nie wydajna metoda do conversji obrazow
@@ -123,7 +134,7 @@ class Vision(tk.Frame):
         :return:
         """
         # Rearrang the color channel
-        b, g, r = cv2.split(img) # not optimal TODO change to numpay array
+        b, g, r = cv2.split(img)  # not optimal TODO change to numpay array
         return cv2.merge((r, g, b))
 
     def close_hist(self):
@@ -135,7 +146,7 @@ class Vision(tk.Frame):
         # self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.frame_for_Canvas.pack(side=tk.RIGHT, expand=True)
 
-    def set_hist(self, tmp= None):
+    def set_hist(self, tmp=None):
         # todo how close histogram ?
 
         if tmp is None:
@@ -159,9 +170,9 @@ class Vision(tk.Frame):
             self.histCanvas.show()
         else:
             self.histCanvas.show()
-    ###################
-        #     ToolBAR
-    ###################
+            ###################
+            #     ToolBAR
+            ###################
         if self.toolbar is None:
             self.toolbar = NavigationToolbar2TkAgg(self.histCanvas,
                                                    self.frame_for_Canvas)
@@ -223,7 +234,7 @@ class Vision(tk.Frame):
             self.panel.configure(image=self.tkImage)
             self.panel_tmp.image = self.tkImage_tmp
             self.panel.image = self.tkImage
-        # self.panel.image = self.tkImage_tmp
+            # self.panel.image = self.tkImage_tmp
 
     def resize(self, width, height):
         # TODO store the original value to save image in original size.
@@ -250,9 +261,10 @@ class Vision(tk.Frame):
         # self.display.delete("IMG")
         # self.display.create_image(0, 0, image=self.tkImage, anchor='nw', tags="IMG")
         #
+
     def resize_event_tmp(self, event):
         # TODO store the original value to save image in original size.
-        size = (event.width-20, event.height-25)
+        size = (event.width - 20, event.height - 25)
         # image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
         # cv2.COLOR_BGR2RGB)
         print(size)
@@ -270,7 +282,8 @@ class Vision(tk.Frame):
         self.show_both_img()
         # self.set_hist(tmp=1)
 
-    def adaptive_prog(self,adaptiveMethod=cv2.ADAPTIVE_THRESH_MEAN_C, thresholdType=cv2.THRESH_BINARY, blockSize=11, C=2):
+    def adaptive_prog(self, adaptiveMethod=cv2.ADAPTIVE_THRESH_MEAN_C, thresholdType=cv2.THRESH_BINARY, blockSize=11,
+                      C=2):
         """
         Adaptive Thresholding
 
@@ -293,7 +306,6 @@ class Vision(tk.Frame):
                                                  C)
         self.assign_tkimage_tmp()
         self.show_both_img()
-
 
     def color_picker(self):
         # Create a black image, a window
@@ -325,7 +337,7 @@ class Vision(tk.Frame):
             # s = cv2.getTrackbarPos(switch, 'image')
 
             # if s == 0:
-                # img[:] = 0
+            # img[:] = 0
             # else:
             img[:] = [b, g, r]
 
@@ -352,7 +364,7 @@ class Vision(tk.Frame):
         hist, bins = np.histogram(self.cvImage.flatten(), 256, [0, 256])
         print(bins)
         # cdf = hist.cumsum()
-        cdf_m = (255-bins)
+        cdf_m = (255 - bins)
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
         # print("cdf Lut: ", cdf)
         # LUT Table cdf
@@ -361,7 +373,6 @@ class Vision(tk.Frame):
 
         # self.show_both_img()
         # self.set_hist(tmp=1)
-
 
     def hist_num(self):
         hist, bins = np.histogram(self.cvImage.flatten(), 256, [0, 256])
@@ -414,6 +425,7 @@ class Vision(tk.Frame):
         else:
             cv2.imwrite(path, self.cvImage)
 
+
 """
 Testing
 """
@@ -426,7 +438,8 @@ if __name__ == '__main__':
 
     huk = Vision(parent=container, controller=popup)
 
-    huk.open_grey_scale_img("Auto_3.jpg")
+    huk.path = "Auto_3.jpg"
+    huk.open_image(False)
     huk.set_panel_img()
 
     # huk.rps(255)
@@ -434,9 +447,8 @@ if __name__ == '__main__':
 
     huk.set_panel_img()
 
-    sl = tk.Scale(container, orient=tk.HORIZONTAL,from_=1, to=255)
+    sl = tk.Scale(container, orient=tk.HORIZONTAL, from_=1, to=255)
     sl.configure(command=lambda x: huk.rps(int(x)))
     sl.pack()
-
 
     popup.mainloop()
