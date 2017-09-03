@@ -1,13 +1,11 @@
-import main_gui
 import matplotlib
-
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
 from tkinter import ttk
 import matplotlib.animation as animation
 from matplotlib import style
-# old
+from cv2 import *
 import cv2
 import tkinter as tk
 import numpy as np
@@ -15,9 +13,13 @@ from PIL import Image
 from PIL import ImageTk
 import matplotlib.pyplot as plt
 
+colors = {"COLOR": 1,
+          "GREY": 0}
 
-# f = Figure()
-# a = f.add_subplot(111)
+supported_ext = [
+    ".jpg",
+    ".png"
+]
 
 
 class Vision(tk.Frame):
@@ -30,6 +32,7 @@ class Vision(tk.Frame):
         tk.Frame.__init__(self, master=parent)
         self.controller = controller
         self.path = None
+        self.color = None
         # Actual
         self.cvImage = None
         self.tkImage = None
@@ -53,43 +56,20 @@ class Vision(tk.Frame):
         # Bad Idea Dont do that again
         # self.fCanvas.bind("<Configure>", self.resize)
 
-    # def __del__(self):
-    #     self.destroy()
-
     def set_geometry_hist_frame(self):
         # self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         return self.frame_for_Canvas
 
-    #################################
-
-    def open_image(self, color):
-        if color is True:
+    def open_image(self, path):
+        self.path = path
+        if self.color is cv2.IMREAD_COLOR:
             self.cvImage = cv2.imread(self.path, cv2.IMREAD_COLOR)
             self.cvImage = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
         else:
-            self.cvImage = cv2.imread(self.path, 0)
-        image = Image.fromarray(self.cvImage)
-        self.tkImage = ImageTk.PhotoImage(image)
+            self.cvImage = cv2.imread(self.path, cv2.IMREAD_GRAYSCALE)
 
-    def open_color_img(self, path):
-        # 0 - gray , 1 color
-        self.path = path
-        self.cvImage = cv2.imread(self.path, cv2.IMREAD_COLOR)
-        # cv2.cvtColor(self.tkImage, cv2.COLOR_BGR2RGB, self.cvImage)
-        # OpenCV represents images in BGR order; however PIL represents
-        # images in RGB order, so we need to swap the channels
-        # TODO sa problemy przy otwieraniu obrazkow o jakims rozszerzeniu. gify i svg .
-        self.cvImage = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
+        # move this to tabpic
         image = Image.fromarray(self.cvImage)
-        self.tkImage = ImageTk.PhotoImage(image)
-
-    def open_grey_scale_img(self, path):
-        # 0 - gray , 1 color
-        self.path = path
-        self.cvImage = cv2.imread(path, 0)
-        # TODO sa problemy przy otwieraniu obrazkow o jakims rozszerzeniu. gify i svg .
-        image = cv2.cvtColor(self.cvImage, cv2.COLOR_GRAY2RGB)
-        image = Image.fromarray(image)
         self.tkImage = ImageTk.PhotoImage(image)
 
     ################################

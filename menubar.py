@@ -1,5 +1,4 @@
 import tkinter as tk
-from computer_vision import *
 
 
 class MainMenu(tk.Frame):

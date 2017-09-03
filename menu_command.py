@@ -1,5 +1,7 @@
 import matplotlib
 
+import main_gui
+
 matplotlib.use("TkAgg")
 # from tkinter import *
 from tkinter import filedialog
@@ -29,7 +31,7 @@ class MenuCmd(tk.Frame):
     def client_exit():
         exit()
 
-    def open_img(self, color=True):
+    def _open_img(self, color=True):
         """
         Init new tab of color or gray image.
 
@@ -44,31 +46,41 @@ class MenuCmd(tk.Frame):
             name.set(os.path.split(path)[1])
             tab_frame = self.tkController.new_tab(name.get())
             if color is True:
-                pic = TabColorPicture(tab_frame, self.tkController, name.get())
+                pic = TabColorPicture(tab_frame, self.tkController, name)
             else:
-                pic = TabGreyPicture(tab_frame, self.tkController, name.get())
+                pic = TabGreyPicture(tab_frame, self.tkController, name)
+
             pic.open_image(path)
             main_gui.add_img(tab_frame._w, pic.vision)
 
             pic.vision.set_panel_img()
 
     def open_color_image(self):
-        self.open_img(True)
+        self._open_img(True)
 
     def open_grey_image(self):
-        self.open_img(False)
+        self._open_img(False)
 
     def load_image(self):
         path = filedialog.askopenfilename()
         if len(path) > 0:
             tab_id = self.tkController.notebook.select()
+            print(tab_id)
+            main_gui.gallery[tab_id].path = path
+            if main_gui.gallery[tab_id].color == 1:
+                self._open_img(color=True)
+            else:
+                self._open_img(color=False)
+
+            tab_id = self.tkController.notebook.select()
             self.tkController.rename_tab(os.path.splitext(path)[0])
 
-            main_gui.gallery[tab_id].open_color_img(path)
             main_gui.gallery[tab_id].set_panel_img()
+
             if main_gui.gallery[tab_id].histCanvas is not None:
                 main_gui.gallery[tab_id].set_hist()
                 main_gui.gallery[tab_id].set_hist_geometry()
+
 
     @staticmethod
     def not_implemented():

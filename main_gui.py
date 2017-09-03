@@ -15,22 +15,28 @@ def add_img(tab, img):
     """
     global gallery
     gallery[tab] = img
-    print(gallery.keys())
+    # print(gallery.keys())
 
 
-def close_img(img):
+def close_img(tab_id):
     """
 
-    :param img: img index in gallery , Key to pop
+    :param tab_id: img index in gallery , Key to pop
     :return:
     """
     global gallery
-    gallery.pop(img)
-    # item = sorted(self.gallery)[-1] + 1
-    # print("\nitem after close : %d"% item)
+    gallery.pop(tab_id, None)
 
 
 def confirm(tab_id, huk, window=None):
+    """
+    akcja dla operacji wywoływanych z Menu do nadpisanai obrazka przechowywanego
+    na wynikowy z operacji
+    :param tab_id:
+    :param huk:
+    :param window:
+    :return:
+    """
     global gallery
 
     gallery[tab_id].cvImage = huk.cvImage_tmp
@@ -48,6 +54,12 @@ def confirm(tab_id, huk, window=None):
 
 
 def cofnij(tab_id, huk):
+    """
+    reset image stored in gallery to image with operation was initialize.
+    :param tab_id:
+    :param huk:
+    :return:
+    """
     global gallery
 
     gallery[tab_id].cvImage = huk.cvImage

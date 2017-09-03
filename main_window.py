@@ -6,6 +6,8 @@ from menubar import MainMenu
 from tkinter import ttk
 from menu_command import MenuCmd
 from style import StyleGuide
+from tabpicture import TabPicture
+
 
 class MainWindow(tk.Tk):
     # parameters that you want to send through the Frame class.
@@ -47,7 +49,7 @@ class MainWindow(tk.Tk):
         frame = ttk.Frame(self.notebook)
         frame.pack(fill=tk.BOTH, expand=1)
         self.notebook.add(frame, text=tab_name)
-        print("new tab id " + frame._w)
+        # print("new tab id " + frame._w)
         return frame
 
     def rename_tab(self, name):
@@ -62,21 +64,27 @@ class MainWindow(tk.Tk):
 
     def tab_index(self):
         '''
-        Diagnostic method to adjust tab selection in
+        Diagnostic method to adjust tab selection unique value
         :return:
         '''
         print("end " + str(self.notebook.index("end")))
         print("current " + str(self.notebook.index("current")))
         print("tab id " + str(self.notebook.select()))
+        print("text " + str(self.notebook.tab(self.notebook.select(), "text")))
+        print("tab select " + str(self.notebook.tab(self.notebook.select())))
         print("tab data " + str(self.notebook.tab(self.notebook.index("current"))))
+        print("tabs " + str(self.notebook.tabs()))  # same as gallery.keys()
+        print(TabPicture.gallery.keys())
 
     def close_Current_tab(self):
-        id = self.notebook.index("current")
-        self.notebook.forget("current")
+        id = self.notebook.select()
         print(id)
+        TabPicture.gallery[id].__del__()
+        main_gui.close_img(id)
+        self.notebook.forget("current")
+
+
         # main_gui.gallery[id].__del__()
-        main_gui.gallery.pop(id)
-        # todo to zamyka tylko kartę potrzeba sksaować również obiekt by zwolnic pamiec
 
     def update_status(self, text):
         main_gui.status_message.set(text)

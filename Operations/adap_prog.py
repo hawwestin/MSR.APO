@@ -1,5 +1,6 @@
 import main_gui
 import tkinter as tk
+from cv2 import *
 import cv2
 from tkinter import ttk
 from computer_vision import Vision

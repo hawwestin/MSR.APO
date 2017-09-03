@@ -2,24 +2,33 @@ import tkinter as tk
 import cv2
 import os
 
+import main_gui
 from computer_vision import Vision
-
-# Store the next available id for all new images
-last_id = 0
 
 
 class TabPicture:
-    all_pictures = []
+    gallery = {}
 
     def __init__(self, tab_frame, main_window, name):
-        global last_id
-        self.id = last_id
-        last_id += 1
+        self.tab_frame = tab_frame
+        self.main_window = main_window
+
+        self.id = tab_frame._w
+
+        # tk.StrinVar()
         self.name = name
-        self.path = ""
+        # ImageTK.PhotoImage
+        self.tkImage = None
+
         self.vision = Vision(tab_frame, main_window)
 
-        TabPicture.all_pictures.append(self)
+        TabPicture.gallery[self.id] = self
+
+    def __len__(self):
+        return TabPicture.gallery.__len__()
+
+    def __del__(self):
+        TabPicture.gallery.pop(self.id, None)
 
     def match(self, what):
         '''
@@ -30,7 +39,7 @@ class TabPicture:
         :param what:
         :return:
         '''
-        return what in self.id or what in self.name.get()
+        return what == self.id or what in self.name.get()
 
     def search(self, finder):
         '''
@@ -38,44 +47,36 @@ class TabPicture:
         :param finder:
         :return:
         '''
-        return [tab for tab in TabPicture.all_pictures if tab.match(finder)]
+        return [TabPicture.gallery[tab] for tab in TabPicture.gallery.keys()
+                if TabPicture.gallery[tab].match(finder)]
+
+    def __contains__(self, item):
+        """
+        Implement Container abstract method to check if object is in our list.
+        :param item:
+        :return:
+        """
+        return len(self.search(item)) > 0
 
     def open_image(self, path):
         '''
         Save copy of opened image for further usage.
-        :param path:
+        :param path: image path
         :return:
         '''
-        self.path = path
         if len(path) > 0:
-            self.vision.path = self.path #todo refactor vision to drop that internal value.
-
-    def save(self, path=None):
-        if path is None:
-            cv2.imwrite(self.path, self.vision.cvImage)
+            self.vision.open_image(path)
         else:
-            cv2.imwrite(path, self.vision.cvImage)
+            main_gui.status_message.set("nie podano pliku")
 
 
 class TabColorPicture(TabPicture):
     def __init__(self, tab_frame, main_window, name):
         super().__init__(tab_frame, main_window, name)
-
-    def open_image(self, path):
-        super().open_image(path)
-
-        self.vision.open_image(color=True)
-
-        # self.cvImage = cv2.imread(self.path, cv2.IMREAD_COLOR)
-        # image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
-        # image = Image.fromarray(image)
-        # self.tkImage = ImageTk.PhotoImage(image)
+        self.vision.color = 1
 
 
 class TabGreyPicture(TabPicture):
     def __init__(self, tab_frame, main_window, name):
         super().__init__(tab_frame, main_window, name)
-
-    def open_image(self, path):
-        super().open_image(path)
-        self.vision.open_image(color=False)
+        self.vision.color = 0
