@@ -7,7 +7,7 @@ matplotlib.use("TkAgg")
 from tkinter import filedialog
 import os
 from Operations import adap_prog, histEq, red_poz_sza, prog
-from tabpicture import TabColorPicture, TabGreyPicture
+from tabpicture import TabColorPicture, TabGreyPicture, TabPicture
 from computer_vision import *
 
 LARGE_FONT = main_gui.LARGE_FONT
@@ -114,7 +114,8 @@ class MenuCmd(tk.Frame):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        main_gui.gallery[tab_id].show_hist()
+        TabPicture.gallery[tab_id].show_hist()
+        # main_gui.gallery[tab_id].show_hist()
 
     def info(self):
         self.popupmsg("APO Made by\nMichał Robaszewski\n2016/2017")
@@ -150,7 +151,7 @@ class MenuCmd(tk.Frame):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        main_gui.gallery[tab_id].close_hist()
+        TabPicture.gallery[tab_id].close_hist()
 
     def negacja(self):
         tab_id = self.tkController.notebook.select()

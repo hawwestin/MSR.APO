@@ -1,12 +1,20 @@
 import tkinter as tk
-import cv2
-import os
-
+import matplotlib
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 import main_gui
 from computer_vision import Vision
 
+matplotlib.use("TkAgg")
+
 
 class TabPicture:
+    """
+    Kompozycja obiektów Vision przechowujących obrazy do operacji.
+
+    In feature main control of tkinter tab displaying images and other data.
+    """
     gallery = {}
 
     def __init__(self, tab_frame, main_window, name):
@@ -23,6 +31,15 @@ class TabPicture:
         self.vision = Vision(tab_frame, main_window)
 
         TabPicture.gallery[self.id] = self
+
+        self.panel = None
+        self.panel_tmp = None
+        self.display = tk.Canvas(tab_frame, bd=0, highlightthickness=0)
+        self.frame_for_Canvas = tk.Frame(master=tab_frame)
+        self.histCanvas = None
+        self.toolbar = None
+        self.f = Figure()
+        self.fig_subplot = self.f.add_subplot(111)
 
     def __len__(self):
         return TabPicture.gallery.__len__()
@@ -68,6 +85,59 @@ class TabPicture:
             self.vision.open_image(path)
         else:
             main_gui.status_message.set("nie podano pliku")
+
+    def set_hist(self, tmp=None):
+        # todo how close histogram ?
+
+        if tmp is None:
+            source = self.vision.cvImage
+            self.close_hist()
+            # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
+
+            self.fig_subplot.hist(source.ravel(), bins=256, range=[0.0, 256.0])
+            self.fig_subplot.set_xlim([0, 256])
+
+        else:
+            self.close_hist()
+            # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
+
+            self.fig_subplot.hist(self.vision.cvImage_tmp.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
+            self.fig_subplot.hist(self.vision.cvImage.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
+            self.fig_subplot.set_xlim([0, 256])
+
+        if self.histCanvas is None:
+            self.histCanvas = FigureCanvasTkAgg(self.f, self.frame_for_Canvas)
+            self.histCanvas.show()
+        else:
+            self.histCanvas.show()
+            ###################
+            #     ToolBAR
+            ###################
+        if self.toolbar is None:
+            self.toolbar = NavigationToolbar2TkAgg(self.histCanvas,
+                                                   self.frame_for_Canvas)
+            self.toolbar.update()
+        else:
+            self.toolbar.update()
+
+        self.histCanvas.get_tk_widget().pack(side=tk.TOP,
+                                             fill=tk.BOTH,
+                                             expand=True)
+
+
+    def show_hist(self):
+        """
+        Wyswietlenie histogramu dla danego okna. zachowanie Mathplota
+        zostawic . wyswietlanie dodatkowych ekranow z wykozystaniem tego
+
+        :return:
+        """
+        # todo wyczyszczenie grafu przed zaladowaniem kolejnego , jak zaladowac kilka instancji do kilku obrazkow ?
+        plt.hist(self.vision.cvImage.ravel(), 256, [0, 255])
+        plt.show()
+
+    def close_hist(self):
+        self.fig_subplot.clear()
 
 
 class TabColorPicture(TabPicture):

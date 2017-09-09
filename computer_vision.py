@@ -1,4 +1,5 @@
 import matplotlib
+
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
@@ -22,14 +23,14 @@ supported_ext = [
 ]
 
 
-class Vision(tk.Frame):
+class Vision:
     """
     Przechowuje instancje otwartego pliku i pozwala wykonywac na nim operacje
 
     """
 
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, master=parent)
+        self.master = parent
         self.controller = controller
         self.path = None
         self.color = None
@@ -43,7 +44,7 @@ class Vision(tk.Frame):
         # Panele
         self.panel = None
         self.panel_tmp = None
-        self.display = tk.Canvas(self, bd=0, highlightthickness=0)
+        self.display = tk.Canvas(parent, bd=0, highlightthickness=0)
         self.frame_for_Canvas = tk.Frame(master=parent)
         self.histCanvas = None
         self.toolbar = None
@@ -56,10 +57,6 @@ class Vision(tk.Frame):
         # Bad Idea Dont do that again
         # self.fCanvas.bind("<Configure>", self.resize)
 
-    def set_geometry_hist_frame(self):
-        # self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        return self.frame_for_Canvas
-
     def open_image(self, path):
         self.path = path
         if self.color is cv2.IMREAD_COLOR:
@@ -68,43 +65,21 @@ class Vision(tk.Frame):
         else:
             self.cvImage = cv2.imread(self.path, cv2.IMREAD_GRAYSCALE)
 
-        # move this to tabpic
-        image = Image.fromarray(self.cvImage)
-        self.tkImage = ImageTk.PhotoImage(image)
+        self.tkImage = self.assign_tkimage(self.cvImage)
 
-    ################################
-    def assign_tkimage(self):
-        image = cv2.cvtColor(self.cvImage, cv2.COLOR_GRAY2RGB)
-        # cv2.COLOR_BGR2RGB)
-        image = Image.fromarray(image)
-        self.tkImage = ImageTk.PhotoImage(image)
-
-    def assign_tkimage_tmp(self):
-        # TODO sprawdzic czy try sie sprawdzi
-        try:
-            image = cv2.cvtColor(self.cvImage_tmp, cv2.COLOR_GRAY2RGB)
-        except Exception:
-            image = cv2.cvtColor(self.cvImage_tmp, cv2.COLOR_BGR2RGB)
-            # cv2.COLOR_BGR2RGB)
-        image = Image.fromarray(image)
-        self.tkImage_tmp = ImageTk.PhotoImage(image)
+    def assign_tkimage(self, image):
+        # todo move this to tabpic
+        # if self.color is cv2.IMREAD_COLOR:
+        #     image = cv2.cvtColor(self.cvImage, cv2.COLOR_RGB2BGR)
+        # else:
+        #     image = cv2.cvtColor(self.cvImage, cv2.COLOR_GRAY2BGR)
+        return ImageTk.PhotoImage(Image.fromarray(image))
 
     ################################
 
-    def show(self):
-        plt.imshow(self.cvImage, cmap='Greys', interpolation='bicubic')
-        plt.show()
-
-    def show_hist(self):
-        """
-                Wyswietlenie histogramu dla danego okna. zachowanie Mathplota
-                zostawic . wyswietlanie dodatkowych ekranow z wykozystaniem tego
-
-                :return:
-                """
-        # todo wyczyszczenie grafu przed zaladowaniem kolejnego , jak zaladowac kilka instancji do kilku obrazkow ?
-        plt.hist(self.cvImage.ravel(), 256, [0, 255])
-        plt.show()
+    # def show(self):
+    #     plt.imshow(self.cvImage, cmap='Greys', interpolation='bicubic')
+    #     plt.show()
 
     def color_convertion(self, img):
         """
@@ -258,7 +233,7 @@ class Vision(tk.Frame):
 
     def global_prog(self, thresh, thresholdType=cv2.THRESH_BINARY):
         ret, self.cvImage_tmp = cv2.threshold(self.cvImage, thresh, 255, thresholdType)
-        self.assign_tkimage_tmp()
+        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
         self.show_both_img()
         # self.set_hist(tmp=1)
 
@@ -284,7 +259,7 @@ class Vision(tk.Frame):
                                                  thresholdType,
                                                  blockSize,
                                                  C)
-        self.assign_tkimage_tmp()
+        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
         self.show_both_img()
 
     def color_picker(self):
@@ -335,7 +310,7 @@ class Vision(tk.Frame):
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
         # LUT Table cdf
         self.cvImage_tmp = cdf[self.cvImage]
-        self.assign_tkimage_tmp()
+        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
         self.show_both_img()
 
     def negation(self):
@@ -349,7 +324,7 @@ class Vision(tk.Frame):
         # print("cdf Lut: ", cdf)
         # LUT Table cdf
         self.cvImage = cdf[self.cvImage]
-        self.assign_tkimage()
+        self.tkImage = self.assign_tkimage(self.cvImage)
 
         # self.show_both_img()
         # self.set_hist(tmp=1)
@@ -366,7 +341,7 @@ class Vision(tk.Frame):
         # LUT Table cdf
         self.cvImage_tmp = cdf[self.cvImage]
 
-        self.assign_tkimage_tmp()
+        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
         # TODO zmieniac tylko _tmp obraz nie potrzeba przeladowywac orginalnego jezeli go nie modyfikujemy.
         self.show_both_img()
         self.set_hist(tmp=1)
@@ -385,7 +360,7 @@ class Vision(tk.Frame):
     def hist_eq(self):
         self.cvImage_tmp = cv2.equalizeHist(self.cvImage)
 
-        self.assign_tkimage_tmp()
+        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
         # TODO zmieniac tylko _tmp obraz nie potrzeba przeladowywac orginalnego jezeli go nie modyfikujemy.
         self.show_both_img()
         self.set_hist(tmp=1)
@@ -394,7 +369,7 @@ class Vision(tk.Frame):
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(x, y))
         self.cvImage_tmp = clahe.apply(self.cvImage)
 
-        self.assign_tkimage_tmp()
+        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
         # TODO zmieniac tylko _tmp obraz nie potrzeba przeladowywac orginalnego jezeli go nie modyfikujemy.
         self.show_both_img()
         self.set_hist(tmp=1)
