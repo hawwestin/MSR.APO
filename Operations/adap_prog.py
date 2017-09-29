@@ -1,4 +1,4 @@
-import main_gui
+import utils
 import tkinter as tk
 from cv2 import *
 import cv2
@@ -40,8 +40,8 @@ def progowanie(tab_id):
     huk.panel_tmp = tk.Label(labelframe_tmp)
     huk.panel_tmp.grid(sticky='nsew')
 
-    huk.cvImage = main_gui.gallery[tab_id].cvImage
-    huk.tkImage = main_gui.gallery[tab_id].tkImage
+    huk.cvImage = utils.gallery[tab_id].cvImage
+    huk.tkImage = utils.gallery[tab_id].tkImage
     huk.set_panel_img()
 
     adaptiveMethodOptions = {'Gaussion': cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
@@ -58,18 +58,18 @@ def progowanie(tab_id):
     tto_v = tk.StringVar()
     tto_v.set('Binary')
 
-    label = ttk.Label(popup, text="Progowanie", font=main_gui.NORM_FONT)
+    label = ttk.Label(popup, text="Progowanie", font=utils.NORM_FONT)
     label.grid(row=2, column=5, sticky='nsew')
 
     menurow = 1
 
     B1 = ttk.Button(popup, text="Wyjdź", command=popup.destroy)
     B1.grid(row=menurow, column=0, sticky='nsew')
-    B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=lambda: main_gui.confirm(tab_id, huk))
+    B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=lambda: utils.confirm(tab_id, huk))
     B2.grid(row=menurow, column=1, sticky='nsew')
-    B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: main_gui.confirm(tab_id, huk, popup))
+    B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: utils.confirm(tab_id, huk, popup))
     B3.grid(row=menurow, column=2, sticky='nsew')
-    B4 = ttk.Button(popup, text="Cofnij", command=lambda: main_gui.cofnij(tab_id, huk))
+    B4 = ttk.Button(popup, text="Cofnij", command=lambda: utils.cofnij(tab_id, huk))
     B4.grid(row=menurow, column=3, sticky='nsew')
 
     amo_l = tk.Label(popup, text="Metoda progowania")

@@ -1,6 +1,6 @@
 # coding=utf-8
 # my py
-import main_gui
+import utils
 import tkinter as tk
 from menubar import MainMenu
 from tkinter import ttk
@@ -28,9 +28,9 @@ class MainWindow(tk.Tk):
         self.command = MenuCmd(self.body, self)
         self.main_menu = MainMenu(self.body, self)
 
-        main_gui.status_message = tk.StringVar()
-        main_gui.status_message.set('')
-        self.status_bar = tk.Label(self, textvariable=main_gui.status_message, bd=1, relief=tk.SUNKEN,
+        utils.status_message = tk.StringVar()
+        utils.status_message.set('')
+        self.status_bar = tk.Label(self, textvariable=utils.status_message, bd=1, relief=tk.SUNKEN,
                                    anchor='w')
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
@@ -80,12 +80,12 @@ class MainWindow(tk.Tk):
         id = self.notebook.select()
         print(id)
         TabPicture.gallery[id].__del__()
-        main_gui.close_img(id)
+        utils.close_img(id)
         self.notebook.forget("current")
 
 
         # main_gui.gallery[id].__del__()
 
     def update_status(self, text):
-        main_gui.status_message.set(text)
+        utils.status_message.set(text)
         self.update_idletasks()

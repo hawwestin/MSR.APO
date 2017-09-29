@@ -3,7 +3,7 @@ import matplotlib
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-import main_gui
+import utils
 from computer_vision import Vision
 
 matplotlib.use("TkAgg")
@@ -84,7 +84,7 @@ class TabPicture:
         if len(path) > 0:
             self.vision.open_image(path)
         else:
-            main_gui.status_message.set("nie podano pliku")
+            utils.status_message.set("nie podano pliku")
 
     def set_hist(self, tmp=None):
         # todo how close histogram ?

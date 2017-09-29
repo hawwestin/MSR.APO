@@ -1,6 +1,6 @@
 import matplotlib
 
-import main_gui
+import utils
 
 matplotlib.use("TkAgg")
 # from tkinter import *
@@ -10,16 +10,14 @@ from Operations import adap_prog, histEq, red_poz_sza, prog
 from tabpicture import TabColorPicture, TabGreyPicture, TabPicture
 from computer_vision import *
 
-LARGE_FONT = main_gui.LARGE_FONT
-NORM_FONT = main_gui.NORM_FONT
-SMALL_FONT = main_gui.SMALL_FONT
+LARGE_FONT = utils.LARGE_FONT
+NORM_FONT = utils.NORM_FONT
+SMALL_FONT = utils.SMALL_FONT
 
 
 class MenuCmd(tk.Frame):
     """
     Class to communicate Main Menu with tab windows to perform desired actions on images inside.
-
-
 
     """
 
@@ -51,7 +49,7 @@ class MenuCmd(tk.Frame):
                 pic = TabGreyPicture(tab_frame, self.tkController, name)
 
             pic.open_image(path)
-            main_gui.add_img(tab_frame._w, pic.vision)
+            utils.add_img(tab_frame._w, pic.vision)
 
             pic.vision.set_panel_img()
 
@@ -66,8 +64,8 @@ class MenuCmd(tk.Frame):
         if len(path) > 0:
             tab_id = self.tkController.notebook.select()
             print(tab_id)
-            main_gui.gallery[tab_id].path = path
-            if main_gui.gallery[tab_id].color == 1:
+            utils.gallery[tab_id].path = path
+            if utils.gallery[tab_id].color == 1:
                 self._open_img(color=True)
             else:
                 self._open_img(color=False)
@@ -75,11 +73,11 @@ class MenuCmd(tk.Frame):
             tab_id = self.tkController.notebook.select()
             self.tkController.rename_tab(os.path.splitext(path)[0])
 
-            main_gui.gallery[tab_id].set_panel_img()
+            utils.gallery[tab_id].set_panel_img()
 
-            if main_gui.gallery[tab_id].histCanvas is not None:
-                main_gui.gallery[tab_id].set_hist()
-                main_gui.gallery[tab_id].set_hist_geometry()
+            if utils.gallery[tab_id].histCanvas is not None:
+                utils.gallery[tab_id].set_hist()
+                utils.gallery[tab_id].set_hist_geometry()
 
 
     @staticmethod
@@ -107,8 +105,8 @@ class MenuCmd(tk.Frame):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        main_gui.gallery[tab_id].set_hist()
-        main_gui.gallery[tab_id].set_hist_geometry()
+        utils.gallery[tab_id].set_hist()
+        utils.gallery[tab_id].set_hist_geometry()
 
     def outHist(self):
         tab_id = self.tkController.notebook.select()
@@ -124,7 +122,7 @@ class MenuCmd(tk.Frame):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        main_gui.gallery[tab_id].color_picker()
+        utils.gallery[tab_id].color_picker()
 
     def hist_Equ(self):
         tab_id = self.tkController.notebook.select()
@@ -137,7 +135,7 @@ class MenuCmd(tk.Frame):
         print(tab_id)
 
         # id = self.tkController.notebook.index("current")
-        main_gui.gallery[tab_id].save()
+        utils.gallery[tab_id].save()
 
     def save_as(self):
         tab_id = self.tkController.notebook.select()
@@ -145,7 +143,7 @@ class MenuCmd(tk.Frame):
         title = filedialog.asksaveasfilename()
         # TODO jakis dialog box do podania ścieżki.
         # id = self.tkController.notebook.index("current")
-        main_gui.gallery[tab_id].save(title)
+        utils.gallery[tab_id].save(title)
 
     def clear_hist(self):
         tab_id = self.tkController.notebook.select()
@@ -157,10 +155,10 @@ class MenuCmd(tk.Frame):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        main_gui.gallery[tab_id].negation()
-        main_gui.gallery[tab_id].set_panel_img()
-        if main_gui.gallery[tab_id].histCanvas is not None:
-            main_gui.gallery[tab_id].set_hist()
+        utils.gallery[tab_id].negation()
+        utils.gallery[tab_id].set_panel_img()
+        if utils.gallery[tab_id].histCanvas is not None:
+            utils.gallery[tab_id].set_hist()
 
     def progowanie(self):
         tab_id = self.tkController.notebook.select()
