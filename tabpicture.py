@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import ttk
+
 import matplotlib
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
@@ -21,6 +23,9 @@ class TabPicture:
         self.tab_frame = tab_frame
         self.main_window = main_window
 
+        """
+        Master Key must match menu_command _current tab politics
+        """
         self.id = tab_frame._w
 
         # tk.StrinVar()
@@ -124,6 +129,10 @@ class TabPicture:
                                              fill=tk.BOTH,
                                              expand=True)
 
+    def set_hist_geometry(self):
+        # self.histCanvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        # self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.frame_for_Canvas.pack(side=tk.RIGHT, expand=True)
 
     def show_hist(self):
         """
@@ -138,6 +147,56 @@ class TabPicture:
 
     def close_hist(self):
         self.fig_subplot.clear()
+
+    def set_panel_img(self):
+        """
+        Logic : odpalenie okna z obrazkiem ktore  ma wlasne Menu do operacji.
+        Kazde okienko to nowy obiekt.
+        Undowanie na tablicach ? może pod spodem baze danych machnac
+        """
+        # plt.imshow(self.image, cmap='Greys', interpolation='bicubic')
+        # plt.show()
+        # if the panels are None, initialize them
+        if self.panel is None:
+            self.panel = ttk.Label(self.tab_frame, image=self.vision.tkImage)
+            # self.panel.configure(image=self.tkImage)
+            # self.panel.image = self.tkImage
+            self.panel.pack(side="left", padx=10, pady=10)
+        # otherwise, update the image panels
+        else:
+            self.panel.configure(image=self.vision.tkImage)
+            self.panel.image = self.vision.tkImage
+
+        if self.panel_tmp is None and self.vision.tkImage_tmp is not None:
+            self.panel_tmp = ttk.Label(self.tab_frame, image=self.vision.tkImage_tmp)
+            # self.panel.configure(image=self.tkImage)
+            # self.panel.image = self.tkImage
+            self.panel_tmp.pack(side="left", padx=10, pady=10)
+        # otherwise, update the image panels
+        elif self.panel_tmp is not None:
+            self.panel_tmp.configure(image=self.vision.tkImage_tmp)
+            self.panel_tmp.image = self.vision.tkImage_tmp
+
+    def show_both_img(self):
+        if self.panel_tmp is None or self.panel is None:
+            self.panel_tmp = ttk.Label(self.tab_frame,
+                                       image=self.vision.tkImage_tmp)
+            self.panel_tmp.image = self.vision.tkImage_tmp
+            self.panel_tmp.pack(side="left", padx=10, pady=10)
+
+            self.panel = ttk.Label(self.tab_frame, image=self.vision.tkImage)
+            self.panel.image = self.vision.tkImage
+            self.panel.pack(side="left")
+
+        # otherwise, update the image panels
+        else:
+            # update the pannels
+            self.panel_tmp.configure(image=self.vision.tkImage_tmp)
+            self.panel.configure(image=self.vision.tkImage)
+            self.panel_tmp.image = self.vision.tkImage_tmp
+            self.panel.image = self.vision.tkImage
+            # self.panel.image = self.tkImage_tmp
+
 
 
 class TabColorPicture(TabPicture):

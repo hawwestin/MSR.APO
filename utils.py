@@ -1,3 +1,5 @@
+from tabpicture import TabPicture
+
 status_message = None
 
 gallery = {}
@@ -5,6 +7,7 @@ gallery = {}
 LARGE_FONT = ("Verdana", 12)
 NORM_FONT = ("Helvetica", 10)
 SMALL_FONT = ("Helvetica", 8)
+
 
 def add_img(tab, img):
     """
@@ -15,7 +18,6 @@ def add_img(tab, img):
     """
     global gallery
     gallery[tab] = img
-    # print(gallery.keys())
 
 
 def close_img(tab_id):
@@ -28,47 +30,43 @@ def close_img(tab_id):
     gallery.pop(tab_id, None)
 
 
-def confirm(tab_id, huk, window=None):
+def confirm(tab: TabPicture, huk, window=None):
     """
     akcja dla operacji wywoływanych z Menu do nadpisanai obrazka przechowywanego
     na wynikowy z operacji
-    :param tab_id:
+    :param tab:
     :param huk:
     :param window:
     :return:
     """
-    global gallery
+    tab.vision.cvImage = huk.cvImage_tmp
+    tab.vision.tkImage = huk.tkImage_tmp
+    tab.set_panel_img()
+    tab.panel.pack(side="left",
+                   padx=10,
+                   pady=10)
 
-    gallery[tab_id].cvImage = huk.cvImage_tmp
-    gallery[tab_id].tkImage = huk.tkImage_tmp
-    gallery[tab_id].set_panel_img()
-    gallery[tab_id].panel.pack(side="left",
-                               padx=10,
-                               pady=10)
-
-    if gallery[tab_id].histCanvas is not None:
-        gallery[tab_id].set_hist()
-        gallery[tab_id].set_hist_geometry()
+    if tab.histCanvas is not None:
+        tab.set_hist()
+        tab.set_hist_geometry()
     if window is not None:
         window.destroy()
 
 
-def cofnij(tab_id, huk):
+def cofnij(tab: TabPicture, huk):
     """
     reset image stored in gallery to image with operation was initialize.
-    :param tab_id:
+    :param tab:
     :param huk:
     :return:
     """
-    global gallery
+    tab.vision.cvImage = huk.cvImage
+    tab.vision.tkImage = huk.tkImage
+    tab.set_panel_img()
+    tab.panel.pack(side="left",
+                   padx=10,
+                   pady=10)
 
-    gallery[tab_id].cvImage = huk.cvImage
-    gallery[tab_id].tkImage = huk.tkImage
-    gallery[tab_id].set_panel_img()
-    gallery[tab_id].panel.pack(side="left",
-                               padx=10,
-                               pady=10)
-
-    if gallery[tab_id].histCanvas is not None:
-        gallery[tab_id].set_hist()
-        gallery[tab_id].set_hist_geometry()
+    if tab.histCanvas is not None:
+        tab.set_hist()
+        tab.set_hist_geometry()

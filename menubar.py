@@ -70,9 +70,9 @@ class MainMenu(tk.Frame):
         histogram.add_command(label="Clear hist", command=self._menucmd.clear_hist)
 
         punktowe = tk.Menu(self.menu, tearoff=0)
-        punktowe.add_command(label="Negacja", command=self._menucmd.negacja)
-        punktowe.add_command(label="Progowanie", command=self._menucmd.progowanie)
-        punktowe.add_command(label="Progowanie adaptacyjne", command=self._menucmd.adap_progowanie)
+        punktowe.add_command(label="Negacja", command=self._menucmd.negation)
+        punktowe.add_command(label="Progowanie", command=self._menucmd.light_levelling)
+        punktowe.add_command(label="Progowanie adaptacyjne", command=self._menucmd.adaptive_light_levelling)
         punktowe.add_command(label="Redukcja poziomów szarości", command=self._menucmd.redukcja_p_s)
 
         operation = tk.Menu(self.menu, tearoff=0)

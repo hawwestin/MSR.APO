@@ -25,7 +25,7 @@ class MainWindow(tk.Tk):
         self.body.pack()
 
         self.title("APO")
-        self.command = MenuCmd(self.body, self)
+        self.command = MenuCmd(self)
         self.main_menu = MainMenu(self.body, self)
 
         utils.status_message = tk.StringVar()
@@ -78,13 +78,9 @@ class MainWindow(tk.Tk):
 
     def close_Current_tab(self):
         id = self.notebook.select()
-        print(id)
-        TabPicture.gallery[id].__del__()
-        utils.close_img(id)
+        del TabPicture.gallery[id]
+        TabPicture.gallery.pop(id, None)
         self.notebook.forget("current")
-
-
-        # main_gui.gallery[id].__del__()
 
     def update_status(self, text):
         utils.status_message.set(text)

@@ -2,8 +2,10 @@ import utils
 import tkinter as tk
 from tkinter import ttk
 from computer_vision import Vision
+from tabpicture import TabPicture
 
-def Hist_Equalization(tab_id):
+
+def Hist_Equalization(tab: TabPicture):
     """
     """
     # Tab numer with Image to load and wher save to
@@ -31,7 +33,7 @@ def Hist_Equalization(tab_id):
 
     labelframe_tmp = tk.LabelFrame(popup, text="Equalised", labelanchor='nw')
     # labelframe_tmp.pack(fill="both", expand="yes", side=tk.LEFT)
-    labelframe_tmp.grid(row=5, column=0,columnspan=4, sticky='nsew')
+    labelframe_tmp.grid(row=5, column=0, columnspan=4, sticky='nsew')
 
     huk.panel = tk.Label(labelframe)
     huk.panel.grid(sticky='nsew')
@@ -39,8 +41,8 @@ def Hist_Equalization(tab_id):
     huk.panel_tmp.grid(sticky='nsew')
 
     # huk.open_grey_scale_img(gallery[tab_id].path)
-    huk.cvImage = utils.gallery[tab_id].cvImage
-    huk.tkImage = utils.gallery[tab_id].tkImage
+    huk.cvImage = tab.vision.cvImage
+    huk.tkImage = tab.vision.tkImage
     huk.set_panel_img()
 
     # huk.load_hist()
@@ -64,13 +66,13 @@ def Hist_Equalization(tab_id):
     B1 = ttk.Button(popup, text="Wyjdź", command=popup.destroy)
     # B1.pack(side=tk.BOTTOM, padx=2)
     B1.grid(row=1, column=0, sticky='nsew')
-    B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=lambda: utils.confirm(tab_id, huk))
+    B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=lambda: utils.confirm(tab, huk))
     # B2.pack(side=tk.BOTTOM, padx=2)
     B2.grid(row=1, column=1, sticky='nsew')
-    B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: utils.confirm(tab_id, huk, popup))
+    B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: utils.confirm(tab, huk, popup))
     # B3.pack(side=tk.BOTTOM, padx=2)
     B3.grid(row=1, column=2, sticky='nsew')
-    B7 = ttk.Button(popup, text="Cofnij", command=lambda: utils.cofnij(tab_id, huk))
+    B7 = ttk.Button(popup, text="Cofnij", command=lambda: utils.cofnij(tab, huk))
     # B7.pack(side=tk.BOTTOM, padx=2)
     B7.grid(row=1, column=3, sticky='nsew')
 

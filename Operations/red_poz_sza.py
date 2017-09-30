@@ -3,9 +3,10 @@ import tkinter as tk
 import cv2
 from tkinter import ttk
 from computer_vision import Vision
+from tabpicture import TabPicture
 
 
-def rps(tab_id):
+def rps(tab: TabPicture):
     """
     Tab numer with Image to load and wher save to
     """
@@ -39,8 +40,8 @@ def rps(tab_id):
     huk.panel_tmp = tk.Label(labelframe_tmp)
     huk.panel_tmp.grid(sticky='nsew')
 
-    huk.cvImage = utils.gallery[tab_id].cvImage
-    huk.tkImage = utils.gallery[tab_id].tkImage
+    huk.cvImage = tab.vision.cvImage
+    huk.tkImage = tab.vision.tkImage
     huk.set_panel_img()
 
     label = ttk.Label(popup, text="Redukcja poziomów szarości", font=utils.NORM_FONT)
@@ -48,11 +49,11 @@ def rps(tab_id):
 
     B1 = ttk.Button(popup, text="Wyjdź", command=popup.destroy)
     B1.grid(row=1, column=0, sticky='nsew')
-    B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=lambda: utils.confirm(tab_id, huk))
+    B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=lambda: utils.confirm(tab, huk))
     B2.grid(row=1, column=1, sticky='nsew')
-    B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: utils.confirm(tab_id, huk, popup))
+    B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: utils.confirm(tab, huk, popup))
     B3.grid(row=1, column=2, sticky='nsew')
-    B4 = ttk.Button(popup, text="Cofnij", command=lambda: utils.cofnij(tab_id, huk))
+    B4 = ttk.Button(popup, text="Cofnij", command=lambda: utils.cofnij(tab, huk))
     B4.grid(row=1, column=3, sticky='nsew')
 
     B5 = ttk.Button(popup, text="odświerz histogram", command=lambda: huk.set_hist(tmp=1))
@@ -61,7 +62,7 @@ def rps(tab_id):
     slider = tk.Frame(popup)
     slider.grid(row=2, column=0, columnspan=4, sticky='nsew')
 
-    sl = tk.Scale(slider, orient=tk.HORIZONTAL,from_=1, to=255, length=300)
+    sl = tk.Scale(slider, orient=tk.HORIZONTAL, from_=1, to=255, length=300)
     sl.configure(command=lambda x: huk.rps(int(x)))
     sl.pack(expand=1)
 

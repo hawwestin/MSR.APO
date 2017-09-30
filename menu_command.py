@@ -15,19 +15,29 @@ NORM_FONT = utils.NORM_FONT
 SMALL_FONT = utils.SMALL_FONT
 
 
-class MenuCmd(tk.Frame):
+class MenuCmd:
     """
     Class to communicate Main Menu with tab windows to perform desired actions on images inside.
 
     """
 
-    def __init__(self, parentFrame, tkController):
-        tk.Frame.__init__(self, parentFrame)
+    def __init__(self, tkController):
         self.tkController = tkController
 
     @staticmethod
     def client_exit():
         exit()
+
+    def _current_tab(self) -> TabPicture:
+        """
+        Fetch TabPicture object of current selected tab.
+        TabPicture dict gallery must have matching keys with value returned by
+         ttk.notebook.select() function.
+        :return: TabPicture object of current selected tab
+        """
+        tab_id = self.tkController.notebook.select()
+        print(tab_id)
+        return TabPicture.gallery.get(tab_id, None)
 
     def _open_img(self, color=True):
         """
@@ -44,14 +54,12 @@ class MenuCmd(tk.Frame):
             name.set(os.path.split(path)[1])
             tab_frame = self.tkController.new_tab(name.get())
             if color is True:
-                pic = TabColorPicture(tab_frame, self.tkController, name)
+                tab_pic = TabColorPicture(tab_frame, self.tkController, name)
             else:
-                pic = TabGreyPicture(tab_frame, self.tkController, name)
+                tab_pic = TabGreyPicture(tab_frame, self.tkController, name)
 
-            pic.open_image(path)
-            utils.add_img(tab_frame._w, pic.vision)
-
-            pic.vision.set_panel_img()
+            tab_pic.open_image(path)
+            tab_pic.set_panel_img()
 
     def open_color_image(self):
         self._open_img(True)
@@ -62,10 +70,9 @@ class MenuCmd(tk.Frame):
     def load_image(self):
         path = filedialog.askopenfilename()
         if len(path) > 0:
-            tab_id = self.tkController.notebook.select()
-            print(tab_id)
-            utils.gallery[tab_id].path = path
-            if utils.gallery[tab_id].color == 1:
+            tab = self._current_tab()
+            tab.vision.path = path
+            if tab.vision.color == 1:
                 self._open_img(color=True)
             else:
                 self._open_img(color=False)
@@ -73,12 +80,18 @@ class MenuCmd(tk.Frame):
             tab_id = self.tkController.notebook.select()
             self.tkController.rename_tab(os.path.splitext(path)[0])
 
-            utils.gallery[tab_id].set_panel_img()
+            tab.set_panel_img()
+            # utils.gallery[tab_id].set_panel_img()
+            self._reset_hist()
 
-            if utils.gallery[tab_id].histCanvas is not None:
-                utils.gallery[tab_id].set_hist()
-                utils.gallery[tab_id].set_hist_geometry()
-
+    def _reset_hist(self):
+        tab = self._current_tab()
+        if tab.histCanvas is not None:
+            tab.set_hist()
+            tab.set_hist_geometry()
+            # if utils.gallery[tab_id].histCanvas is not None:
+            #     utils.gallery[tab_id].set_hist()
+            #     utils.gallery[tab_id].set_hist_geometry()
 
     @staticmethod
     def not_implemented():
@@ -102,18 +115,12 @@ class MenuCmd(tk.Frame):
         print(self.tkController.notebook.select())
 
     def inHist(self):
-        tab_id = self.tkController.notebook.select()
-        print(tab_id)
-        # id = self.tkController.notebook.index("current")
-        utils.gallery[tab_id].set_hist()
-        utils.gallery[tab_id].set_hist_geometry()
+        tab = self._current_tab()
+        tab.set_hist()
+        tab.set_hist_geometry()
 
     def outHist(self):
-        tab_id = self.tkController.notebook.select()
-        print(tab_id)
-        # id = self.tkController.notebook.index("current")
-        TabPicture.gallery[tab_id].show_hist()
-        # main_gui.gallery[tab_id].show_hist()
+        self._current_tab().show_hist()
 
     def info(self):
         self.popupmsg("APO Made by\nMichał Robaszewski\n2016/2017")
@@ -122,61 +129,47 @@ class MenuCmd(tk.Frame):
         tab_id = self.tkController.notebook.select()
         print(tab_id)
         # id = self.tkController.notebook.index("current")
-        utils.gallery[tab_id].color_picker()
+        TabPicture.gallery[tab_id].vision.color_picker()
 
     def hist_Equ(self):
-        tab_id = self.tkController.notebook.select()
-        print(tab_id)
-        # tab_id = self.tkController.notebook.index("current")
-        histEq.Hist_Equalization(tab_id)
+        tab = self._current_tab()
+        histEq.Hist_Equalization(tab)
 
     def save(self):
-        tab_id = self.tkController.notebook.select()
-        print(tab_id)
-
-        # id = self.tkController.notebook.index("current")
-        utils.gallery[tab_id].save()
+        tab = self._current_tab()
+        tab.vision.save()
 
     def save_as(self):
-        tab_id = self.tkController.notebook.select()
-        print(tab_id)
+        tab = self._current_tab()
         title = filedialog.asksaveasfilename()
         # TODO jakis dialog box do podania ścieżki.
-        # id = self.tkController.notebook.index("current")
-        utils.gallery[tab_id].save(title)
+        tab.vision.save(title)
 
     def clear_hist(self):
-        tab_id = self.tkController.notebook.select()
-        print(tab_id)
-        # id = self.tkController.notebook.index("current")
-        TabPicture.gallery[tab_id].close_hist()
+        tab = self._current_tab()
+        tab.vision.close_hist()
 
-    def negacja(self):
-        tab_id = self.tkController.notebook.select()
-        print(tab_id)
-        # id = self.tkController.notebook.index("current")
-        utils.gallery[tab_id].negation()
-        utils.gallery[tab_id].set_panel_img()
-        if utils.gallery[tab_id].histCanvas is not None:
-            utils.gallery[tab_id].set_hist()
+    def negation(self):
+        tab = self._current_tab()
+        tab.vision.negation()
+        tab.set_panel_img()
+        self._reset_hist()
 
-    def progowanie(self):
-        tab_id = self.tkController.notebook.select()
-        print(tab_id)
-        # tab_id = self.tkController.notebook.index("current")
-        prog.progowanie(tab_id)
+    def light_levelling(self):
+        """
+        Progowanie
+        :return:
+        """
+        tab = self._current_tab()
+        prog.progowanie(tab)
 
-    def adap_progowanie(self):
-        tab_id = self.tkController.notebook.select()
-        print(tab_id)
-        # tab_id = self.tkController.notebook.index("current")
-        adap_prog.progowanie(tab_id)
+    def adaptive_light_levelling(self):
+        tab = self._current_tab()
+        adap_prog.progowanie(tab)
 
     def redukcja_p_s(self):
-        tab_id = self.tkController.notebook.select()
-        print(tab_id)
-        # id = self.tkController.notebook.index("current")
-        red_poz_sza.rps(tab_id)
+        tab = self._current_tab()
+        red_poz_sza.rps(tab)
         # MainGui.gallery[tab_id].rps()
         # MainGui.gallery[tab_id].set_panel_img()
         # if MainGui.gallery[tab_id].histCanvas is not None:
