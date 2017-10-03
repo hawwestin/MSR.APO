@@ -1,4 +1,5 @@
 import tkinter as tk
+from queue import LifoQueue
 from tkinter import ttk
 
 import matplotlib
@@ -7,6 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 import utils
 from computer_vision import Vision
+from repeater import Repeater
 
 matplotlib.use("TkAgg")
 
@@ -19,7 +21,7 @@ class TabPicture:
     """
     gallery = {}
 
-    def __init__(self, tab_frame, main_window, name):
+    def __init__(self, tab_frame: tk.Frame, main_window: tk.Tk, name: tk.StringVar):
         self.tab_frame = tab_frame
         self.main_window = main_window
 
@@ -51,6 +53,45 @@ class TabPicture:
 
     def __del__(self):
         TabPicture.gallery.pop(self.id, None)
+
+    def confirm(self, huk: Vision, window=None):
+        """
+        akcja dla operacji wywoływanych z Menu do nadpisanai obrazka przechowywanego
+        na wynikowy z operacji
+        :param huk:
+        :param window:
+        :return:
+        """
+        self.vision.cvImage = huk.cvImage_tmp
+        self.vision.tkImage = huk.tkImage_tmp
+        self.set_panel_img()
+        self.panel.pack(side="left",
+                        padx=10,
+                        pady=10)
+
+        if self.histCanvas is not None:
+            self.set_hist()
+            self.set_hist_geometry()
+        if window is not None:
+            window.destroy()
+
+    def cofnij(self, huk):
+        """
+        reset image stored in gallery to image with operation was initialize.
+        :param tab:
+        :param huk:
+        :return:
+        """
+        self.vision.cvImage = huk.cvImage
+        self.vision.tkImage = huk.tkImage
+        self.set_panel_img()
+        self.panel.pack(side="left",
+                        padx=10,
+                        pady=10)
+
+        if self.histCanvas is not None:
+            self.set_hist()
+            self.set_hist_geometry()
 
     def match(self, what):
         '''
@@ -154,13 +195,9 @@ class TabPicture:
         Kazde okienko to nowy obiekt.
         Undowanie na tablicach ? może pod spodem baze danych machnac
         """
-        # plt.imshow(self.image, cmap='Greys', interpolation='bicubic')
-        # plt.show()
         # if the panels are None, initialize them
         if self.panel is None:
             self.panel = ttk.Label(self.tab_frame, image=self.vision.tkImage)
-            # self.panel.configure(image=self.tkImage)
-            # self.panel.image = self.tkImage
             self.panel.pack(side="left", padx=10, pady=10)
         # otherwise, update the image panels
         else:
@@ -169,8 +206,6 @@ class TabPicture:
 
         if self.panel_tmp is None and self.vision.tkImage_tmp is not None:
             self.panel_tmp = ttk.Label(self.tab_frame, image=self.vision.tkImage_tmp)
-            # self.panel.configure(image=self.tkImage)
-            # self.panel.image = self.tkImage
             self.panel_tmp.pack(side="left", padx=10, pady=10)
         # otherwise, update the image panels
         elif self.panel_tmp is not None:
@@ -197,6 +232,9 @@ class TabPicture:
             self.panel.image = self.vision.tkImage
             # self.panel.image = self.tkImage_tmp
 
+    def popup_image(self):
+        plt.imshow(self.vision.tkImage, cmap='Greys', interpolation='bicubic')
+        plt.show()
 
 
 class TabColorPicture(TabPicture):

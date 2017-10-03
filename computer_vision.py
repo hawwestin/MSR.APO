@@ -1,5 +1,7 @@
 import matplotlib
 
+from repeater import Repeater
+
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
@@ -35,8 +37,8 @@ class Vision:
         self.path = None
         self.color = None
         # Actual
-        self.cvImage = None
-        self.tkImage = None
+        self._cvImage = Repeater()
+        self._tkImage = Repeater()
         # temp
         self.cvImage_tmp = None
         self.tkImage_tmp = None
@@ -56,6 +58,14 @@ class Vision:
         # parent.bind("<Configure>", self.resize)
         # Bad Idea Dont do that again
         # self.fCanvas.bind("<Configure>", self.resize)
+
+    @property
+    def cvImage(self):
+        return self._cvImage.current()
+
+    @cvImage.setter
+    def cvImage(self, value):
+        self._cvImage.update(value)
 
     def open_image(self, path):
         self.path = path

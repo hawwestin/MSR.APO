@@ -21,8 +21,8 @@ class MenuCmd:
 
     """
 
-    def __init__(self, tkController):
-        self.tkController = tkController
+    def __init__(self, tk_controller: tk.Tk):
+        self.tkController = tk_controller
 
     @staticmethod
     def client_exit():

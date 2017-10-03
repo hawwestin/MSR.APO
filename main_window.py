@@ -46,7 +46,7 @@ class MainWindow(tk.Tk):
         :param tab_name:
         :return:
         """
-        frame = ttk.Frame(self.notebook)
+        frame = tk.Frame(self.notebook)
         frame.pack(fill=tk.BOTH, expand=1)
         self.notebook.add(frame, text=tab_name)
         # print("new tab id " + frame._w)

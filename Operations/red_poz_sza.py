@@ -49,11 +49,11 @@ def rps(tab: TabPicture):
 
     B1 = ttk.Button(popup, text="Wyjdź", command=popup.destroy)
     B1.grid(row=1, column=0, sticky='nsew')
-    B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=lambda: utils.confirm(tab, huk))
+    B2 = ttk.Button(popup, text="Zatwierdz zmiany", command=lambda: tab.confirm(huk))
     B2.grid(row=1, column=1, sticky='nsew')
-    B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: utils.confirm(tab, huk, popup))
+    B3 = ttk.Button(popup, text="Zapisz i wyjdz", command=lambda: tab.confirm(huk, popup))
     B3.grid(row=1, column=2, sticky='nsew')
-    B4 = ttk.Button(popup, text="Cofnij", command=lambda: utils.cofnij(tab, huk))
+    B4 = ttk.Button(popup, text="Cofnij", command=lambda: tab.cofnij(huk))
     B4.grid(row=1, column=3, sticky='nsew')
 
     B5 = ttk.Button(popup, text="odświerz histogram", command=lambda: huk.set_hist(tmp=1))
