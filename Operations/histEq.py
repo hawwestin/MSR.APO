@@ -41,8 +41,8 @@ def Hist_Equalization(tab: TabPicture):
     huk.panel_tmp.grid(sticky='nsew')
 
     # huk.open_grey_scale_img(gallery[tab_id].path)
-    huk.cvImage = tab.vision.cvImage
-    huk.tkImage = tab.vision.tkImage
+    huk.cvImage.update( tab.vision.cvImage.current())
+    huk.tkImage = tab.vision.cvImage.tk_image
     huk.set_panel_img()
 
     # huk.load_hist()

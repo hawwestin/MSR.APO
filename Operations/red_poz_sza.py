@@ -40,8 +40,8 @@ def rps(tab: TabPicture):
     huk.panel_tmp = tk.Label(labelframe_tmp)
     huk.panel_tmp.grid(sticky='nsew')
 
-    huk.cvImage = tab.vision.cvImage
-    huk.tkImage = tab.vision.tkImage
+    huk.cvImage.update(tab.vision.cvImage.current())
+    huk.tkImage = tab.vision.cvImage.tk_image
     huk.set_panel_img()
 
     label = ttk.Label(popup, text="Redukcja poziomów szarości", font=utils.NORM_FONT)

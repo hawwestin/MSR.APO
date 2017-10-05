@@ -62,8 +62,8 @@ class TabPicture:
         :param window:
         :return:
         """
-        self.vision.cvImage = huk.cvImage_tmp
-        self.vision.tkImage = huk.tkImage_tmp
+        self.vision.cvImage.update(huk.cvImage_tmp)
+        self.vision.tkImage = self.vision.cvImage.tk_image
         self.set_panel_img()
         self.panel.pack(side="left",
                         padx=10,
@@ -75,15 +75,15 @@ class TabPicture:
         if window is not None:
             window.destroy()
 
-    def cofnij(self, huk):
+    def cofnij(self, huk: Vision):
         """
         reset image stored in gallery to image with operation was initialize.
         :param tab:
         :param huk:
         :return:
         """
-        self.vision.cvImage = huk.cvImage
-        self.vision.tkImage = huk.tkImage
+        self.vision.cvImage.update(huk.cvImage.current())
+        self.vision.tkImage = self.vision.cvImage.tk_image
         self.set_panel_img()
         self.panel.pack(side="left",
                         padx=10,
@@ -136,7 +136,7 @@ class TabPicture:
         # todo how close histogram ?
 
         if tmp is None:
-            source = self.vision.cvImage
+            source = self.vision.cvImage.current()
             self.close_hist()
             # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
 
@@ -148,7 +148,7 @@ class TabPicture:
             # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
 
             self.fig_subplot.hist(self.vision.cvImage_tmp.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
-            self.fig_subplot.hist(self.vision.cvImage.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
+            self.fig_subplot.hist(self.vision.cvImage.current().ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
             self.fig_subplot.set_xlim([0, 256])
 
         if self.histCanvas is None:
@@ -183,7 +183,7 @@ class TabPicture:
         :return:
         """
         # todo wyczyszczenie grafu przed zaladowaniem kolejnego , jak zaladowac kilka instancji do kilku obrazkow ?
-        plt.hist(self.vision.cvImage.ravel(), 256, [0, 255])
+        plt.hist(self.vision.cvImage.current().ravel(), 256, [0, 255])
         plt.show()
 
     def close_hist(self):

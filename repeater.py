@@ -3,8 +3,8 @@ from queue import LifoQueue
 
 class Repeater:
     def __init__(self):
-        self.stack = LifoQueue()
-        self.rstack = LifoQueue()
+        self.__stack = LifoQueue()
+        self.__rstack = LifoQueue()
         self.item = None
 
     def current(self):
@@ -21,19 +21,19 @@ class Repeater:
         :return:
         """
         self.item = value
-        self.stack.put_nowait(value)
-        if not self.rstack.empty():
-            self.rstack = LifoQueue()
+        self.__stack.put_nowait(value)
+        if not self.__rstack.empty():
+            self.__rstack = LifoQueue()
 
-        print("Updated {}".format(self.stack.qsize()))
+        print("Updated {}".format(self.__stack.qsize()))
 
     def redo(self):
         """
         Load next image
         :return:
         """
-        if not self.rstack.empty():
-            self.item = self.rstack.get_nowait()
+        if not self.__rstack.empty():
+            self.item = self.__rstack.get_nowait()
         else:
             pass
 
@@ -42,16 +42,16 @@ class Repeater:
         Load previous image
         :return:
         """
-        if self.stack.empty():
+        if self.__stack.empty():
             pass
         else:
-            self.rstack.put_nowait(self.item)
-            self.item = self.stack.get()
+            self.__rstack.put_nowait(self.item)
+            self.item = self.__stack.get()
 
     @property
     def redo_empty(self):
-        return self.rstack.empty()
+        return self.__rstack.empty()
 
     @property
     def undo_empty(self):
-        return self.stack.empty()
+        return self.__stack.empty()
