@@ -61,6 +61,25 @@ class MenuCmd:
             tab_pic.open_image(path)
             tab_pic.set_panel_img()
 
+    def duplicate(self):
+        """
+        Create duplicate image of current selected Tab.
+        Method load image from HDD not copying current state of image.
+        :return:
+        """
+        tab = self._current_tab()
+
+        name = tk.StringVar(value=tab.name.get())
+        tab_frame = self.tkController.new_tab(name.get())
+        if tab.vision.color == 1:
+            tab_pic = TabColorPicture(tab_frame, self.tkController, name)
+        else:
+            tab_pic = TabGreyPicture(tab_frame, self.tkController, name)
+
+        tab_pic.open_image(tab.vision.path)
+        tab_pic.set_panel_img()
+
+
     def open_color_image(self):
         self._open_img(True)
 
@@ -174,3 +193,16 @@ class MenuCmd:
         # MainGui.gallery[tab_id].set_panel_img()
         # if MainGui.gallery[tab_id].histCanvas is not None:
         #     MainGui.gallery[tab_id].set_hist()
+
+    def undo_image(self):
+        tab = self._current_tab()
+        tab.vision.cvImage.undo()
+        tab.vision.tkImage = tab.vision.cvImage.tk_image
+        tab.set_panel_img()
+
+    def redo_image(self):
+        tab = self._current_tab()
+        tab.vision.cvImage.redo()
+        tab.vision.tkImage = tab.vision.cvImage.tk_image
+        tab.set_panel_img()
+

@@ -1,5 +1,7 @@
 import tkinter as tk
 
+from menu_command import MenuCmd
+
 
 class MainMenu(tk.Frame):
     def __init__(self, parent_frame, main_window):
@@ -16,6 +18,10 @@ class MainMenu(tk.Frame):
         self._menucmd = self.tkController.command
         self.menu_bar()
 
+    @property
+    def menu_cmd(self) -> MenuCmd:
+        return self._menucmd
+
     def menu_bar(self):
         # creating a menu instance
         # menu = Menu(self.master)
@@ -24,31 +30,31 @@ class MainMenu(tk.Frame):
         # create the file object
 
         open = tk.Menu(self.menu, tearoff=0)
-        open.add_command(label="Open in Color", command=self._menucmd.open_color_image)
-        open.add_command(label="Open in Grey Scale", command=self._menucmd.open_grey_image)
+        open.add_command(label="Open in Color", command=self.menu_cmd.open_color_image)
+        open.add_command(label="Open in Grey Scale", command=self.menu_cmd.open_grey_image)
 
         file = tk.Menu(self.menu, tearoff=0)
 
         file.add_command(label="New")
         # todo przerobic na otwarcie kolorowego obrazka i szarego
         file.add_cascade(label="Open", menu=open)
-        file.add_command(label="Reload", command=self._menucmd.load_image)
-        file.add_command(label="Save", command=self._menucmd.save)
-        file.add_command(label="Save as", command=self._menucmd.save_as)
+        file.add_command(label="Reload", command=self.menu_cmd.load_image)
+        file.add_command(label="Save", command=self.menu_cmd.save)
+        file.add_command(label="Save as", command=self.menu_cmd.save_as)
         file.add_separator()
         # Tabs Options
         file.add_command(label="Close Current Tab", command=self.tkController.close_Current_tab)
         file.add_separator()
-        file.add_command(label="Exit", command=self._menucmd.client_exit)
+        file.add_command(label="Exit", command=self.menu_cmd.client_exit)
         self.menu.add_cascade(label="File", menu=file)
 
         edit = tk.Menu(self.menu, tearoff=0)
         # adds a command to the menu option, calling it exit, and the
         # command it runs on event is client_exit
-        edit.add_command(label="Undo")
-        edit.add_command(label="Redo")
+        edit.add_command(label="Undo", command=self.menu_cmd.undo_image)
+        edit.add_command(label="Redo", command=self.menu_cmd.redo_image)
         edit.add_separator()
-        edit.add_command(label="Duplicate")
+        edit.add_command(label="Duplicate", command=self.menu_cmd.duplicate)
         edit.add_command(label="Color picker", command=self._menucmd.picker)
         # added "file" to our menu
         self.menu.add_cascade(label="Edit", menu=edit)

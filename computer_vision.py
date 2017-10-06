@@ -339,7 +339,6 @@ class Vision:
         # cv2.invert(self.cvImage, self.cvImage_tmp)
 
         hist, bins = np.histogram(self.cvImage.current().flatten(), 256, [0, 256])
-        print(bins)
         # cdf = hist.cumsum()
         cdf_m = (255 - bins)
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')

@@ -29,7 +29,7 @@ class MainWindow(tk.Tk):
         self.main_menu = MainMenu(self.body, self)
 
         utils.status_message = tk.StringVar()
-        utils.status_message.set('')
+        utils.status_message.set('*')
         self.status_bar = tk.Label(self, textvariable=utils.status_message, bd=1, relief=tk.SUNKEN,
                                    anchor='w')
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
