@@ -1,11 +1,36 @@
 import utils
 import tkinter as tk
 from tkinter import ttk
+
+from Operations.operation_template import OperationTemplate
 from computer_vision import Vision
 from tabpicture import TabPicture
 
 
+class OperationHistEQ(OperationTemplate):
+    def __init__(self, tab: TabPicture):
+        super().__init__("Histogram Equalization", tab)
+
+    def control_plugin(self):
+        B4 = ttk.Button(self.controls, text="Hist EQ", command=self.tab.vision.hist_eq)
+        # B4.pack(side=tk.LEFT, padx=2)
+        B4.grid(row=0, column=0, sticky='nsew')
+        B5 = ttk.Button(self.controls, text="Hist num", command=self.tab.vision.hist_num)
+        # B5.pack(side=tk.LEFT, padx=2)
+        B5.grid(row=0, column=1, sticky='nsew')
+        B6 = ttk.Button(self.controls, text="Sąsiedztwa 3x3", command=lambda: self.tab.vision.hist_CLAHE(3, 3))
+        # B6.pack(side=tk.LEFT, padx=2)
+        B6.grid(row=0, column=2, sticky='nsew')
+        B8 = ttk.Button(self.controls, text="Sąsiedztwa 8x8", command=lambda: self.tab.vision.hist_CLAHE(8, 8))
+        # B6.pack(side=tk.LEFT, padx=2)
+        B8.grid(row=0, column=3, sticky='nsew')
+
+
 def Hist_Equalization(tab: TabPicture):
+    OperationHistEQ(tab)
+
+
+def tmp_Hist_Equalization(tab: TabPicture):
     """
     """
     # Tab numer with Image to load and wher save to
@@ -41,7 +66,7 @@ def Hist_Equalization(tab: TabPicture):
     huk.panel_tmp.grid(sticky='nsew')
 
     # huk.open_grey_scale_img(gallery[tab_id].path)
-    huk.cvImage.update( tab.vision.cvImage.current())
+    huk.cvImage.update(tab.vision.cvImage.current())
     huk.tkImage = tab.vision.cvImage.tk_image
     huk.set_panel_img()
 
