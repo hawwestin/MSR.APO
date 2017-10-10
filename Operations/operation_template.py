@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.figure import Figure
+
 from tabpicture import TabPicture
 
 
@@ -41,6 +44,11 @@ class OperationTemplate:
         self.panel_tmp.pack()
         self.frame_for_Canvas.pack(side=tk.RIGHT)
 
+        self.toolbar = None
+        self.histCanvas = None
+        self.fig = Figure()
+        self.fig_subplot = self.fig.add_subplot(111)
+
         self.widget_buttons()
 
         self.control_plugin()
@@ -58,6 +66,10 @@ class OperationTemplate:
             self.tab.vision.tkImage = self.tab.vision.cvImage.tk_image
             self.refresh_panels()
 
+        def confirm():
+            self.tab.persist_tmp()
+            self.refresh_panels()
+
         b_undo = ttk.Button(self.buttons, text="Undo", command=undo)
         b_undo.pack(side=tk.LEFT, padx=2)
 
@@ -67,6 +79,9 @@ class OperationTemplate:
         b_refresh = ttk.Button(self.buttons, text="Refresh images", command=self.refresh_panels)
         b_refresh.pack(side=tk.LEFT, padx=2, after=b_redo)
 
+        b_confirm = ttk.Button(self.buttons, text="Confirm", command=confirm)
+        b_confirm.pack(side=tk.LEFT, padx=2, after=b_refresh)
+
         b_exit = ttk.Button(self.buttons, text="Exit", command=self.window.destroy)
         b_exit.pack(side=tk.RIGHT, padx=2)
 
@@ -75,7 +90,27 @@ class OperationTemplate:
         self.panel.configure(image=self.tab.vision.tkImage)
         self.panel_tmp.image = self.tab.vision.tkImage_tmp
         self.panel.image = self.tab.vision.tkImage
+        self.histogram()
         # todo Refresh Histogram
+
+    def histogram(self):
+        self.fig_subplot.clear()
+        self.fig_subplot.hist(self.tab.vision.cvImage_tmp.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
+        self.fig_subplot.hist(self.tab.vision.cvImage.current().ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
+        self.fig_subplot.set_xlim([0, 256])
+
+        if self.histCanvas is None:
+            self.histCanvas = FigureCanvasTkAgg(self.fig, self.frame_for_Canvas)
+        self.histCanvas.show()
+
+        if self.toolbar is None:
+            self.toolbar = NavigationToolbar2TkAgg(self.histCanvas,
+                                                   self.frame_for_Canvas)
+        self.toolbar.update()
+
+        self.histCanvas.get_tk_widget().pack(side=tk.TOP,
+                                             fill=tk.BOTH,
+                                             expand=True)
 
     def control_plugin(self):
         """

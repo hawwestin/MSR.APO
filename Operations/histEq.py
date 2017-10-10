@@ -9,19 +9,35 @@ from tabpicture import TabPicture
 
 class OperationHistEQ(OperationTemplate):
     def __init__(self, tab: TabPicture):
-        super().__init__("Histogram Equalization", tab)
+        super().__init__("APO Histogram Equalization", tab)
 
     def control_plugin(self):
-        B4 = ttk.Button(self.controls, text="Hist EQ", command=self.tab.vision.hist_eq)
+        def heq():
+            self.tab.vision.hist_eq()
+            self.refresh_panels()
+
+        def hnum():
+            self.tab.vision.hist_num()
+            self.refresh_panels()
+
+        def hcl3():
+            self.tab.vision.hist_CLAHE(3, 3)
+            self.refresh_panels()
+
+        def hcl8():
+            self.tab.vision.hist_CLAHE(8, 8)
+            self.refresh_panels()
+
+        B4 = ttk.Button(self.controls, text="Hist EQ", command=heq)
         # B4.pack(side=tk.LEFT, padx=2)
         B4.grid(row=0, column=0, sticky='nsew')
-        B5 = ttk.Button(self.controls, text="Hist num", command=self.tab.vision.hist_num)
+        B5 = ttk.Button(self.controls, text="Hist num", command=hnum)
         # B5.pack(side=tk.LEFT, padx=2)
         B5.grid(row=0, column=1, sticky='nsew')
-        B6 = ttk.Button(self.controls, text="Sąsiedztwa 3x3", command=lambda: self.tab.vision.hist_CLAHE(3, 3))
+        B6 = ttk.Button(self.controls, text="Sąsiedztwa 3x3", command=hcl3)
         # B6.pack(side=tk.LEFT, padx=2)
         B6.grid(row=0, column=2, sticky='nsew')
-        B8 = ttk.Button(self.controls, text="Sąsiedztwa 8x8", command=lambda: self.tab.vision.hist_CLAHE(8, 8))
+        B8 = ttk.Button(self.controls, text="Sąsiedztwa 8x8", command=hcl8)
         # B6.pack(side=tk.LEFT, padx=2)
         B8.grid(row=0, column=3, sticky='nsew')
 
@@ -31,8 +47,6 @@ def Hist_Equalization(tab: TabPicture):
 
 
 def tmp_Hist_Equalization(tab: TabPicture):
-    """
-    """
     # Tab numer with Image to load and wher save to
 
     popup = tk.Toplevel()

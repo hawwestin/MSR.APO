@@ -364,8 +364,8 @@ class Vision:
 
         self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
         # TODO zmieniac tylko _tmp obraz nie potrzeba przeladowywac orginalnego jezeli go nie modyfikujemy.
-        self.show_both_img()
-        self.set_hist(tmp=1)
+        # self.show_both_img()
+        # self.set_hist(tmp=1)
 
 
         # plt.imshow(huk.cvImage_tmp)
@@ -383,8 +383,8 @@ class Vision:
 
         self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
         # TODO zmieniac tylko _tmp obraz nie potrzeba przeladowywac orginalnego jezeli go nie modyfikujemy.
-        self.show_both_img()
-        self.set_hist(tmp=1)
+        # self.show_both_img()
+        # self.set_hist(tmp=1)
 
     def hist_CLAHE(self, x=8, y=8):
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(x, y))
@@ -392,8 +392,8 @@ class Vision:
 
         self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
         # TODO zmieniac tylko _tmp obraz nie potrzeba przeladowywac orginalnego jezeli go nie modyfikujemy.
-        self.show_both_img()
-        self.set_hist(tmp=1)
+        # self.show_both_img()
+        # self.set_hist(tmp=1)
 
     def save(self, path=None):
         if path is None:

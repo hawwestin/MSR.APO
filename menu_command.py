@@ -101,16 +101,7 @@ class MenuCmd:
 
             tab.set_panel_img()
             # utils.gallery[tab_id].set_panel_img()
-            self._reset_hist()
-
-    def _reset_hist(self):
-        tab = self._current_tab()
-        if tab.histCanvas is not None:
             tab.set_hist()
-            tab.set_hist_geometry()
-            # if utils.gallery[tab_id].histCanvas is not None:
-            #     utils.gallery[tab_id].set_hist()
-            #     utils.gallery[tab_id].set_hist_geometry()
 
     @staticmethod
     def not_implemented():
@@ -136,7 +127,6 @@ class MenuCmd:
     def inHist(self):
         tab = self._current_tab()
         tab.set_hist()
-        tab.set_hist_geometry()
 
     def outHist(self):
         self._current_tab().show_hist()
@@ -172,7 +162,6 @@ class MenuCmd:
         tab = self._current_tab()
         tab.vision.negation()
         tab.set_panel_img()
-        self._reset_hist()
 
     def light_levelling(self):
         """

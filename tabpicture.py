@@ -32,8 +32,6 @@ class TabPicture:
 
         # tk.StrinVar()
         self.name = name
-        # ImageTK.PhotoImage
-        self.tkImage = None
 
         self.vision = Vision(tab_frame, main_window)
 
@@ -54,6 +52,11 @@ class TabPicture:
     def __del__(self):
         TabPicture.gallery.pop(self.id, None)
 
+    def persist_tmp(self):
+        self.vision.cvImage.update(self.vision.cvImage_tmp)
+        self.vision.tkImage = self.vision.cvImage.tk_image
+        self.set_panel_img()
+
     def confirm(self, huk: Vision, window=None):
         """
         akcja dla operacji wywoływanych z Menu do nadpisanai obrazka przechowywanego
@@ -71,7 +74,6 @@ class TabPicture:
 
         if self.histCanvas is not None:
             self.set_hist()
-            self.set_hist_geometry()
         if window is not None:
             window.destroy()
 
@@ -91,7 +93,6 @@ class TabPicture:
 
         if self.histCanvas is not None:
             self.set_hist()
-            self.set_hist_geometry()
 
     def match(self, what):
         '''
@@ -132,47 +133,22 @@ class TabPicture:
         else:
             utils.status_message.set("nie podano pliku")
 
-    def set_hist(self, tmp=None):
-        # todo how close histogram ?
+    def set_hist(self):
+        self.fig_subplot.clear()
+        # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
 
-        if tmp is None:
-            source = self.vision.cvImage.current()
-            self.close_hist()
-            # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
-
-            self.fig_subplot.hist(source.ravel(), bins=256, range=[0.0, 256.0])
-            self.fig_subplot.set_xlim([0, 256])
-
-        else:
-            self.close_hist()
-            # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
-
-            self.fig_subplot.hist(self.vision.cvImage_tmp.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
-            self.fig_subplot.hist(self.vision.cvImage.current().ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
-            self.fig_subplot.set_xlim([0, 256])
+        self.fig_subplot.hist(self.vision.cvImage.current().ravel(), bins=256, range=[0.0, 256.0])
+        self.fig_subplot.set_xlim([0, 256])
 
         if self.histCanvas is None:
             self.histCanvas = FigureCanvasTkAgg(self.f, self.frame_for_Canvas)
-            self.histCanvas.show()
-        else:
-            self.histCanvas.show()
-            ###################
-            #     ToolBAR
-            ###################
+        self.histCanvas.show()
+
         if self.toolbar is None:
-            self.toolbar = NavigationToolbar2TkAgg(self.histCanvas,
-                                                   self.frame_for_Canvas)
-            self.toolbar.update()
-        else:
-            self.toolbar.update()
+            self.toolbar = NavigationToolbar2TkAgg(self.histCanvas, self.frame_for_Canvas)
+        self.toolbar.update()
 
-        self.histCanvas.get_tk_widget().pack(side=tk.TOP,
-                                             fill=tk.BOTH,
-                                             expand=True)
-
-    def set_hist_geometry(self):
-        # self.histCanvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        # self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.frame_for_Canvas.pack(side=tk.RIGHT, expand=True)
 
     def show_hist(self):
@@ -195,22 +171,13 @@ class TabPicture:
         Kazde okienko to nowy obiekt.
         Undowanie na tablicach ? może pod spodem baze danych machnac
         """
-        # if the panels are None, initialize them
         if self.panel is None:
             self.panel = ttk.Label(self.tab_frame, image=self.vision.tkImage)
             self.panel.pack(side="left", padx=10, pady=10)
-        # otherwise, update the image panels
-        else:
-            self.panel.configure(image=self.vision.tkImage)
-            self.panel.image = self.vision.tkImage
+        self.panel.configure(image=self.vision.tkImage)
+        self.panel.image = self.vision.tkImage
 
-        if self.panel_tmp is None and self.vision.tkImage_tmp is not None:
-            self.panel_tmp = ttk.Label(self.tab_frame, image=self.vision.tkImage_tmp)
-            self.panel_tmp.pack(side="left", padx=10, pady=10)
-        # otherwise, update the image panels
-        elif self.panel_tmp is not None:
-            self.panel_tmp.configure(image=self.vision.tkImage_tmp)
-            self.panel_tmp.image = self.vision.tkImage_tmp
+        self.set_hist()
 
     def show_both_img(self):
         if self.panel_tmp is None or self.panel is None:
