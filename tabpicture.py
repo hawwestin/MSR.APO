@@ -164,6 +164,7 @@ class TabPicture:
 
     def close_hist(self):
         self.fig_subplot.clear()
+        self.frame_for_Canvas.destroy()
 
     def set_panel_img(self):
         """
@@ -178,26 +179,6 @@ class TabPicture:
         self.panel.image = self.vision.tkImage
 
         self.set_hist()
-
-    def show_both_img(self):
-        if self.panel_tmp is None or self.panel is None:
-            self.panel_tmp = ttk.Label(self.tab_frame,
-                                       image=self.vision.tkImage_tmp)
-            self.panel_tmp.image = self.vision.tkImage_tmp
-            self.panel_tmp.pack(side="left", padx=10, pady=10)
-
-            self.panel = ttk.Label(self.tab_frame, image=self.vision.tkImage)
-            self.panel.image = self.vision.tkImage
-            self.panel.pack(side="left")
-
-        # otherwise, update the image panels
-        else:
-            # update the pannels
-            self.panel_tmp.configure(image=self.vision.tkImage_tmp)
-            self.panel.configure(image=self.vision.tkImage)
-            self.panel_tmp.image = self.vision.tkImage_tmp
-            self.panel.image = self.vision.tkImage
-            # self.panel.image = self.tkImage_tmp
 
     def popup_image(self):
         plt.imshow(self.vision.tkImage, cmap='Greys', interpolation='bicubic')

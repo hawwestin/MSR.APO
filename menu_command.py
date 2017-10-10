@@ -142,7 +142,7 @@ class MenuCmd:
 
     def hist_Equ(self):
         tab = self._current_tab()
-        histEq.Hist_Equalization(tab)
+        histEq.OperationHistEQ(tab)
 
     def save(self):
         tab = self._current_tab()
@@ -153,10 +153,6 @@ class MenuCmd:
         title = filedialog.asksaveasfilename()
         # TODO jakis dialog box do podania ścieżki.
         tab.vision.save(title)
-
-    def clear_hist(self):
-        tab = self._current_tab()
-        tab.vision.close_hist()
 
     def negation(self):
         tab = self._current_tab()

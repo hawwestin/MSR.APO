@@ -73,7 +73,6 @@ class MainMenu(tk.Frame):
         histogram.add_command(label="Wewnatrz histogram", command=self._menucmd.inHist)
         histogram.add_command(label="Popup hist", command=self._menucmd.outHist)
         histogram.add_command(label="Hist Equalization", command=self._menucmd.hist_Equ)
-        histogram.add_command(label="Clear hist", command=self._menucmd.clear_hist)
 
         punktowe = tk.Menu(self.menu, tearoff=0)
         punktowe.add_command(label="Negacja", command=self._menucmd.negation)

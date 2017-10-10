@@ -184,10 +184,6 @@ class Vision:
             self.panel_tmp.configure(image=self.tkImage_tmp)
             self.panel_tmp.image = self.tkImage_tmp
 
-    def set_display_img(self):
-        self.display.create_image(0, 0, image=self.tkImage, anchor="nw", tags="IMG")
-        self.display.pack(side="left", padx=10, pady=10)
-
     def show_both_img(self):
         if self.panel_tmp is None or self.panel is None:
             self.panel_tmp = ttk.Label(self.master, image=self.tkImage_tmp)
@@ -222,7 +218,6 @@ class Vision:
         image = Image.fromarray(self.cvImage.current())
         resized = image.resize(size, Image.ANTIALIAS)
         self.tkImage = ImageTk.PhotoImage(resized)
-        self.set_panel_img()
 
     def resize_event(self, event):
         # TODO store the original value to save image in original size.
@@ -233,7 +228,6 @@ class Vision:
         image = Image.fromarray(self.cvImage)
         resized = image.resize_event(size, Image.ANTIALIAS)
         self.tkImage = ImageTk.PhotoImage(resized)
-        self.set_panel_img()
         #         For Canvas
         # self.display.delete("IMG")
         # self.display.create_image(0, 0, image=self.tkImage, anchor='nw', tags="IMG")
@@ -248,7 +242,6 @@ class Vision:
         image = Image.fromarray(self.cvImage_tmp)
         resized = image.resize_event(size, Image.ANTIALIAS)
         self.tkImage_tmp = ImageTk.PhotoImage(resized)
-        self.set_panel_img()
         #         For Canvas
         # self.display.delete("IMG")
         # self.display.create_image(0, 0, image=self.tkImage, anchor='nw', tags="IMG")
@@ -333,7 +326,6 @@ class Vision:
         # LUT Table cdf
         self.cvImage_tmp = cdf[self.cvImage.current()]
         self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
-        self.show_both_img()
 
     def negation(self):
         # cv2.invert(self.cvImage, self.cvImage_tmp)
@@ -347,8 +339,15 @@ class Vision:
         self.cvImage.update(cdf[self.cvImage.current()])
         self.tkImage = self.cvImage.tk_image
 
-        # self.show_both_img()
-        # self.set_hist(tmp=1)
+    def hist_rand(self):
+        hist, bins = np.histogram(self.cvImage.current().flatten(), 256, [0, 256])
+        cdf = hist.cumsum()
+        cdf_m = np.ma.masked_equal(cdf, 0)
+        cdf_m = (cdf_m - cdf_m.min()) * 255 / (cdf_m.max() - cdf_m.mean())
+        cdf = np.ma.filled(cdf_m, 0).astype('uint8')
+
+        self.cvImage_tmp = cdf[self.cvImage.current()]
+        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
 
     def hist_num(self):
         hist, bins = np.histogram(self.cvImage.current().flatten(), 256, [0, 256])
@@ -367,11 +366,6 @@ class Vision:
         # self.show_both_img()
         # self.set_hist(tmp=1)
 
-
-        # plt.imshow(huk.cvImage_tmp)
-
-        # self.show_both_img()
-
         # plt.plot(cdf_normalized, color='b')
         # plt.hist(self.cvImage.flatten(), 256, [0, 256], color='r')
         # plt.xlim([0, 256])
@@ -380,51 +374,15 @@ class Vision:
 
     def hist_eq(self):
         self.cvImage_tmp = cv2.equalizeHist(self.cvImage.current())
-
         self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
-        # TODO zmieniac tylko _tmp obraz nie potrzeba przeladowywac orginalnego jezeli go nie modyfikujemy.
-        # self.show_both_img()
-        # self.set_hist(tmp=1)
 
     def hist_CLAHE(self, x=8, y=8):
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(x, y))
         self.cvImage_tmp = clahe.apply(self.cvImage.current())
-
         self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
-        # TODO zmieniac tylko _tmp obraz nie potrzeba przeladowywac orginalnego jezeli go nie modyfikujemy.
-        # self.show_both_img()
-        # self.set_hist(tmp=1)
 
     def save(self, path=None):
         if path is None:
             cv2.imwrite(self.path, self.cvImage.current())
         else:
             cv2.imwrite(path, self.cvImage.current())
-
-
-"""
-Testing
-"""
-if __name__ == '__main__':
-    popup = tk.Tk()
-
-    container = tk.Frame(master=popup)
-
-    container.pack()
-
-    huk = Vision(parent=container, controller=popup)
-
-    huk.path = "Auto_3.jpg"
-    huk.open_image(False)
-    huk.set_panel_img()
-
-    # huk.rps(255)
-    # huk.negation()
-
-    huk.set_panel_img()
-
-    sl = tk.Scale(container, orient=tk.HORIZONTAL, from_=1, to=255)
-    sl.configure(command=lambda x: huk.rps(int(x)))
-    sl.pack()
-
-    popup.mainloop()
