@@ -169,7 +169,7 @@ class MenuCmd:
 
     def adaptive_light_levelling(self):
         tab = self._current_tab()
-        adap_prog.progowanie(tab)
+        adap_prog.OperationAdaptiveThreshold(tab)
 
     def redukcja_p_s(self):
         tab = self._current_tab()

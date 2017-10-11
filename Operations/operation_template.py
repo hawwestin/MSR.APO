@@ -90,7 +90,7 @@ class OperationTemplate:
         self.panel.configure(image=self.tab.vision.tkImage)
         self.panel_tmp.image = self.tab.vision.tkImage_tmp
         self.panel.image = self.tab.vision.tkImage
-        # self.histogram()
+        self.histogram()
         # todo Refresh Histogram
 
     def histogram(self):
