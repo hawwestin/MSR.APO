@@ -165,7 +165,7 @@ class MenuCmd:
         :return:
         """
         tab = self._current_tab()
-        prog.progowanie(tab)
+        prog.OperationLightThreshold(tab)
 
     def adaptive_light_levelling(self):
         tab = self._current_tab()
@@ -173,7 +173,7 @@ class MenuCmd:
 
     def redukcja_p_s(self):
         tab = self._current_tab()
-        red_poz_sza.rps(tab)
+        red_poz_sza.OperationLightLeveling(tab)
         # MainGui.gallery[tab_id].rps()
         # MainGui.gallery[tab_id].set_panel_img()
         # if MainGui.gallery[tab_id].histCanvas is not None:

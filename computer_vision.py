@@ -249,8 +249,6 @@ class Vision:
     def global_prog(self, thresh, thresholdType=cv2.THRESH_BINARY):
         ret, self.cvImage_tmp = cv2.threshold(self.cvImage.current(), thresh, 255, thresholdType)
         self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
-        self.show_both_img()
-        # self.set_hist(tmp=1)
 
     def adaptive_prog(self, adaptiveMethod=cv2.ADAPTIVE_THRESH_MEAN_C, thresholdType=cv2.THRESH_BINARY, blockSize=11,
                       C=2):

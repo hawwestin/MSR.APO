@@ -22,11 +22,11 @@ class OperationTemplate:
         self.buttons = tk.Frame(master=self.body)
         self.buttons.pack(side=tk.TOP, fill=tk.X)
 
-        self.controls = tk.Frame(master=self.body)
-        self.controls.pack(after=self.buttons, side=tk.TOP, fill=tk.X)
+        self.plugins = tk.Frame(master=self.body)
+        self.plugins.pack(after=self.buttons, side=tk.TOP, fill=tk.X)
 
         self.panels = tk.Frame(master=self.body)
-        self.panels.pack(after=self.controls, side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.panels.pack(after=self.plugins, side=tk.TOP, fill=tk.BOTH, expand=True)
 
         ###############
         # Panels
@@ -90,7 +90,7 @@ class OperationTemplate:
         self.panel.configure(image=self.tab.vision.tkImage)
         self.panel_tmp.image = self.tab.vision.tkImage_tmp
         self.panel.image = self.tab.vision.tkImage
-        self.histogram()
+        # self.histogram()
         # todo Refresh Histogram
 
     def histogram(self):
