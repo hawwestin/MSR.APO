@@ -1,20 +1,10 @@
-import matplotlib
-
 from repeater import Repeater
 
-matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-from matplotlib.figure import Figure
-from tkinter import ttk
-import matplotlib.animation as animation
-from matplotlib import style
 from cv2 import *
 import cv2
-import tkinter as tk
 import numpy as np
 from PIL import Image
 from PIL import ImageTk
-import matplotlib.pyplot as plt
 
 colors = {"COLOR": 1,
           "GREY": 0}
@@ -26,7 +16,6 @@ supported_ext = [
 
 
 class ImageData(Repeater):
-
     @property
     def tk_image(self):
         """
@@ -57,17 +46,6 @@ class Vision:
         self.cvImage_tmp = None
         self.tkImage_tmp = None
         self.id = None
-        # Panele
-        self.panel = None
-        self.panel_tmp = None
-        self.display = tk.Canvas(parent, bd=0, highlightthickness=0)
-        self.frame_for_Canvas = tk.Frame(master=parent)
-        self.histCanvas = None
-        self.toolbar = None
-        # self.panel = tk.Label(parent)
-        # self.panel.pack()
-        self.f = Figure()
-        self.fig_subplot = self.f.add_subplot(111)
         # ToDO po tym resize nie widac histogramu po prawej stronie.
         # parent.bind("<Configure>", self.resize)
         # Bad Idea Dont do that again
@@ -107,101 +85,6 @@ class Vision:
         # Rearrang the color channel
         b, g, r = cv2.split(img)  # not optimal TODO change to numpay array
         return cv2.merge((r, g, b))
-
-    def close_hist(self):
-        self.fig_subplot.clear()
-        # self.f.clear()
-
-    def set_hist_geometry(self):
-        # self.histCanvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        # self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        self.frame_for_Canvas.pack(side=tk.RIGHT, expand=True)
-
-    def set_hist(self, tmp=None):
-        # todo how close histogram ?
-
-        if tmp is None:
-            source = self.cvImage.current()
-            self.close_hist()
-            # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
-
-            self.fig_subplot.hist(source.ravel(), bins=256, range=[0.0, 256.0])
-            self.fig_subplot.set_xlim([0, 256])
-
-        else:
-            self.close_hist()
-            # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
-
-            self.fig_subplot.hist(self.cvImage_tmp.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
-            self.fig_subplot.hist(self.cvImage.current().ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
-            self.fig_subplot.set_xlim([0, 256])
-
-        if self.histCanvas is None:
-            self.histCanvas = FigureCanvasTkAgg(self.f, self.frame_for_Canvas)
-            self.histCanvas.show()
-        else:
-            self.histCanvas.show()
-            ###################
-            #     ToolBAR
-            ###################
-        if self.toolbar is None:
-            self.toolbar = NavigationToolbar2TkAgg(self.histCanvas,
-                                                   self.frame_for_Canvas)
-            self.toolbar.update()
-        else:
-            self.toolbar.update()
-
-        self.histCanvas.get_tk_widget().pack(side=tk.TOP,
-                                             fill=tk.BOTH,
-                                             expand=True)
-
-    def set_panel_img(self):
-        """
-        Logic : odpalenie okna z obrazkiem ktore  ma wlasne Menu do operacji.
-        Kazde okienko to nowy obiekt.
-        Undowanie na tablicach ? może pod spodem baze danych machnac
-        """
-        # plt.imshow(self.image, cmap='Greys', interpolation='bicubic')
-        # plt.show()
-        # if the panels are None, initialize them
-        if self.panel is None:
-            self.panel = ttk.Label(self.master, image=self.tkImage)
-            # self.panel.configure(image=self.tkImage)
-            # self.panel.image = self.tkImage
-            self.panel.pack(side="left", padx=10, pady=10)
-        # otherwise, update the image panels
-        else:
-            self.panel.configure(image=self.tkImage)
-            self.panel.image = self.tkImage
-
-        if self.panel_tmp is None and self.tkImage_tmp is not None:
-            self.panel_tmp = ttk.Label(self.master, image=self.tkImage_tmp)
-            # self.panel.configure(image=self.tkImage)
-            # self.panel.image = self.tkImage
-            self.panel_tmp.pack(side="left", padx=10, pady=10)
-        # otherwise, update the image panels
-        elif self.panel_tmp is not None:
-            self.panel_tmp.configure(image=self.tkImage_tmp)
-            self.panel_tmp.image = self.tkImage_tmp
-
-    def show_both_img(self):
-        if self.panel_tmp is None or self.panel is None:
-            self.panel_tmp = ttk.Label(self.master, image=self.tkImage_tmp)
-            self.panel_tmp.image = self.tkImage_tmp
-            self.panel_tmp.pack(side="left", padx=10, pady=10)
-
-            self.panel = ttk.Label(self.master, image=self.tkImage)
-            self.panel.image = self.tkImage
-            self.panel.pack(side="left")
-
-        # otherwise, update the image panels
-        else:
-            # update the pannels
-            self.panel_tmp.configure(image=self.tkImage_tmp)
-            self.panel.configure(image=self.tkImage)
-            self.panel_tmp.image = self.tkImage_tmp
-            self.panel.image = self.tkImage
-            # self.panel.image = self.tkImage_tmp
 
     def resize(self, width, height):
         """
@@ -273,7 +156,6 @@ class Vision:
                                                  blockSize,
                                                  C)
         self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
-        self.show_both_img()
 
     def color_picker(self):
         # Create a black image, a window

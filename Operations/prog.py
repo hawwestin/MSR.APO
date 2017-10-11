@@ -1,11 +1,8 @@
-import utils
 import tkinter as tk
 from cv2 import *
 import cv2
-from tkinter import ttk
 
 from Operations.operation_template import OperationTemplate
-from computer_vision import Vision
 from tabpicture import TabPicture
 
 
