@@ -229,6 +229,9 @@ class Vision:
         self.cvImage_tmp = cdf[self.cvImage.current()]
         self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
 
+    def calculate_hist(self):
+        return cv2.calcHist([self.cvImage_tmp], [0], None, [256], [0, 256])
+
     def hist_num(self):
         hist, bins = np.histogram(self.cvImage.current().flatten(), 256, [0, 256])
 

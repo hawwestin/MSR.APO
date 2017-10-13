@@ -39,10 +39,12 @@ class OperationTemplate:
         self.panel_tmp = tk.Label(master=lf_equalised)
 
         self.frame_for_Canvas = tk.Frame(master=self.panels)
+        self.hist_pos_label = tk.Label(master=self.frame_for_Canvas)
 
         self.panel.pack()
         self.panel_tmp.pack()
         self.frame_for_Canvas.pack(side=tk.RIGHT)
+        self.hist_pos_label.pack(side=tk.TOP)
 
         self.toolbar = None
         self.histCanvas = None
@@ -52,6 +54,7 @@ class OperationTemplate:
         self.widget_buttons()
 
         self.control_plugin()
+        self.refresh_panels()
 
         self.window.mainloop()
 
@@ -91,13 +94,20 @@ class OperationTemplate:
         self.panel_tmp.image = self.tab.vision.tkImage_tmp
         self.panel.image = self.tab.vision.tkImage
         self.histogram()
+        self.fig.canvas.mpl_connect('motion_notify_event', self.on_plot_hover)
         # todo Refresh Histogram
+
+    def on_plot_hover(self, event):
+        if event.xdata is not None:
+            self.hist_pos_label.config(
+                text="{}:{}".format(int(event.xdata), int(self.tab.vision.calculate_hist()[int(event.xdata)][0])))
 
     def histogram(self):
         self.fig_subplot.clear()
-        self.fig_subplot.hist(self.tab.vision.cvImage_tmp.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
-        self.fig_subplot.hist(self.tab.vision.cvImage.current().ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
-        self.fig_subplot.set_xlim([0, 256])
+        self.fig_subplot.bar(range(0, 256), self.tab.vision.calculate_hist(), width=1)
+        # self.fig_subplot.hist(self.tab.vision.cvImage_tmp.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
+        # self.fig_subplot.hist(self.tab.vision.cvImage.current().ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
+        self.fig_subplot.set_xlim([-1, 255])
 
         if self.histCanvas is None:
             self.histCanvas = FigureCanvasTkAgg(self.fig, self.frame_for_Canvas)

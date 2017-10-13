@@ -1,9 +1,11 @@
 import matplotlib
+import tkinter as tk
+
 
 import utils
 
 matplotlib.use("TkAgg")
-# from tkinter import *
+
 from tkinter import filedialog
 import os
 from Operations import adap_prog, histEq, red_poz_sza, prog
