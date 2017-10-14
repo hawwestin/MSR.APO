@@ -184,12 +184,12 @@ class MenuCmd:
     def undo_image(self):
         tab = self._current_tab()
         tab.vision.cvImage.undo()
-        tab.vision.tkImage = tab.vision.cvImage.tk_image
+        tab.vision.tkImage = tab.vision.prepare_tk_image(tab.vision.cvImage.current())
         tab.set_panel_img()
 
     def redo_image(self):
         tab = self._current_tab()
         tab.vision.cvImage.redo()
-        tab.vision.tkImage = tab.vision.cvImage.tk_image
+        tab.vision.tkImage = tab.vision.prepare_tk_image(tab.vision.cvImage.current())
         tab.set_panel_img()
 

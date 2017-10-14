@@ -14,6 +14,8 @@ class OperationTemplate:
         self.window.geometry("1024x720")
 
         self.tab = tab
+        self.tab.vision.size = (300, 600)
+        self.tab.vision.tkImage = self.tab.vision.prepare_tk_image(self.tab.vision.cvImage.current())
 
         self.body = tk.Frame(master=self.window)
 
@@ -61,12 +63,12 @@ class OperationTemplate:
     def widget_buttons(self):
         def undo():
             self.tab.vision.cvImage.undo()
-            self.tab.vision.tkImage = self.tab.vision.cvImage.tk_image
+            self.tab.vision.tkImage = self.tab.vision.prepare_tk_image(self.tab.vision.cvImage.current())
             self.refresh_panels()
 
         def redo():
             self.tab.vision.cvImage.redo()
-            self.tab.vision.tkImage = self.tab.vision.cvImage.tk_image
+            self.tab.vision.tkImage = self.tab.vision.prepare_tk_image(self.tab.vision.cvImage.current())
             self.refresh_panels()
 
         def confirm():
@@ -99,15 +101,17 @@ class OperationTemplate:
 
     def on_plot_hover(self, event):
         if event.xdata is not None:
-            self.hist_pos_label.config(
-                text="{}:{}".format(int(event.xdata), int(self.tab.vision.calculate_hist()[int(event.xdata)][0])))
+            if event.xdata <=256:
+                x = int(event.xdata)
+                y = int(self.tab.vision.calculate_hist()[int(event.xdata)])
+                self.hist_pos_label.config(text="{}:{}".format(x, y))
 
     def histogram(self):
         self.fig_subplot.clear()
         self.fig_subplot.bar(range(0, 256), self.tab.vision.calculate_hist(), width=1)
         # self.fig_subplot.hist(self.tab.vision.cvImage_tmp.ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
         # self.fig_subplot.hist(self.tab.vision.cvImage.current().ravel(), bins=256, range=[0.0, 256.0], alpha=0.5)
-        self.fig_subplot.set_xlim([-1, 255])
+        self.fig_subplot.set_xlim([-1, 256])
 
         if self.histCanvas is None:
             self.histCanvas = FigureCanvasTkAgg(self.fig, self.frame_for_Canvas)

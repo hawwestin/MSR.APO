@@ -16,15 +16,7 @@ supported_ext = [
 
 
 class ImageData(Repeater):
-    @property
-    def tk_image(self):
-        """
-        Return tkImage of current cvImage
-        :param image:
-        :return:
-        """
-        # todo add resize on image to keep same size after image enchantments operations.
-        return ImageTk.PhotoImage(Image.fromarray(self.item))
+    pass
 
 
 class Vision:
@@ -43,6 +35,7 @@ class Vision:
         self.cvImage = ImageData()
         self.tkImage = None
         # temp
+        self.size = None
         self.cvImage_tmp = None
         self.tkImage_tmp = None
         self.id = None
@@ -59,15 +52,10 @@ class Vision:
         else:
             self.cvImage.update(cv2.imread(self.path, cv2.IMREAD_GRAYSCALE))
 
-        self.tkImage = self.cvImage.tk_image
+        self.tkImage = self.prepare_tk_image(self.cvImage.current())
 
-    def assign_tkimage(self, image):
-        # todo move this to tabpic
-        # if self.color is cv2.IMREAD_COLOR:
-        #     image = cv2.cvtColor(self.cvImage, cv2.COLOR_RGB2BGR)
-        # else:
-        #     image = cv2.cvtColor(self.cvImage, cv2.COLOR_GRAY2BGR)
-        return ImageTk.PhotoImage(Image.fromarray(image))
+    def prepare_tk_image(self, image):
+        return Vision.resize_tk_image(image, self.size)
 
     ################################
 
@@ -131,7 +119,7 @@ class Vision:
 
     def global_prog(self, thresh, thresholdType=cv2.THRESH_BINARY):
         ret, self.cvImage_tmp = cv2.threshold(self.cvImage.current(), thresh, 255, thresholdType)
-        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
 
     def adaptive_prog(self, adaptiveMethod=cv2.ADAPTIVE_THRESH_MEAN_C, thresholdType=cv2.THRESH_BINARY, blockSize=11,
                       C=2):
@@ -155,7 +143,7 @@ class Vision:
                                                  thresholdType,
                                                  blockSize,
                                                  C)
-        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
 
     def color_picker(self):
         # Create a black image, a window
@@ -205,7 +193,7 @@ class Vision:
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
         # LUT Table cdf
         self.cvImage_tmp = cdf[self.cvImage.current()]
-        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
 
     def negation(self):
         # cv2.invert(self.cvImage, self.cvImage_tmp)
@@ -217,7 +205,7 @@ class Vision:
         # print("cdf Lut: ", cdf)
         # LUT Table cdf
         self.cvImage.update(cdf[self.cvImage.current()])
-        self.tkImage = self.cvImage.tk_image
+        self.tkImage = self.prepare_tk_image(self.cvImage.current())
 
     def hist_rand(self):
         hist, bins = np.histogram(self.cvImage.current().flatten(), 256, [0, 256])
@@ -227,7 +215,7 @@ class Vision:
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
 
         self.cvImage_tmp = cdf[self.cvImage.current()]
-        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
 
     def calculate_hist(self):
         return cv2.calcHist([self.cvImage_tmp], [0], None, [256], [0, 256])
@@ -244,7 +232,7 @@ class Vision:
         # LUT Table cdf
         self.cvImage_tmp = cdf[self.cvImage.current()]
 
-        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
         # TODO zmieniac tylko _tmp obraz nie potrzeba przeladowywac orginalnego jezeli go nie modyfikujemy.
         # self.show_both_img()
         # self.set_hist(tmp=1)
@@ -257,15 +245,32 @@ class Vision:
 
     def hist_eq(self):
         self.cvImage_tmp = cv2.equalizeHist(self.cvImage.current())
-        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
 
     def hist_CLAHE(self, x=8, y=8):
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(x, y))
         self.cvImage_tmp = clahe.apply(self.cvImage.current())
-        self.tkImage_tmp = self.assign_tkimage(self.cvImage_tmp)
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
 
     def save(self, path=None):
         if path is None:
             cv2.imwrite(self.path, self.cvImage.current())
         else:
             cv2.imwrite(path, self.cvImage.current())
+
+    @staticmethod
+    def resize_tk_image(image, size=None):
+        inner_image = ImageTk.PhotoImage(Image.fromarray(image))
+        if size is None:
+            return inner_image
+        org_size = inner_image._PhotoImage__size
+        if org_size[0] > size[0] or org_size[1] > size[1]:
+            proportion_x = size[0] / org_size[0]
+            proportion_y = size[1] / org_size[1]
+            prop = proportion_x if proportion_x < proportion_y else proportion_y
+            size = tuple([int(org_size[0] * prop), int(org_size[1] * prop)])
+        else:
+            size = org_size
+        image = Image.fromarray(image)
+        resize = image.resize(size, Image.ANTIALIAS)
+        return ImageTk.PhotoImage(resize)

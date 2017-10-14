@@ -34,6 +34,7 @@ class TabPicture:
         self.name = name
 
         self.vision = Vision(tab_frame, main_window)
+        self.vision.size = (500, 600)
 
         TabPicture.gallery[self.id] = self
 
@@ -54,7 +55,7 @@ class TabPicture:
 
     def persist_tmp(self):
         self.vision.cvImage.update(self.vision.cvImage_tmp)
-        self.vision.tkImage = self.vision.cvImage.tk_image
+        self.vision.tkImage = self.vision.prepare_tk_image(self.vision.cvImage.current())
         self.set_panel_img()
 
     def confirm(self, huk: Vision, window=None):
@@ -66,7 +67,7 @@ class TabPicture:
         :return:
         """
         self.vision.cvImage.update(huk.cvImage_tmp)
-        self.vision.tkImage = self.vision.cvImage.tk_image
+        self.vision.tkImage = self.vision.prepare_tk_image(self.vision.cvImage.current())
         self.set_panel_img()
         self.panel.pack(side="left",
                         padx=10,
@@ -85,7 +86,7 @@ class TabPicture:
         :return:
         """
         self.vision.cvImage.update(huk.cvImage.current())
-        self.vision.tkImage = self.vision.cvImage.tk_image
+        self.vision.tkImage = self.vision.prepare_tk_image(self.vision.cvImage.current())
         self.set_panel_img()
         self.panel.pack(side="left",
                         padx=10,
