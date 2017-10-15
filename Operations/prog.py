@@ -21,11 +21,11 @@ class OperationLightThreshold(OperationTemplate):
             self.tab.vision.global_prog(float(x),
                                         OperationLightThreshold.thresholdTypeOptions[
                                             tto_v.get()])
-            self.refresh_panels()
+            self.refresh()
 
         def threshold_bind():
             self.tab.vision.global_prog(float(scale.get()), OperationLightThreshold.thresholdTypeOptions[tto_v.get()])
-            self.refresh_panels()
+            self.refresh()
 
         tto_v = tk.StringVar()
         tto_v.set('Binary')

@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 import utils
 from computer_vision import Vision
+from histogram import Histogram
 from repeater import Repeater
 
 matplotlib.use("TkAgg")
@@ -40,8 +41,10 @@ class TabPicture:
 
         self.panel = None
         self.panel_tmp = None
-        self.display = tk.Canvas(tab_frame, bd=0, highlightthickness=0)
-        self.frame_for_Canvas = tk.Frame(master=tab_frame)
+
+        self.panel_hist = tk.Frame(master=tab_frame)
+        self.panel_hist.pack(side=tk.RIGHT, expand=True)
+        self.histogram = Histogram(self.panel_hist, self.vision.cvImage)
         self.histCanvas = None
         self.toolbar = None
         self.f = Figure()
@@ -56,44 +59,44 @@ class TabPicture:
     def persist_tmp(self):
         self.vision.cvImage.update(self.vision.cvImage_tmp)
         self.vision.tkImage = self.vision.prepare_tk_image(self.vision.cvImage.current())
-        self.set_panel_img()
+        self.refresh()
 
-    def confirm(self, huk: Vision, window=None):
-        """
-        akcja dla operacji wywoływanych z Menu do nadpisanai obrazka przechowywanego
-        na wynikowy z operacji
-        :param huk:
-        :param window:
-        :return:
-        """
-        self.vision.cvImage.update(huk.cvImage_tmp)
-        self.vision.tkImage = self.vision.prepare_tk_image(self.vision.cvImage.current())
-        self.set_panel_img()
-        self.panel.pack(side="left",
-                        padx=10,
-                        pady=10)
-
-        if self.histCanvas is not None:
-            self.set_hist()
-        if window is not None:
-            window.destroy()
-
-    def cofnij(self, huk: Vision):
-        """
-        reset image stored in gallery to image with operation was initialize.
-        :param tab:
-        :param huk:
-        :return:
-        """
-        self.vision.cvImage.update(huk.cvImage.current())
-        self.vision.tkImage = self.vision.prepare_tk_image(self.vision.cvImage.current())
-        self.set_panel_img()
-        self.panel.pack(side="left",
-                        padx=10,
-                        pady=10)
-
-        if self.histCanvas is not None:
-            self.set_hist()
+    # def confirm(self, huk: Vision, window=None):
+    #     """
+    #     akcja dla operacji wywoływanych z Menu do nadpisanai obrazka przechowywanego
+    #     na wynikowy z operacji
+    #     :param huk:
+    #     :param window:
+    #     :return:
+    #     """
+    #     self.vision.cvImage.update(huk.cvImage_tmp)
+    #     self.vision.tkImage = self.vision.prepare_tk_image(self.vision.cvImage.current())
+    #     self.set_panel_img()
+    #     self.panel.pack(side="left",
+    #                     padx=10,
+    #                     pady=10)
+    #
+    #     if self.histCanvas is not None:
+    #         self.histogram()
+    #     if window is not None:
+    #         window.destroy()
+    #
+    # def cofnij(self, huk: Vision):
+    #     """
+    #     reset image stored in gallery to image with operation was initialize.
+    #     :param tab:
+    #     :param huk:
+    #     :return:
+    #     """
+    #     self.vision.cvImage.update(huk.cvImage.current())
+    #     self.vision.tkImage = self.vision.prepare_tk_image(self.vision.cvImage.current())
+    #     self.refresh()
+    #     # self.panel.pack(side="left",
+    #     #                 padx=10,
+    #     #                 pady=10)
+    #
+    #     # if self.histCanvas is not None:
+    #     #     self.histogram()
 
     def match(self, what):
         '''
@@ -131,10 +134,11 @@ class TabPicture:
         '''
         if len(path) > 0:
             self.vision.open_image(path)
+            self.vision.tkImage = Vision.resize_tk_image(self.vision.cvImage.current(), (500, 500))
         else:
             utils.status_message.set("nie podano pliku")
 
-    def set_hist(self):
+    def _histogram(self):
         self.fig_subplot.clear()
         # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
 
@@ -142,15 +146,15 @@ class TabPicture:
         self.fig_subplot.set_xlim([0, 256])
 
         if self.histCanvas is None:
-            self.histCanvas = FigureCanvasTkAgg(self.f, self.frame_for_Canvas)
+            self.histCanvas = FigureCanvasTkAgg(self.f, self.panel_hist)
         self.histCanvas.show()
 
         if self.toolbar is None:
-            self.toolbar = NavigationToolbar2TkAgg(self.histCanvas, self.frame_for_Canvas)
+            self.toolbar = NavigationToolbar2TkAgg(self.histCanvas, self.panel_hist)
         self.toolbar.update()
 
         self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        self.frame_for_Canvas.pack(side=tk.RIGHT, expand=True)
+        self.panel_hist.pack(side=tk.RIGHT, expand=True)
 
     def show_hist(self):
         """
@@ -165,7 +169,11 @@ class TabPicture:
 
     def close_hist(self):
         self.fig_subplot.clear()
-        self.frame_for_Canvas.destroy()
+        self.panel_hist.destroy()
+
+    def refresh(self):
+        self.set_panel_img()
+        self.histogram()
 
     def set_panel_img(self):
         """
@@ -176,10 +184,9 @@ class TabPicture:
         if self.panel is None:
             self.panel = ttk.Label(self.tab_frame, image=self.vision.tkImage)
             self.panel.pack(side="left", padx=10, pady=10)
+        self.vision.tkImage = Vision.resize_tk_image(self.vision.cvImage.current(), (500, 500))
         self.panel.configure(image=self.vision.tkImage)
         self.panel.image = self.vision.tkImage
-
-        self.set_hist()
 
     def popup_image(self):
         plt.imshow(self.vision.tkImage, cmap='Greys', interpolation='bicubic')

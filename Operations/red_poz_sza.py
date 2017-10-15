@@ -11,7 +11,7 @@ class OperationLightLeveling(OperationTemplate):
     def control_plugin(self):
         def rps(x):
             self.tab.vision.rps(x)
-            self.refresh_panels()
+            self.refresh()
 
         slider = tk.Frame(self.plugins)
         slider.pack()

@@ -61,7 +61,7 @@ class MenuCmd:
                 tab_pic = TabGreyPicture(tab_frame, self.tkController, name)
 
             tab_pic.open_image(path)
-            tab_pic.set_panel_img()
+            tab_pic.refresh()
 
     def duplicate(self):
         """
@@ -79,7 +79,7 @@ class MenuCmd:
             tab_pic = TabGreyPicture(tab_frame, self.tkController, name)
 
         tab_pic.open_image(tab.vision.path)
-        tab_pic.set_panel_img()
+        tab_pic.refresh()
 
 
     def open_color_image(self):
@@ -97,13 +97,9 @@ class MenuCmd:
                 self._open_img(color=True)
             else:
                 self._open_img(color=False)
-
-            tab_id = self.tkController.notebook.select()
             self.tkController.rename_tab(os.path.splitext(path)[0])
 
-            tab.set_panel_img()
-            # utils.gallery[tab_id].set_panel_img()
-            tab.set_hist()
+            tab.refresh()
 
     @staticmethod
     def not_implemented():
@@ -128,7 +124,7 @@ class MenuCmd:
 
     def inHist(self):
         tab = self._current_tab()
-        tab.set_hist()
+        tab.histogram()
 
     def outHist(self):
         self._current_tab().show_hist()
@@ -159,7 +155,7 @@ class MenuCmd:
     def negation(self):
         tab = self._current_tab()
         tab.vision.negation()
-        tab.set_panel_img()
+        tab.refresh()
 
     def light_levelling(self):
         """
@@ -176,20 +172,16 @@ class MenuCmd:
     def redukcja_p_s(self):
         tab = self._current_tab()
         red_poz_sza.OperationLightLeveling(tab)
-        # MainGui.gallery[tab_id].rps()
-        # MainGui.gallery[tab_id].set_panel_img()
-        # if MainGui.gallery[tab_id].histCanvas is not None:
-        #     MainGui.gallery[tab_id].set_hist()
 
     def undo_image(self):
         tab = self._current_tab()
         tab.vision.cvImage.undo()
         tab.vision.tkImage = tab.vision.prepare_tk_image(tab.vision.cvImage.current())
-        tab.set_panel_img()
+        tab.refresh()
 
     def redo_image(self):
         tab = self._current_tab()
         tab.vision.cvImage.redo()
         tab.vision.tkImage = tab.vision.prepare_tk_image(tab.vision.cvImage.current())
-        tab.set_panel_img()
+        tab.refresh()
 

@@ -16,6 +16,8 @@ supported_ext = [
 
 
 class ImageData(Repeater):
+    def calculate_hist(self):
+        return cv2.calcHist([self.current()], [0], None, [256], [0, 256])
     pass
 
 
@@ -233,15 +235,6 @@ class Vision:
         self.cvImage_tmp = cdf[self.cvImage.current()]
 
         self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
-        # TODO zmieniac tylko _tmp obraz nie potrzeba przeladowywac orginalnego jezeli go nie modyfikujemy.
-        # self.show_both_img()
-        # self.set_hist(tmp=1)
-
-        # plt.plot(cdf_normalized, color='b')
-        # plt.hist(self.cvImage.flatten(), 256, [0, 256], color='r')
-        # plt.xlim([0, 256])
-        # plt.legend(('cdf', 'histogram'), loc='upper left')
-        # plt.show()
 
     def hist_eq(self):
         self.cvImage_tmp = cv2.equalizeHist(self.cvImage.current())

@@ -12,23 +12,23 @@ class OperationHistEQ(OperationTemplate):
     def control_plugin(self):
         def heq():
             self.tab.vision.hist_eq()
-            self.refresh_panels()
+            self.refresh()
 
         def hnum():
             self.tab.vision.hist_num()
-            self.refresh_panels()
+            self.refresh()
 
         def hcl3():
             self.tab.vision.hist_CLAHE(3, 3)
-            self.refresh_panels()
+            self.refresh()
 
         def hcl8():
             self.tab.vision.hist_CLAHE(8, 8)
-            self.refresh_panels()
+            self.refresh()
 
         def hrand():
             self.tab.vision.hist_rand()
-            self.refresh_panels()
+            self.refresh()
 
         B4 = ttk.Button(self.plugins, text="Hist EQ", command=heq)
         B4.pack(side=tk.LEFT, padx=2)

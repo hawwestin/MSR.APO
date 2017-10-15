@@ -56,7 +56,7 @@ class OperationTemplate:
         self.widget_buttons()
 
         self.control_plugin()
-        self.refresh_panels()
+        self.refresh()
 
         self.window.mainloop()
 
@@ -64,16 +64,16 @@ class OperationTemplate:
         def undo():
             self.tab.vision.cvImage.undo()
             self.tab.vision.tkImage = self.tab.vision.prepare_tk_image(self.tab.vision.cvImage.current())
-            self.refresh_panels()
+            self.refresh()
 
         def redo():
             self.tab.vision.cvImage.redo()
             self.tab.vision.tkImage = self.tab.vision.prepare_tk_image(self.tab.vision.cvImage.current())
-            self.refresh_panels()
+            self.refresh()
 
         def confirm():
             self.tab.persist_tmp()
-            self.refresh_panels()
+            self.refresh()
 
         b_undo = ttk.Button(self.buttons, text="Undo", command=undo)
         b_undo.pack(side=tk.LEFT, padx=2)
@@ -81,7 +81,7 @@ class OperationTemplate:
         b_redo = ttk.Button(self.buttons, text="Redo", command=redo)
         b_redo.pack(side=tk.LEFT, padx=2, after=b_undo)
 
-        b_refresh = ttk.Button(self.buttons, text="Refresh images", command=self.refresh_panels)
+        b_refresh = ttk.Button(self.buttons, text="Refresh images", command=self.refresh)
         b_refresh.pack(side=tk.LEFT, padx=2, after=b_redo)
 
         b_confirm = ttk.Button(self.buttons, text="Confirm", command=confirm)
@@ -90,13 +90,16 @@ class OperationTemplate:
         b_exit = ttk.Button(self.buttons, text="Exit", command=self.window.destroy)
         b_exit.pack(side=tk.RIGHT, padx=2)
 
-    def refresh_panels(self):
+    def refresh(self):
+        self.set_panel_img()
+        self.histogram()
+
+    def set_panel_img(self):
         self.panel_tmp.configure(image=self.tab.vision.tkImage_tmp)
         self.panel.configure(image=self.tab.vision.tkImage)
         self.panel_tmp.image = self.tab.vision.tkImage_tmp
         self.panel.image = self.tab.vision.tkImage
-        self.histogram()
-        self.fig.canvas.mpl_connect('motion_notify_event', self.on_plot_hover)
+
         # todo Refresh Histogram
 
     def on_plot_hover(self, event):
@@ -125,6 +128,7 @@ class OperationTemplate:
         self.histCanvas.get_tk_widget().pack(side=tk.TOP,
                                              fill=tk.BOTH,
                                              expand=True)
+        self.fig.canvas.mpl_connect('motion_notify_event', self.on_plot_hover)
 
     def control_plugin(self):
         """

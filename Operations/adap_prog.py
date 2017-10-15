@@ -20,7 +20,7 @@ class OperationAdaptiveThreshold(OperationTemplate):
         def threshold():
             self.tab.vision.adaptive_prog(OperationAdaptiveThreshold.adaptiveMethodOptions[amo_v.get()],
                                           OperationAdaptiveThreshold.thresholdTypeOptions[tto_v.get()])
-            self.refresh_panels()
+            self.refresh()
 
         amo_v = tk.StringVar()
         amo_v.set('Mean')
