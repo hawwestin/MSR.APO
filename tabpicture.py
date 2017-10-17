@@ -1,15 +1,12 @@
 import tkinter as tk
-from queue import LifoQueue
 from tkinter import ttk
 
 import matplotlib
-from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+
 import utils
 from computer_vision import Vision
 from histogram import Histogram
-from repeater import Repeater
 
 matplotlib.use("TkAgg")
 
@@ -30,25 +27,20 @@ class TabPicture:
         Master Key must match menu_command _current tab politics
         """
         self.id = tab_frame._w
+        TabPicture.gallery[self.id] = self
 
-        # tk.StrinVar()
         self.name = name
 
         self.vision = Vision(tab_frame, main_window)
-        self.vision.size = (500, 600)
-
-        TabPicture.gallery[self.id] = self
+        self.size = (500, 600)
 
         self.panel = None
-        self.panel_tmp = None
+        self.panel = ttk.Label(self.tab_frame)
+        self.panel.pack(side=tk.LEFT, padx=10, pady=10, expand=True)
 
         self.panel_hist = tk.Frame(master=tab_frame)
-        self.panel_hist.pack(side=tk.RIGHT, expand=True)
-        self.histogram = Histogram(self.panel_hist, self.vision.cvImage)
-        self.histCanvas = None
-        self.toolbar = None
-        self.f = Figure()
-        self.fig_subplot = self.f.add_subplot(111)
+        self.panel_hist.pack(side=tk.RIGHT, expand=True, after=self.panel)
+        self.histogram = Histogram(self.panel_hist)
 
     def __len__(self):
         return TabPicture.gallery.__len__()
@@ -57,46 +49,9 @@ class TabPicture:
         TabPicture.gallery.pop(self.id, None)
 
     def persist_tmp(self):
-        self.vision.cvImage.update(self.vision.cvImage_tmp)
-        self.vision.tkImage = self.vision.prepare_tk_image(self.vision.cvImage.current())
+        self.vision.cvImage.image = self.vision.cvImage_tmp.image
+        self.vision.tkImage = self.vision.prepare_tk_image(self.vision.cvImage.image)
         self.refresh()
-
-    # def confirm(self, huk: Vision, window=None):
-    #     """
-    #     akcja dla operacji wywoływanych z Menu do nadpisanai obrazka przechowywanego
-    #     na wynikowy z operacji
-    #     :param huk:
-    #     :param window:
-    #     :return:
-    #     """
-    #     self.vision.cvImage.update(huk.cvImage_tmp)
-    #     self.vision.tkImage = self.vision.prepare_tk_image(self.vision.cvImage.current())
-    #     self.set_panel_img()
-    #     self.panel.pack(side="left",
-    #                     padx=10,
-    #                     pady=10)
-    #
-    #     if self.histCanvas is not None:
-    #         self.histogram()
-    #     if window is not None:
-    #         window.destroy()
-    #
-    # def cofnij(self, huk: Vision):
-    #     """
-    #     reset image stored in gallery to image with operation was initialize.
-    #     :param tab:
-    #     :param huk:
-    #     :return:
-    #     """
-    #     self.vision.cvImage.update(huk.cvImage.current())
-    #     self.vision.tkImage = self.vision.prepare_tk_image(self.vision.cvImage.current())
-    #     self.refresh()
-    #     # self.panel.pack(side="left",
-    #     #                 padx=10,
-    #     #                 pady=10)
-    #
-    #     # if self.histCanvas is not None:
-    #     #     self.histogram()
 
     def match(self, what):
         '''
@@ -134,27 +89,8 @@ class TabPicture:
         '''
         if len(path) > 0:
             self.vision.open_image(path)
-            self.vision.tkImage = Vision.resize_tk_image(self.vision.cvImage.current(), (500, 500))
         else:
             utils.status_message.set("nie podano pliku")
-
-    def _histogram(self):
-        self.fig_subplot.clear()
-        # histr = cv2.calcHist([self.cvImage], [0], None, [256], [0, 256])
-
-        self.fig_subplot.hist(self.vision.cvImage.current().ravel(), bins=256, range=[0.0, 256.0])
-        self.fig_subplot.set_xlim([0, 256])
-
-        if self.histCanvas is None:
-            self.histCanvas = FigureCanvasTkAgg(self.f, self.panel_hist)
-        self.histCanvas.show()
-
-        if self.toolbar is None:
-            self.toolbar = NavigationToolbar2TkAgg(self.histCanvas, self.panel_hist)
-        self.toolbar.update()
-
-        self.histCanvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        self.panel_hist.pack(side=tk.RIGHT, expand=True)
 
     def show_hist(self):
         """
@@ -164,16 +100,12 @@ class TabPicture:
         :return:
         """
         # todo wyczyszczenie grafu przed zaladowaniem kolejnego , jak zaladowac kilka instancji do kilku obrazkow ?
-        plt.hist(self.vision.cvImage.current().ravel(), 256, [0, 255])
+        plt.hist(self.vision.cvImage.image.ravel(), 256, [0, 255])
         plt.show()
-
-    def close_hist(self):
-        self.fig_subplot.clear()
-        self.panel_hist.destroy()
 
     def refresh(self):
         self.set_panel_img()
-        self.histogram()
+        self.histogram(image=self.vision.cvImage.image)
 
     def set_panel_img(self):
         """
@@ -181,10 +113,7 @@ class TabPicture:
         Kazde okienko to nowy obiekt.
         Undowanie na tablicach ? może pod spodem baze danych machnac
         """
-        if self.panel is None:
-            self.panel = ttk.Label(self.tab_frame, image=self.vision.tkImage)
-            self.panel.pack(side="left", padx=10, pady=10)
-        self.vision.tkImage = Vision.resize_tk_image(self.vision.cvImage.current(), (500, 500))
+        self.vision.tkImage = Vision.resize_tk_image(self.vision.cvImage.image, self.size)
         self.panel.configure(image=self.vision.tkImage)
         self.panel.image = self.vision.tkImage
 

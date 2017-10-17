@@ -15,10 +15,27 @@ supported_ext = [
 ]
 
 
-class ImageData(Repeater):
-    def calculate_hist(self):
-        return cv2.calcHist([self.current()], [0], None, [256], [0, 256])
-    pass
+class MemoImageData(Repeater):
+    @property
+    def image(self):
+        return self.current()
+
+    @image.setter
+    def image(self, value):
+        self.update(value)
+
+
+class SingleImageData:
+    def __init__(self):
+        self._item = None
+
+    @property
+    def image(self):
+        return self._item
+
+    @image.setter
+    def image(self, value):
+        self._item = value
 
 
 class Vision:
@@ -34,11 +51,11 @@ class Vision:
         self.color = None
 
         # Actual
-        self.cvImage = ImageData()
+        self.cvImage = MemoImageData()
         self.tkImage = None
         # temp
         self.size = None
-        self.cvImage_tmp = None
+        self.cvImage_tmp = SingleImageData()
         self.tkImage_tmp = None
         self.id = None
         # ToDO po tym resize nie widac histogramu po prawej stronie.
@@ -49,21 +66,15 @@ class Vision:
     def open_image(self, path):
         self.path = path
         if self.color is cv2.IMREAD_COLOR:
-            self.cvImage.update(cv2.imread(self.path, cv2.IMREAD_COLOR))
-            self.cvImage.update(cv2.cvtColor(self.cvImage.current(), cv2.COLOR_BGR2RGB))
+            self.cvImage.image = cv2.imread(self.path, cv2.IMREAD_COLOR)
+            self.cvImage.image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_BGR2RGB)
         else:
-            self.cvImage.update(cv2.imread(self.path, cv2.IMREAD_GRAYSCALE))
+            self.cvImage.image = cv2.imread(self.path, cv2.IMREAD_GRAYSCALE)
 
-        self.tkImage = self.prepare_tk_image(self.cvImage.current())
+        self.tkImage = self.prepare_tk_image(self.cvImage.image)
 
     def prepare_tk_image(self, image):
         return Vision.resize_tk_image(image, self.size)
-
-    ################################
-
-    # def show(self):
-    #     plt.imshow(self.cvImage, cmap='Greys', interpolation='bicubic')
-    #     plt.show()
 
     def color_convertion(self, img):
         """
@@ -88,7 +99,7 @@ class Vision:
         # image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
         # cv2.COLOR_BGR2RGB)
         print(size)
-        image = Image.fromarray(self.cvImage.current())
+        image = Image.fromarray(self.cvImage.image)
         resized = image.resize(size, Image.ANTIALIAS)
         self.tkImage = ImageTk.PhotoImage(resized)
 
@@ -98,7 +109,7 @@ class Vision:
         # image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
         # cv2.COLOR_BGR2RGB)
         print(size)
-        image = Image.fromarray(self.cvImage)
+        image = Image.fromarray(self.cvImage.image)
         resized = image.resize_event(size, Image.ANTIALIAS)
         self.tkImage = ImageTk.PhotoImage(resized)
         #         For Canvas
@@ -112,7 +123,7 @@ class Vision:
         # image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
         # cv2.COLOR_BGR2RGB)
         print(size)
-        image = Image.fromarray(self.cvImage_tmp)
+        image = Image.fromarray(self.cvImage_tmp.image)
         resized = image.resize_event(size, Image.ANTIALIAS)
         self.tkImage_tmp = ImageTk.PhotoImage(resized)
         #         For Canvas
@@ -120,8 +131,8 @@ class Vision:
         # self.display.create_image(0, 0, image=self.tkImage, anchor='nw', tags="IMG")
 
     def global_prog(self, thresh, thresholdType=cv2.THRESH_BINARY):
-        ret, self.cvImage_tmp = cv2.threshold(self.cvImage.current(), thresh, 255, thresholdType)
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
+        ret, self.cvImage_tmp.image = cv2.threshold(self.cvImage.image, thresh, 255, thresholdType)
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
 
     def adaptive_prog(self, adaptiveMethod=cv2.ADAPTIVE_THRESH_MEAN_C, thresholdType=cv2.THRESH_BINARY, blockSize=11,
                       C=2):
@@ -140,12 +151,12 @@ class Vision:
         :param C: It is just a constant which is subtracted from the mean or weighted mean calculated.
         :return:
         """
-        self.cvImage_tmp = cv2.adaptiveThreshold(self.cvImage.current(), 255,
-                                                 adaptiveMethod,
-                                                 thresholdType,
-                                                 blockSize,
-                                                 C)
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
+        self.cvImage_tmp.image = cv2.adaptiveThreshold(self.cvImage.image, 255,
+                                                       adaptiveMethod,
+                                                       thresholdType,
+                                                       blockSize,
+                                                       C)
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
 
     def color_picker(self):
         # Create a black image, a window
@@ -194,36 +205,35 @@ class Vision:
         cdf_m = np.array(cdf_m).ravel()
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
         # LUT Table cdf
-        self.cvImage_tmp = cdf[self.cvImage.current()]
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
+        self.cvImage_tmp.image = cdf[self.cvImage.image]
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
 
     def negation(self):
         # cv2.invert(self.cvImage, self.cvImage_tmp)
 
-        hist, bins = np.histogram(self.cvImage.current().flatten(), 256, [0, 256])
+        hist, bins = np.histogram(self.cvImage.image.flatten(), 256, [0, 256])
         # cdf = hist.cumsum()
         cdf_m = (255 - bins)
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
         # print("cdf Lut: ", cdf)
         # LUT Table cdf
-        self.cvImage.update(cdf[self.cvImage.current()])
-        self.tkImage = self.prepare_tk_image(self.cvImage.current())
+        self.cvImage.image = cdf[self.cvImage.image]
+        self.tkImage = self.prepare_tk_image(self.cvImage.image)
 
     def hist_rand(self):
-        hist, bins = np.histogram(self.cvImage.current().flatten(), 256, [0, 256])
+        hist, bins = np.histogram(self.cvImage.image.flatten(), 256, [0, 256])
         cdf = hist.cumsum()
         cdf_m = np.ma.masked_equal(cdf, 0)
         cdf_m = (cdf_m - cdf_m.min()) * 255 / (cdf_m.max() - cdf_m.mean())
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
 
-        self.cvImage_tmp = cdf[self.cvImage.current()]
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
+        self.cvImage_tmp.image = cdf[self.cvImage.image]
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
 
-    def calculate_hist(self):
-        return cv2.calcHist([self.cvImage_tmp], [0], None, [256], [0, 256])
+        return cv2.calcHist([self.cvImage_tmp.image], [0], None, [256], [0, 256])
 
     def hist_num(self):
-        hist, bins = np.histogram(self.cvImage.current().flatten(), 256, [0, 256])
+        hist, bins = np.histogram(self.cvImage.image.flatten(), 256, [0, 256])
 
         cdf = hist.cumsum()
         # cdf_normalized = cdf * hist.max() / cdf.max()
@@ -232,24 +242,24 @@ class Vision:
         cdf_m = (cdf_m - cdf_m.min()) * 255 / (cdf_m.max() - cdf_m.min())
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
         # LUT Table cdf
-        self.cvImage_tmp = cdf[self.cvImage.current()]
+        self.cvImage_tmp.image = cdf[self.cvImage.image]
 
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
 
     def hist_eq(self):
-        self.cvImage_tmp = cv2.equalizeHist(self.cvImage.current())
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
+        self.cvImage_tmp.image = cv2.equalizeHist(self.cvImage.image)
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
 
     def hist_CLAHE(self, x=8, y=8):
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(x, y))
-        self.cvImage_tmp = clahe.apply(self.cvImage.current())
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp)
+        self.cvImage_tmp.image = clahe.apply(self.cvImage.image)
+        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
 
     def save(self, path=None):
         if path is None:
-            cv2.imwrite(self.path, self.cvImage.current())
+            cv2.imwrite(self.path, self.cvImage.image)
         else:
-            cv2.imwrite(path, self.cvImage.current())
+            cv2.imwrite(path, self.cvImage.image)
 
     @staticmethod
     def resize_tk_image(image, size=None):

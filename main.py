@@ -1,8 +1,9 @@
-from main_window import *
+from main_window import MainWindow
+from utils import resolution
 
 # creation of an instance
 app = MainWindow()
 
-app.geometry("800x600")
+app.geometry(resolution)
 # mainloop
 app.mainloop()

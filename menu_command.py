@@ -124,7 +124,7 @@ class MenuCmd:
 
     def inHist(self):
         tab = self._current_tab()
-        tab.histogram()
+        tab.histogram(tab.vision.cvImage.image)
 
     def outHist(self):
         self._current_tab().show_hist()
@@ -176,12 +176,12 @@ class MenuCmd:
     def undo_image(self):
         tab = self._current_tab()
         tab.vision.cvImage.undo()
-        tab.vision.tkImage = tab.vision.prepare_tk_image(tab.vision.cvImage.current())
+        tab.vision.tkImage = tab.vision.prepare_tk_image(tab.vision.cvImage.image)
         tab.refresh()
 
     def redo_image(self):
         tab = self._current_tab()
         tab.vision.cvImage.redo()
-        tab.vision.tkImage = tab.vision.prepare_tk_image(tab.vision.cvImage.current())
+        tab.vision.tkImage = tab.vision.prepare_tk_image(tab.vision.cvImage.image)
         tab.refresh()
 
