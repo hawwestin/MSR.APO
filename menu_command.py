@@ -7,6 +7,7 @@ import utils
 matplotlib.use("TkAgg")
 
 from tkinter import filedialog
+from tkinter import simpledialog
 import os
 from Operations import adap_prog, histEq, red_poz_sza, prog
 from tabpicture import TabColorPicture, TabGreyPicture, TabPicture
@@ -185,3 +186,13 @@ class MenuCmd:
         tab.vision.tkImage = tab.vision.prepare_tk_image(tab.vision.cvImage.image)
         tab.refresh()
 
+    def new_img(self):
+        path = filedialog.asksaveasfilename()
+        name = tk.StringVar()
+        name.set("New.jpg")
+        tab_frame = self.tkController.new_tab(name.get())
+        tab_pic = TabGreyPicture(tab_frame, self.tkController, name)
+        tab_pic.vision.new_rand_img()
+        tab_pic.vision.path = path
+        # tab_pic.open_image(path)
+        tab_pic.refresh()

@@ -36,6 +36,7 @@ class OperationTemplate:
         ###############
         # Panels
         ###############
+        # todo Panned window ith checkbox switcher for Horizontal / vertical layout
         lf_original = tk.LabelFrame(master=self.panels, text='Original')
         lf_original.pack(side=tk.LEFT)
         self.panel = tk.Label(master=lf_original, image=self.tab.vision.tkImage)

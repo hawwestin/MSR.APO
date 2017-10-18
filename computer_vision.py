@@ -277,3 +277,7 @@ class Vision:
         image = Image.fromarray(image)
         resize = image.resize(size, Image.ANTIALIAS)
         return ImageTk.PhotoImage(resize)
+
+    def new_rand_img(self):
+        image = np.random.randint(0, 256, 120000).reshape(300, 400)
+        self.cvImage.image = image.astype('uint8')

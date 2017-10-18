@@ -50,7 +50,6 @@ class TabPicture:
 
     def persist_tmp(self):
         self.vision.cvImage.image = self.vision.cvImage_tmp.image
-        self.vision.tkImage = self.vision.prepare_tk_image(self.vision.cvImage.image)
         self.refresh()
 
     def match(self, what):
