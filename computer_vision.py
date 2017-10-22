@@ -281,3 +281,35 @@ class Vision:
     def new_rand_img(self):
         image = np.random.randint(0, 256, 120000).reshape(300, 400)
         self.cvImage.image = image.astype('uint8')
+
+    def uop(self, tilt, level):
+        # hist, bins = np.histogram(self.cvImage.image.flatten(), 256, [0, 256])
+        # cdf = hist.cumsum()
+        # cdf_n = (255 - bins)
+        cdf = []
+        for x in range(256):
+            v = int(tilt) * int(x) + int(level)
+            if v < 0:
+                cdf.append(0)
+            elif v > 255:
+                cdf.append(255)
+            else:
+                cdf.append(v)
+        cdf = np.array(cdf)
+        # cdf = np.ma.filled(cdf_l, 0).astype('uint8')
+        # print("cdf Lut: ", cdf)
+        # LUT Table cdf
+        cdf = np.ma.filled(cdf, 0).astype('uint8')
+        x = cdf[self.cvImage.image]
+        self.cvImage_tmp.image = x
+
+    def image_stretching(self, p1, p2):
+        lut = []
+        for p in range(256):
+            if p1 < p < p2:
+                lut.append((p - p1) * (256 / (p2 - p1)))
+            else:
+                lut.append(0)
+        lut = np.array(lut)
+        lut = np.ma.filled(lut, 0).astype('uint8')
+        self.cvImage_tmp.image = lut[self.cvImage.image]

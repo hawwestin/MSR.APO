@@ -23,21 +23,15 @@ class MainMenu(tk.Frame):
         return self._menucmd
 
     def menu_bar(self):
-        # creating a menu instance
-        # menu = Menu(self.master)
-
-
-        # create the file object
-
-        open = tk.Menu(self.menu, tearoff=0)
-        open.add_command(label="Open in Color", command=self.menu_cmd.open_color_image)
-        open.add_command(label="Open in Grey Scale", command=self.menu_cmd.open_grey_image)
+        file_open = tk.Menu(self.menu, tearoff=0)
+        file_open.add_command(label="Open in Color", command=self.menu_cmd.open_color_image)
+        file_open.add_command(label="Open in Grey Scale", command=self.menu_cmd.open_grey_image)
 
         file = tk.Menu(self.menu, tearoff=0)
 
         file.add_command(label="New", command=self.menu_cmd.new_img)
         # todo przerobic na otwarcie kolorowego obrazka i szarego
-        file.add_cascade(label="Open", menu=open)
+        file.add_cascade(label="Open", menu=file_open)
         file.add_command(label="Reload", command=self.menu_cmd.load_image)
         file.add_command(label="Save", command=self.menu_cmd.save)
         file.add_command(label="Save as", command=self.menu_cmd.save_as)
@@ -79,6 +73,8 @@ class MainMenu(tk.Frame):
         punktowe.add_command(label="Progowanie", command=self._menucmd.light_levelling)
         punktowe.add_command(label="Progowanie adaptacyjne", command=self._menucmd.adaptive_light_levelling)
         punktowe.add_command(label="Redukcja poziomów szarości", command=self._menucmd.redukcja_p_s)
+        punktowe.add_command(label="Rozciąganie", command=self._menucmd.stretching)
+        punktowe.add_command(label="Uniwersalna operacja jednopunktowa", command=self._menucmd.uop)
 
         operation = tk.Menu(self.menu, tearoff=0)
         operation.add_cascade(label="Histogram", menu=histogram)

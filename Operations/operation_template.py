@@ -94,6 +94,8 @@ class OperationTemplate:
 
     def set_panel_img(self):
         self.tab.vision.tkImage = Vision.resize_tk_image(self.tab.vision.cvImage.image, self.size)
+        if self.tab.vision.cvImage_tmp.image is not None:
+            self.tab.vision.tkImage_tmp = Vision.resize_tk_image(self.tab.vision.cvImage_tmp.image, self.size)
         self.panel.configure(image=self.tab.vision.tkImage)
         self.panel.image = self.tab.vision.tkImage
         if self.tab.vision.tkImage_tmp is not None:

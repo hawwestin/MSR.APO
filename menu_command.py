@@ -9,7 +9,7 @@ matplotlib.use("TkAgg")
 from tkinter import filedialog
 from tkinter import simpledialog
 import os
-from Operations import adap_prog, histEq, red_poz_sza, prog
+from Operations import adap_prog, histEq, red_poz_sza, prog, UOP, stretching
 from tabpicture import TabColorPicture, TabGreyPicture, TabPicture
 from computer_vision import *
 
@@ -174,6 +174,10 @@ class MenuCmd:
         tab = self._current_tab()
         red_poz_sza.OperationLightLeveling(tab)
 
+    def uop(self):
+        tab = self._current_tab()
+        UOP.UOPOperation(tab)
+
     def undo_image(self):
         tab = self._current_tab()
         tab.vision.cvImage.undo()
@@ -196,3 +200,7 @@ class MenuCmd:
         tab_pic.vision.path = path
         # tab_pic.open_image(path)
         tab_pic.refresh()
+
+    def stretching(self):
+        tab = self._current_tab()
+        stretching.OperationStretching(tab)
