@@ -313,3 +313,14 @@ class Vision:
         lut = np.array(lut)
         lut = np.ma.filled(lut, 0).astype('uint8')
         self.cvImage_tmp.image = lut[self.cvImage.image]
+
+    def progowanie_z_zachowaniem_poziomow(self, p1, p2):
+        lut = []
+        for p in range(256):
+            if p1 < p <= p2:
+                lut.append(p)
+            elif p <= p1 or p > p2:
+                lut.append(0)
+        lut = np.array(lut)
+        lut = np.ma.filled(lut, 0).astype('uint8')
+        self.cvImage_tmp.image = lut[self.cvImage.image]

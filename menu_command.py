@@ -9,7 +9,7 @@ matplotlib.use("TkAgg")
 from tkinter import filedialog
 from tkinter import simpledialog
 import os
-from Operations import adap_prog, histEq, red_poz_sza, prog, UOP, stretching
+from Operations import adap_prog, histEq, red_poz_sza, prog, UOP, stretching, prog_zach
 from tabpicture import TabColorPicture, TabGreyPicture, TabPicture
 from computer_vision import *
 
@@ -158,7 +158,7 @@ class MenuCmd:
         tab.vision.negation()
         tab.refresh()
 
-    def light_levelling(self):
+    def light_threshold(self):
         """
         Progowanie
         :return:
@@ -166,7 +166,7 @@ class MenuCmd:
         tab = self._current_tab()
         prog.OperationLightThreshold(tab)
 
-    def adaptive_light_levelling(self):
+    def adaptive_light_threshold(self):
         tab = self._current_tab()
         adap_prog.OperationAdaptiveThreshold(tab)
 
@@ -204,3 +204,8 @@ class MenuCmd:
     def stretching(self):
         tab = self._current_tab()
         stretching.OperationStretching(tab)
+
+    def progowanie_z_zachowaniem(self):
+        tab = self._current_tab()
+        prog_zach.OperationLightThresholdKeepingValue(tab)
+

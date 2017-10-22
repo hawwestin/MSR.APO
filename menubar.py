@@ -70,10 +70,11 @@ class MainMenu(tk.Frame):
 
         punktowe = tk.Menu(self.menu, tearoff=0)
         punktowe.add_command(label="Negacja", command=self._menucmd.negation)
-        punktowe.add_command(label="Progowanie", command=self._menucmd.light_levelling)
-        punktowe.add_command(label="Progowanie adaptacyjne", command=self._menucmd.adaptive_light_levelling)
+        punktowe.add_command(label="Binaryzacja", command=self._menucmd.light_threshold)
+        punktowe.add_command(label="Progowanie z zachowaniem poziomów szarości", command=self._menucmd.progowanie_z_zachowaniem)
         punktowe.add_command(label="Redukcja poziomów szarości", command=self._menucmd.redukcja_p_s)
         punktowe.add_command(label="Rozciąganie", command=self._menucmd.stretching)
+        punktowe.add_command(label="Progowanie adaptacyjne", command=self._menucmd.adaptive_light_threshold)
         punktowe.add_command(label="Uniwersalna operacja jednopunktowa", command=self._menucmd.uop)
 
         operation = tk.Menu(self.menu, tearoff=0)
