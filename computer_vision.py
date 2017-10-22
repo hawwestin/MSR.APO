@@ -306,9 +306,9 @@ class Vision:
     def image_stretching(self, p1, p2):
         lut = []
         for p in range(256):
-            if p1 < p < p2:
+            if p1 < p <= p2:
                 lut.append((p - p1) * (256 / (p2 - p1)))
-            else:
+            elif p <= p1 or p > p2:
                 lut.append(0)
         lut = np.array(lut)
         lut = np.ma.filled(lut, 0).astype('uint8')

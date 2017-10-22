@@ -33,6 +33,11 @@ class OperationTemplate:
         self.panels = tk.Frame(master=self.body)
         self.panels.pack(after=self.plugins, side=tk.TOP, fill=tk.BOTH, expand=True)
 
+        self.status_message = tk.StringVar()
+        self.status_message.set('*')
+        self.status_bar = tk.Label(self.body, textvariable=self.status_message, bd=1, relief=tk.SUNKEN, anchor='w')
+        self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+
         ###############
         # Panels
         ###############
