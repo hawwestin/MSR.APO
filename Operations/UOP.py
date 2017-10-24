@@ -11,16 +11,49 @@ from tabpicture import TabPicture
 
 
 class UOPOperation(OperationTemplate):
+    bins = list(range(0, 256))
+
     def __init__(self, tab: TabPicture):
+        self.fig = Figure()
+        self.fig_subplot = self.fig.add_subplot(111)
+        self.lut_canvas = None
+        self.draw = False
+        self.lut = np.array(UOPOperation.bins)
+        self.lut_pos_label = None
         super().__init__("Uniwersalna operacja jednopunktowa", tab)
 
     def control_plugin(self):
-        def uop():
-            self.tab.vision.uop(2, 0)
-            self.refresh()
+        def draw(flag):
+            self.draw = flag
+            if flag is False:
+                self.tab.vision.tone_curve(self.lut)
+                self.refresh()
 
-        button = ttk.Button(self.plugins, text="uop", command=uop)
-        button.pack(side=tk.LEFT, padx=2)
+        self.lut_pos_label = tk.Label(master=self.plugins)
+        self.lut_pos_label.pack(side=tk.TOP)
+
+        self.lut_line(self.lut)
+        self.fig.tight_layout()
+        self.fig.canvas.mpl_connect('button_press_event', lambda x: draw(True))
+        self.fig.canvas.mpl_connect('button_release_event', lambda x: draw(False))
+        self.fig.canvas.mpl_connect('motion_notify_event', self._mouse_brush)
+
+    def _mouse_brush(self, event):
+        if event.xdata is not None:
+            self.lut_pos_label.config(text="{}:{}".format(int(event.xdata), int(self.lut[int(event.xdata)])))
+            if self.draw and event.xdata < 256:
+                self.lut[int(event.xdata)] = event.ydata
+                self.lut_line(self.lut)
+
+    def lut_line(self, lut):
+        self.fig_subplot.clear()
+        self.fig_subplot.plot(UOPOperation.bins, lut)
+        self.fig_subplot.set_xlim([0, 255])
+        self.fig_subplot.set_ylim([0, 255])
+        if self.lut_canvas is None:
+            self.lut_canvas = FigureCanvasTkAgg(self.fig, self.plugins)
+            self.lut_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.lut_canvas.show()
 
 
 class tmp:

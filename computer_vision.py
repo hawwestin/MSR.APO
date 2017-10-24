@@ -282,26 +282,36 @@ class Vision:
         image = np.random.randint(0, 256, 120000).reshape(300, 400)
         self.cvImage.image = image.astype('uint8')
 
-    def uop(self, tilt, level):
+    def uop(self, gamma: float, brightness: int):
         # hist, bins = np.histogram(self.cvImage.image.flatten(), 256, [0, 256])
         # cdf = hist.cumsum()
         # cdf_n = (255 - bins)
-        cdf = []
+        invGamma = 1.0 / gamma
+        table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
+
+        # apply gamma correction using the lookup table
+        xx = cv2.LUT(self.cvImage.image, table)
+
+        lut = []
         for x in range(256):
-            v = int(tilt) * int(x) + int(level)
+            v = ((x / 255.0) ** invGamma) * 255 + brightness
             if v < 0:
-                cdf.append(0)
+                lut.append(0)
             elif v > 255:
-                cdf.append(255)
+                lut.append(255)
             else:
-                cdf.append(v)
-        cdf = np.array(cdf)
+                lut.append(v)
+        lut = np.array(lut)
         # cdf = np.ma.filled(cdf_l, 0).astype('uint8')
         # print("cdf Lut: ", cdf)
         # LUT Table cdf
-        cdf = np.ma.filled(cdf, 0).astype('uint8')
-        x = cdf[self.cvImage.image]
+        lut = np.ma.filled(lut, 0).astype('uint8')
+        x = lut[self.cvImage.image]
         self.cvImage_tmp.image = x
+        return lut
+
+    def tone_curve(self, lut):
+        self.cvImage_tmp.image = cv2.LUT(self.cvImage.image, np.array(lut).astype("uint8"))
 
     def image_stretching(self, p1, p2):
         lut = []
@@ -313,6 +323,7 @@ class Vision:
         lut = np.array(lut)
         lut = np.ma.filled(lut, 0).astype('uint8')
         self.cvImage_tmp.image = lut[self.cvImage.image]
+        return lut
 
     def progowanie_z_zachowaniem_poziomow(self, p1, p2):
         lut = []
@@ -324,3 +335,4 @@ class Vision:
         lut = np.array(lut)
         lut = np.ma.filled(lut, 0).astype('uint8')
         self.cvImage_tmp.image = lut[self.cvImage.image]
+        return lut
