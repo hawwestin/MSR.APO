@@ -282,32 +282,21 @@ class Vision:
         image = np.random.randint(0, 256, 120000).reshape(300, 400)
         self.cvImage.image = image.astype('uint8')
 
-    def uop(self, gamma: float, brightness: int):
-        # hist, bins = np.histogram(self.cvImage.image.flatten(), 256, [0, 256])
-        # cdf = hist.cumsum()
-        # cdf_n = (255 - bins)
+    def uop(self, gamma: float, brightness: int, contrast: float):
         invGamma = 1.0 / gamma
-        table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
 
-        # apply gamma correction using the lookup table
-        xx = cv2.LUT(self.cvImage.image, table)
-
+        # table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
         lut = []
         for x in range(256):
-            v = ((x / 255.0) ** invGamma) * 255 + brightness
+            v = contrast*(((x / 255.0) ** invGamma) * 255) + brightness
             if v < 0:
                 lut.append(0)
             elif v > 255:
                 lut.append(255)
             else:
                 lut.append(v)
-        lut = np.array(lut)
-        # cdf = np.ma.filled(cdf_l, 0).astype('uint8')
-        # print("cdf Lut: ", cdf)
-        # LUT Table cdf
-        lut = np.ma.filled(lut, 0).astype('uint8')
-        x = lut[self.cvImage.image]
-        self.cvImage_tmp.image = x
+        lut = np.array(lut).astype('uint8')
+        cv2.LUT(self.cvImage.image, lut, self.cvImage_tmp.image)
         return lut
 
     def tone_curve(self, lut):
