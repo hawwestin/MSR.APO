@@ -34,6 +34,8 @@ class TabPicture:
         self.vision = Vision(tab_frame, main_window)
         self.size = (500, 600)
 
+        self.tkImage = None
+
         self.panel = None
         self.panel = ttk.Label(self.tab_frame)
         self.panel.pack(side=tk.LEFT, padx=10, pady=10, expand=True)
@@ -112,12 +114,12 @@ class TabPicture:
         Kazde okienko to nowy obiekt.
         Undowanie na tablicach ? może pod spodem baze danych machnac
         """
-        self.vision.tkImage = Vision.resize_tk_image(self.vision.cvImage.image, self.size)
-        self.panel.configure(image=self.vision.tkImage)
-        self.panel.image = self.vision.tkImage
+        self.tkImage = Vision.resize_tk_image(self.vision.cvImage.image, self.size)
+        self.panel.configure(image=self.tkImage)
+        self.panel.image = self.tkImage
 
     def popup_image(self):
-        plt.imshow(self.vision.tkImage, cmap='Greys', interpolation='bicubic')
+        plt.imshow(self.tkImage, cmap='Greys', interpolation='bicubic')
         plt.show()
 
 

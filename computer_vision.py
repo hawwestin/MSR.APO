@@ -52,12 +52,8 @@ class Vision:
 
         # Actual
         self.cvImage = MemoImageData()
-        self.tkImage = None
         # temp
-        self.size = None
         self.cvImage_tmp = SingleImageData()
-        self.tkImage_tmp = None
-        self.id = None
 
     def open_image(self, path):
         self.path = path

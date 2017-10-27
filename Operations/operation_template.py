@@ -18,6 +18,8 @@ class OperationTemplate:
 
         self.tab = tab
         self.size = (300, 700)
+        self.tkImage = Vision.resize_tk_image(self.tab.vision.cvImage.image, self.size)
+        self.tkImage_tmp = None
         # self.tab.vision.tkImage = self.tab.vision.prepare_tk_image(self.tab.vision.cvImage.image)
 
         self.body = tk.Frame(master=self.window)
@@ -43,7 +45,7 @@ class OperationTemplate:
         ###############
         lf_original = tk.LabelFrame(master=self.panels, text='Original')
         lf_original.pack(side=tk.LEFT)
-        self.panel = tk.Label(master=lf_original, image=self.tab.vision.tkImage)
+        self.panel = tk.Label(master=lf_original, image=self.tkImage)
         self.panel.pack()
 
         lf_equalised = tk.LabelFrame(master=self.panels, text='Equalised')
@@ -99,15 +101,13 @@ class OperationTemplate:
         self.histogram(self.tab.vision.cvImage_tmp.image)
 
     def set_panel_img(self):
-        self.tab.vision.tkImage = Vision.resize_tk_image(self.tab.vision.cvImage.image, self.size)
+        self.tkImage = Vision.resize_tk_image(self.tab.vision.cvImage.image, self.size)
+        self.panel.configure(image=self.tkImage)
+        self.panel.image = self.tkImage
         if self.tab.vision.cvImage_tmp.image is not None:
-            self.tab.vision.tkImage_tmp = Vision.resize_tk_image(self.tab.vision.cvImage_tmp.image, self.size)
-        self.panel.configure(image=self.tab.vision.tkImage)
-        self.panel.image = self.tab.vision.tkImage
-        if self.tab.vision.cvImage_tmp.image is not None:
-            self.tab.vision.tkImage_tmp = Vision.resize_tk_image(self.tab.vision.cvImage_tmp.image, self.size)
-            self.panel_tmp.configure(image=self.tab.vision.tkImage_tmp)
-            self.panel_tmp.image = self.tab.vision.tkImage_tmp
+            self.tkImage_tmp = Vision.resize_tk_image(self.tab.vision.cvImage_tmp.image, self.size)
+            self.panel_tmp.configure(image=self.tkImage_tmp)
+            self.panel_tmp.image = self.tkImage_tmp
 
     def control_plugin(self):
         """
