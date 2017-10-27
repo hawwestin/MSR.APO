@@ -1,5 +1,6 @@
 from queue import LifoQueue
 import utils
+import tkinter as tk
 
 
 class Repeater:
@@ -29,25 +30,25 @@ class Repeater:
 
         self.item = value
 
-    def redo(self):
+    def redo(self, status: tk.StringVar):
         """
         Load next image
         :return:
         """
         if self.rstack.empty():
-            utils.status_message.set("Nothing to Redo")
+            status.set("Nothing to Redo")
             return
         elif self.item is not None:
             self.stack.put_nowait(self.item)
             self.item = self.rstack.get_nowait()
 
-    def undo(self):
+    def undo(self, status: tk.StringVar):
         """
         Load previous image
         :return:
         """
         if self.stack.empty():
-            utils.status_message.set("Nothing to Undo")
+            status.set("Nothing to Undo")
             return
         else:
             self.rstack.put_nowait(self.item)

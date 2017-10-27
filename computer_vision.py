@@ -67,11 +67,6 @@ class Vision:
         else:
             self.cvImage.image = cv2.imread(self.path, cv2.IMREAD_GRAYSCALE)
 
-        self.tkImage = self.prepare_tk_image(self.cvImage.image)
-
-    def prepare_tk_image(self, image):
-        return Vision.resize_tk_image(image, self.size)
-
     def color_convertion(self, img):
         """
         chalupnicza nie wydajna metoda do conversji obrazow
@@ -85,7 +80,6 @@ class Vision:
 
     def global_prog(self, thresh, thresholdType=cv2.THRESH_BINARY):
         ret, self.cvImage_tmp.image = cv2.threshold(self.cvImage.image, thresh, 255, thresholdType)
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
 
     def adaptive_prog(self, adaptiveMethod=cv2.ADAPTIVE_THRESH_MEAN_C, thresholdType=cv2.THRESH_BINARY, blockSize=11,
                       C=2):
@@ -109,7 +103,6 @@ class Vision:
                                                        thresholdType,
                                                        blockSize,
                                                        C)
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
 
     def color_picker(self):
         # Create a black image, a window
@@ -159,7 +152,6 @@ class Vision:
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
         # LUT Table cdf
         self.cvImage_tmp.image = cdf[self.cvImage.image]
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
 
     def negation(self):
         # cv2.invert(self.cvImage, self.cvImage_tmp)
@@ -168,10 +160,8 @@ class Vision:
         # cdf = hist.cumsum()
         cdf_m = (255 - bins)
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
-        # print("cdf Lut: ", cdf)
         # LUT Table cdf
         self.cvImage.image = cdf[self.cvImage.image]
-        self.tkImage = self.prepare_tk_image(self.cvImage.image)
 
     def hist_rand(self):
         hist, bins = np.histogram(self.cvImage.image.flatten(), 256, [0, 256])
@@ -179,9 +169,7 @@ class Vision:
         cdf_m = np.ma.masked_equal(cdf, 0)
         cdf_m = (cdf_m - cdf_m.min()) * 255 / (cdf_m.max() - cdf_m.mean())
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
-
         self.cvImage_tmp.image = cdf[self.cvImage.image]
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
 
         return cv2.calcHist([self.cvImage_tmp.image], [0], None, [256], [0, 256])
 
@@ -197,16 +185,12 @@ class Vision:
         # LUT Table cdf
         self.cvImage_tmp.image = cdf[self.cvImage.image]
 
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
-
     def hist_eq(self):
         self.cvImage_tmp.image = cv2.equalizeHist(self.cvImage.image)
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
 
     def hist_CLAHE(self, x=8, y=8):
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(x, y))
         self.cvImage_tmp.image = clahe.apply(self.cvImage.image)
-        self.tkImage_tmp = self.prepare_tk_image(self.cvImage_tmp.image)
 
     def save(self, path=None):
         if path is None:

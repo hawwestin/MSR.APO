@@ -89,7 +89,7 @@ class TabPicture:
         if len(path) > 0:
             self.vision.open_image(path)
         else:
-            utils.status_message.set("nie podano pliku")
+            self.main_window.status_message.set("nie podano pliku")
 
     def show_hist(self):
         """

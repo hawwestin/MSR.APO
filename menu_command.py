@@ -24,8 +24,8 @@ class MenuCmd:
 
     """
 
-    def __init__(self, tk_controller: tk.Tk):
-        self.tkController = tk_controller
+    def __init__(self, main_window: tk.Tk):
+        self.main_window = main_window
 
     @staticmethod
     def client_exit():
@@ -38,7 +38,7 @@ class MenuCmd:
          ttk.notebook.select() function.
         :return: TabPicture object of current selected tab
         """
-        tab_id = self.tkController.notebook.select()
+        tab_id = self.main_window.notebook.select()
         print(tab_id)
         return TabPicture.gallery.get(tab_id, None)
 
@@ -54,11 +54,11 @@ class MenuCmd:
         if len(path) > 0:
             name = tk.StringVar()
             name.set(os.path.split(path)[1])
-            tab_frame = self.tkController.new_tab(name.get())
+            tab_frame = self.main_window.new_tab(name.get())
             if color is True:
-                tab_pic = TabColorPicture(tab_frame, self.tkController, name)
+                tab_pic = TabColorPicture(tab_frame, self.main_window, name)
             else:
-                tab_pic = TabGreyPicture(tab_frame, self.tkController, name)
+                tab_pic = TabGreyPicture(tab_frame, self.main_window, name)
 
             tab_pic.open_image(path)
             tab_pic.refresh()
@@ -72,11 +72,11 @@ class MenuCmd:
         tab = self._current_tab()
 
         name = tk.StringVar(value=tab.name.get())
-        tab_frame = self.tkController.new_tab(name.get())
+        tab_frame = self.main_window.new_tab(name.get())
         if tab.vision.color == 1:
-            tab_pic = TabColorPicture(tab_frame, self.tkController, name)
+            tab_pic = TabColorPicture(tab_frame, self.main_window, name)
         else:
-            tab_pic = TabGreyPicture(tab_frame, self.tkController, name)
+            tab_pic = TabGreyPicture(tab_frame, self.main_window, name)
 
         tab_pic.open_image(tab.vision.path)
         tab_pic.refresh()
@@ -97,7 +97,7 @@ class MenuCmd:
                 self._open_img(color=True)
             else:
                 self._open_img(color=False)
-            self.tkController.rename_tab(os.path.splitext(path)[0])
+            self.main_window.rename_tab(os.path.splitext(path)[0])
 
             tab.refresh()
 
@@ -116,11 +116,11 @@ class MenuCmd:
         popup.mainloop()
 
     def imgList(self):
-        print(self.tkController.notebook.index("current"))
-        print(self.tkController.notebook.index("end"))
-        print(self.tkController.notebook.tab(self.tkController.notebook.index("current")))
-        print(self.tkController.notebook.tabs())
-        print(self.tkController.notebook.select())
+        print(self.main_window.notebook.index("current"))
+        print(self.main_window.notebook.index("end"))
+        print(self.main_window.notebook.tab(self.main_window.notebook.index("current")))
+        print(self.main_window.notebook.tabs())
+        print(self.main_window.notebook.select())
 
     def inHist(self):
         tab = self._current_tab()
@@ -133,9 +133,9 @@ class MenuCmd:
         self.popupmsg("APO Made by\nMichał Robaszewski\n2016/2017")
 
     def picker(self):
-        tab_id = self.tkController.notebook.select()
+        tab_id = self.main_window.notebook.select()
         print(tab_id)
-        # id = self.tkController.notebook.index("current")
+        # id = self.main_window.notebook.index("current")
         TabPicture.gallery[tab_id].vision.color_picker()
 
     def hist_Equ(self):
@@ -178,22 +178,22 @@ class MenuCmd:
 
     def undo_image(self):
         tab = self._current_tab()
-        tab.vision.cvImage.undo()
-        tab.vision.tkImage = tab.vision.prepare_tk_image(tab.vision.cvImage.image)
+        tab.vision.cvImage.undo(self.main_window.status_message)
+        tab.vision.tkImage = Vision.resize_tk_image(tab.vision.cvImage.image, tab.size)
         tab.refresh()
 
     def redo_image(self):
         tab = self._current_tab()
-        tab.vision.cvImage.redo()
-        tab.vision.tkImage = tab.vision.prepare_tk_image(tab.vision.cvImage.image)
+        tab.vision.cvImage.redo(self.main_window.status_message)
+        tab.vision.tkImage = Vision.resize_tk_image(tab.vision.cvImage.image, tab.size)
         tab.refresh()
 
     def new_img(self):
         path = filedialog.asksaveasfilename()
         name = tk.StringVar()
         name.set("New.jpg")
-        tab_frame = self.tkController.new_tab(name.get())
-        tab_pic = TabGreyPicture(tab_frame, self.tkController, name)
+        tab_frame = self.main_window.new_tab(name.get())
+        tab_pic = TabGreyPicture(tab_frame, self.main_window, name)
         tab_pic.vision.new_rand_img()
         tab_pic.vision.path = path
         # tab_pic.open_image(path)

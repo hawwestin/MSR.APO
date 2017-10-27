@@ -64,18 +64,20 @@ class OperationTemplate:
 
     def widget_buttons(self):
         def undo():
-            self.tab.vision.cvImage.undo()
-            self.tab.vision.tkImage = self.tab.vision.prepare_tk_image(self.tab.vision.cvImage.image)
+            self.tab.vision.cvImage.undo(self.status_message)
             self.refresh()
 
         def redo():
-            self.tab.vision.cvImage.redo()
-            self.tab.vision.tkImage = self.tab.vision.prepare_tk_image(self.tab.vision.cvImage.image)
+            self.tab.vision.cvImage.redo(self.status_message)
             self.refresh()
 
         def confirm():
             self.tab.persist_tmp()
             self.refresh()
+
+        def _exit():
+            self.tab.vision.cvImage_tmp.image = None
+            self.window.destroy()
 
         b_undo = ttk.Button(self.buttons, text="Undo", command=undo)
         b_undo.pack(side=tk.LEFT, padx=2)
@@ -89,7 +91,7 @@ class OperationTemplate:
         b_confirm = ttk.Button(self.buttons, text="Confirm", command=confirm)
         b_confirm.pack(side=tk.LEFT, padx=2, after=b_refresh)
 
-        b_exit = ttk.Button(self.buttons, text="Exit", command=self.window.destroy)
+        b_exit = ttk.Button(self.buttons, text="Exit", command=_exit)
         b_exit.pack(side=tk.RIGHT, padx=2)
 
     def refresh(self):
@@ -102,7 +104,7 @@ class OperationTemplate:
             self.tab.vision.tkImage_tmp = Vision.resize_tk_image(self.tab.vision.cvImage_tmp.image, self.size)
         self.panel.configure(image=self.tab.vision.tkImage)
         self.panel.image = self.tab.vision.tkImage
-        if self.tab.vision.tkImage_tmp is not None:
+        if self.tab.vision.cvImage_tmp.image is not None:
             self.tab.vision.tkImage_tmp = Vision.resize_tk_image(self.tab.vision.cvImage_tmp.image, self.size)
             self.panel_tmp.configure(image=self.tab.vision.tkImage_tmp)
             self.panel_tmp.image = self.tab.vision.tkImage_tmp

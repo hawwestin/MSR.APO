@@ -23,14 +23,14 @@ class MainWindow(tk.Tk):
 
         self.body = tk.Frame(self)
         self.body.pack()
+        self.status_message = tk.StringVar()
 
         self.title("APO")
         self.command = MenuCmd(self)
         self.main_menu = MainMenu(self.body, self)
 
-        utils.status_message = tk.StringVar()
-        utils.status_message.set('*')
-        self.status_bar = tk.Label(self, textvariable=utils.status_message, bd=1, relief=tk.SUNKEN,
+        self.status_message.set('*')
+        self.status_bar = tk.Label(self, textvariable=self.status_message, bd=1, relief=tk.SUNKEN,
                                    anchor='w')
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
@@ -83,5 +83,5 @@ class MainWindow(tk.Tk):
         self.notebook.forget("current")
 
     def update_status(self, text):
-        utils.status_message.set(text)
+        self.status_message.set(text)
         self.update_idletasks()
