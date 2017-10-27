@@ -50,7 +50,6 @@ class MenuCmd:
         :param color: bool
         :return:
         """
-        # todo potrzeba blokowac i sprawdzac czy wybrany plik jest obrazkiem o dozwolonym typie
         path = filedialog.askopenfilename()
         if len(path) > 0:
             name = tk.StringVar()
@@ -149,9 +148,8 @@ class MenuCmd:
 
     def save_as(self):
         tab = self._current_tab()
-        title = filedialog.asksaveasfilename()
-        # TODO jakis dialog box do podania ścieżki.
-        tab.vision.save(title)
+        path = filedialog.asksaveasfilename()
+        tab.vision.save(path)
 
     def negation(self):
         tab = self._current_tab()

@@ -15,7 +15,6 @@ class OperationAdaptiveThreshold(OperationTemplate):
     def __init__(self, tab: TabPicture):
         super().__init__("Progowanie Adaptacyjne", tab)
 
-    # TODO jezeli wybrana opcje z kolorowego obrazka powinna byc informacja ze nastapi konwersja na szary .
     def control_plugin(self):
         def threshold():
             self.tab.vision.adaptive_prog(OperationAdaptiveThreshold.adaptiveMethodOptions[amo_v.get()],

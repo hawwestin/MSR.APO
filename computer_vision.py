@@ -58,10 +58,6 @@ class Vision:
         self.cvImage_tmp = SingleImageData()
         self.tkImage_tmp = None
         self.id = None
-        # ToDO po tym resize nie widac histogramu po prawej stronie.
-        # parent.bind("<Configure>", self.resize)
-        # Bad Idea Dont do that again
-        # self.fCanvas.bind("<Configure>", self.resize)
 
     def open_image(self, path):
         self.path = path
@@ -84,51 +80,8 @@ class Vision:
         :return:
         """
         # Rearrang the color channel
-        b, g, r = cv2.split(img)  # not optimal TODO change to numpay array
+        b, g, r = cv2.split(img)
         return cv2.merge((r, g, b))
-
-    def resize(self, width, height):
-        """
-        Resize
-        :param width:
-        :param height:
-        :return:
-        """
-        # TODO store the original value to save image in original size.
-        size = (width, height)
-        # image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
-        # cv2.COLOR_BGR2RGB)
-        print(size)
-        image = Image.fromarray(self.cvImage.image)
-        resized = image.resize(size, Image.ANTIALIAS)
-        self.tkImage = ImageTk.PhotoImage(resized)
-
-    def resize_event(self, event):
-        # TODO store the original value to save image in original size.
-        size = (event.width, event.height)
-        # image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
-        # cv2.COLOR_BGR2RGB)
-        print(size)
-        image = Image.fromarray(self.cvImage.image)
-        resized = image.resize_event(size, Image.ANTIALIAS)
-        self.tkImage = ImageTk.PhotoImage(resized)
-        #         For Canvas
-        # self.display.delete("IMG")
-        # self.display.create_image(0, 0, image=self.tkImage, anchor='nw', tags="IMG")
-        #
-
-    def resize_event_tmp(self, event):
-        # TODO store the original value to save image in original size.
-        size = (event.width - 20, event.height - 25)
-        # image = cv2.cvtColor(self.cvImage, cv2.COLOR_BGR2RGB)
-        # cv2.COLOR_BGR2RGB)
-        print(size)
-        image = Image.fromarray(self.cvImage_tmp.image)
-        resized = image.resize_event(size, Image.ANTIALIAS)
-        self.tkImage_tmp = ImageTk.PhotoImage(resized)
-        #         For Canvas
-        # self.display.delete("IMG")
-        # self.display.create_image(0, 0, image=self.tkImage, anchor='nw', tags="IMG")
 
     def global_prog(self, thresh, thresholdType=cv2.THRESH_BINARY):
         ret, self.cvImage_tmp.image = cv2.threshold(self.cvImage.image, thresh, 255, thresholdType)
@@ -288,7 +241,7 @@ class Vision:
         # table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
         lut = []
         for x in range(256):
-            v = contrast*(((x / 255.0) ** invGamma) * 255) + brightness
+            v = contrast * (((x / 255.0) ** invGamma) * 255) + brightness
             if v < 0:
                 lut.append(0)
             elif v > 255:

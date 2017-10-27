@@ -30,7 +30,6 @@ class MainMenu(tk.Frame):
         file = tk.Menu(self.menu, tearoff=0)
 
         file.add_command(label="New", command=self.menu_cmd.new_img)
-        # todo przerobic na otwarcie kolorowego obrazka i szarego
         file.add_cascade(label="Open", menu=file_open)
         file.add_command(label="Reload", command=self.menu_cmd.load_image)
         file.add_command(label="Save", command=self.menu_cmd.save)

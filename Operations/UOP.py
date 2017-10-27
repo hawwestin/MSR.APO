@@ -10,9 +10,6 @@ from Operations.operation_template import OperationTemplate
 from tabpicture import TabPicture
 
 
-# todo Mouse Mode : Brush , Line drag
-
-
 class UOPOperation(OperationTemplate):
     bins = list(range(0, 256))
 

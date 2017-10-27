@@ -98,7 +98,7 @@ class TabPicture:
 
         :return:
         """
-        # todo wyczyszczenie grafu przed zaladowaniem kolejnego , jak zaladowac kilka instancji do kilku obrazkow ?
+        # wyczyszczenie grafu przed zaladowaniem kolejnego , jak zaladowac kilka instancji do kilku obrazkow ?
         plt.hist(self.vision.cvImage.image.ravel(), 256, [0, 255])
         plt.show()
 

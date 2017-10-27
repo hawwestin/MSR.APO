@@ -9,7 +9,6 @@ class OperationStretching(OperationTemplate):
         super().__init__("Rozciąganie", tab)
 
     def control_plugin(self):
-        # todo walidacja na inputy , wartości w przedziale 0 255 oraz p1>p2.
         def stretch():
             if int(p1.get()) == int(p2.get()):
                 self.status_message.set("p1 and p2 can't by equal")

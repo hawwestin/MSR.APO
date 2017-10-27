@@ -11,7 +11,6 @@ matplotlib.use("TkAgg")
 
 class Histogram:
     def __init__(self, parent: tk.Frame):
-        # TODO List oF image to be ploted - or RGB chanels.
         self.image = None
 
         self.hist_frame = parent
