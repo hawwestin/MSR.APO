@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from Operations.operation_template import OperationTemplate
+from OperationsLinear.operation_template import OperationTemplate
 from tabpicture import TabPicture
 
 

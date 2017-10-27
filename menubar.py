@@ -66,7 +66,7 @@ class MainMenu(tk.Frame):
         points.add_command(label="Uniwersalna operacja jednopunktowa", command=self._menucmd.uop)
 
         arithmetic = tk.Menu(self.menu, tearoff=0)
-        arithmetic.add_command(label="Dodawanie", command=self._menucmd.not_implemented)
+        arithmetic.add_command(label="Dodawanie", command=self._menucmd.add_img)
         # arithmetic.add_command(label="Image Blending", command=self._menucmd.not_implemented)
         # arithmetic.add_command(label="Bitwise", command=self._menucmd.not_implemented)
 

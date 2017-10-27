@@ -9,7 +9,8 @@ matplotlib.use("TkAgg")
 from tkinter import filedialog
 from tkinter import simpledialog
 import os
-from Operations import adap_prog, histEq, red_poz_sza, prog, UOP, stretching, prog_zach
+from OperationsLinear import adap_prog, histEq, red_poz_sza, prog, UOP, stretching, prog_zach
+from OperationsArithmetic import add_img
 from tabpicture import TabColorPicture, TabGreyPicture, TabPicture
 from computer_vision import *
 
@@ -207,3 +208,6 @@ class MenuCmd:
         tab = self._current_tab()
         prog_zach.OperationLightThresholdKeepingValue(tab)
 
+    def add_img(self):
+        tab = self._current_tab()
+        add_img.AddImage(tab)

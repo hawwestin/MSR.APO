@@ -20,7 +20,6 @@ class OperationTemplate:
         self.size = (300, 700)
         self.tkImage = Vision.resize_tk_image(self.tab.vision.cvImage.image, self.size)
         self.tkImage_tmp = None
-        # self.tab.vision.tkImage = self.tab.vision.prepare_tk_image(self.tab.vision.cvImage.image)
 
         self.body = tk.Frame(master=self.window)
 

@@ -2,7 +2,7 @@ import tkinter as tk
 from cv2 import *
 import cv2
 
-from Operations.operation_template import OperationTemplate
+from OperationsLinear.operation_template import OperationTemplate
 from tabpicture import TabPicture
 
 

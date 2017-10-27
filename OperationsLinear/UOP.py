@@ -6,7 +6,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 import matplotlib.pyplot as plt
 import numpy as np
 
-from Operations.operation_template import OperationTemplate
+from OperationsLinear.operation_template import OperationTemplate
 from tabpicture import TabPicture
 
 
