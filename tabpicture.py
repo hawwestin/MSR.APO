@@ -65,7 +65,9 @@ class TabPicture:
         '''
         return what == self.id or what in self.name.get()
 
-    def search(self, finder):
+
+    @staticmethod
+    def search(finder):
         '''
         Find vison object in visions list
         :param finder:

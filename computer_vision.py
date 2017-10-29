@@ -1,3 +1,5 @@
+from tkinter import filedialog
+
 from repeater import Repeater
 
 from cv2 import *
@@ -24,6 +26,10 @@ class MemoImageData(Repeater):
     def image(self, value):
         self.update(value)
 
+    @property
+    def tk_image(self):
+        return ImageTk.PhotoImage(Image.fromarray(self.image))
+
 
 class SingleImageData:
     def __init__(self):
@@ -36,6 +42,10 @@ class SingleImageData:
     @image.setter
     def image(self, value):
         self._item = value
+
+    @property
+    def tk_image(self):
+        return ImageTk.PhotoImage(Image.fromarray(self.image))
 
 
 class Vision:
@@ -189,10 +199,13 @@ class Vision:
         self.cvImage_tmp.image = clahe.apply(self.cvImage.image)
 
     def save(self, path=None):
-        if path is None:
+        if path is not None:
+            cv2.imwrite(path, self.cvImage.image)
+        elif self.path is not None:
             cv2.imwrite(self.path, self.cvImage.image)
         else:
-            cv2.imwrite(path, self.cvImage.image)
+            self.path = filedialog.asksaveasfilename()
+            cv2.imwrite(self.path, self.cvImage.image)
 
     @staticmethod
     def resize_tk_image(image, size=None):

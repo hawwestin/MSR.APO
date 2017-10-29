@@ -1,3 +1,4 @@
+import copy
 import tkinter as tk
 from tkinter import ttk
 
@@ -8,7 +9,8 @@ from matplotlib.figure import Figure
 
 from computer_vision import Vision
 from utils import resolution
-from tabpicture import TabPicture
+from tabpicture import TabPicture, TabColorPicture, TabGreyPicture
+from scrolled_frame import ScrolledCanvas
 
 
 class OperationTemplate:
@@ -17,14 +19,16 @@ class OperationTemplate:
         self.window.title(name)
         self.window.geometry(resolution)
 
-        self.tab = tab
-        # todo resized Frame ????
-        self.size = (500, 500)
-        self.img_background = Vision.resize_tk_image(self.tab.vision.cvImage.image, self.size)
-        # todo dialog box or sth to choose other tab or img from hdd.
-        self.img_foreground = Vision.resize_tk_image(self.tab.vision.cvImage.image, self.size)
-        # todo brand new Vision
-        self.img_result = Vision.resize_tk_image(self.tab.vision.cvImage.image, self.size)
+        self.tab_bg = tab
+        self.tab_fg = None
+        self.size = (300, 300)
+        self.tk_img_background = None
+        self.tk_img_foreground = None
+        self.img_result = self.tab_bg.vision.cvImage.tk_image
+        self.img_fg = None
+
+        self.foreground_name = tk.StringVar()
+        self.foreground_name.set(self.tab_bg.name.get())
 
         self.body = tk.Frame(master=self.window)
 
@@ -47,32 +51,32 @@ class OperationTemplate:
         ###############
         # Panels
         ###############
-        self.pan = tk.PanedWindow(self.panels, handlesize=10, showhandle=True, handlepad=12, sashwidth=3)
-        self.pan.pack(side=tk.TOP, fill=tk.BOTH)
+        self.outer_pan = tk.PanedWindow(self.panels, handlesize=10, showhandle=True, handlepad=12, sashwidth=3)
+        self.outer_pan.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.left_pan = tk.PanedWindow(self.outer_pan, handlesize=10, showhandle=True, handlepad=12, sashwidth=3,
+                                       orient=tk.VERTICAL)
+        self.left_pan.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.outer_pan.add(self.left_pan, minsize=100)
 
         lf_back = tk.LabelFrame(master=self.panels, text='Background')
         lf_back.pack()
-        self.can = tk.Canvas(master=lf_back)
-        # img = ImageTk.PhotoImage(Image.fromarray(self.tab.vision.cvImage.image))
-        self.can.create_image(1, 1, image=self.img_background, tags="img_background")
-        # can.create_image(10, 10, image=self.img_background, tags="img_background")
-        # self.can.create_line(10, 10, 200, 50, fill='red', width=3)
-        self.can.pack(side=tk.TOP)
-        self.pan.add(lf_back, minsize=80)
-        # self.panel_back = tk.Label(master=lf_back, image=self.img_background)
-        # self.panel_back.pack()
+        self.left_pan.add(lf_back, minsize=100)
+        self.panel_back = tk.Label(master=lf_back)
+        self.panel_back.pack()
 
         lf_front = tk.LabelFrame(master=self.panels, text='Foreground')
         lf_front.pack()
-        self.pan.add(lf_front, minsize=80)
+        self.left_pan.add(lf_front, minsize=100)
         self.panel_front = tk.Label(master=lf_front)
         self.panel_front.pack()
 
+        # todo add ^^ with transparent % - LUT With MASK on Gamma.
         lf_result = tk.LabelFrame(master=self.panels, text='Result')
         lf_result.pack()
-        self.pan.add(lf_result, minsize=80)
-        self.panel_result = tk.Label(master=lf_result)
-        self.panel_result.pack()
+        self.can = ScrolledCanvas(lf_result)
+        self.can.create_image(0, 0, image=self.img_result, tags="img_b", anchor='nw')
+        self.can.pack(side=tk.TOP, fill=tk.BOTH, expand=True, anchor='nw')
+        self.outer_pan.add(lf_result, minsize=100)
 
         self.widget_buttons()
 
@@ -81,23 +85,47 @@ class OperationTemplate:
 
         self.window.mainloop()
 
+    def blend(self):
+        self.img_fg = self.tab_fg.vision.cvImage.tk_image
+        self.can.create_image(0, 0, image=self.img_fg, tags="img_f", anchor='nw')
+        y = self.img_fg.height() if self.img_fg.height() > self.img_result.height() else self.img_result.height()
+        x = self.img_fg.width() if self.img_fg.width() > self.img_result.width() else self.img_result.width()
+        self.can.configure(scrollregion=(0, 0, x, y))
+        self.can.update_idletasks()
+
     def widget_buttons(self):
         def undo():
-            self.tab.vision.cvImage.undo(self.status_message)
+            self.tab_bg.vision.cvImage.undo(self.status_message)
             self.refresh_panel_img()
 
         def redo():
-            self.tab.vision.cvImage.redo(self.status_message)
+            self.tab_bg.vision.cvImage.redo(self.status_message)
             self.refresh_panel_img()
 
         def confirm():
-            # todo persist brand new vision in new tab . save path ?
-            self.tab.persist_tmp()
-            self.refresh_panel_img()
+            # todo blend two image with OpenCV.
+            name = tk.StringVar()
+            name.set("*" + self.tab_bg.name.get())
+            tab_frame = self.tab_bg.main_window.new_tab(name.get())
+            if self.tab_bg.vision.color is True:
+                tab_pic = TabColorPicture(tab_frame, self.tab_bg.main_window, name)
+            else:
+                tab_pic = TabGreyPicture(tab_frame, self.tab_bg.main_window, name)
+            tab_pic.vision.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)  # todo write new img
+            tab_pic.refresh()
 
         def _exit():
-            self.tab.vision.cvImage_tmp.image = None
+            self.tab_bg.vision.cvImage_tmp.image = None
             self.window.destroy()
+
+        def choose_foreground():
+            chose = TabPicture.search(self.foreground_name.get())
+            if len(chose) > 0:
+                self.tab_fg = chose[0]
+                self.blend()
+                self.refresh_panel_img()
+            else:
+                self.status_message.set("Error reading and img")
 
         b_undo = ttk.Button(self.buttons, text="Undo", command=undo)
         b_undo.pack(side=tk.LEFT, padx=2)
@@ -108,25 +136,30 @@ class OperationTemplate:
         b_refresh = ttk.Button(self.buttons, text="Refresh images", command=self.refresh_panel_img)
         b_refresh.pack(side=tk.LEFT, padx=2, after=b_redo)
 
+        om_choose = tk.OptionMenu(self.buttons, self.foreground_name,
+                                  *[tab.name.get() for tab in TabPicture.gallery.values()])
+        om_choose.pack(side=tk.LEFT, padx=2, after=b_refresh)
+        self.foreground_name.trace("w", lambda *args: choose_foreground())
+
         b_confirm = ttk.Button(self.buttons, text="Confirm", command=confirm)
-        b_confirm.pack(side=tk.LEFT, padx=2, after=b_refresh)
+        b_confirm.pack(side=tk.LEFT, padx=2, after=om_choose)
 
         b_exit = ttk.Button(self.buttons, text="Exit", command=_exit)
         b_exit.pack(side=tk.RIGHT, padx=2)
 
     def refresh_panel_img(self):
-        # todo Drop Resize. !
-        # self.img_background = ImageTk.PhotoImage(Image.fromarray(self.tab.vision.cvImage.image))
-        # self.panel_back.configure(image=self.img_background)
-        # self.panel_back.image = self.img_background
-        # if self.tab.vision.cvImage_tmp.image is not None:
-        self.img_foreground = ImageTk.PhotoImage(Image.fromarray(self.tab.vision.cvImage.image))
-        self.panel_front.configure(image=self.img_foreground)
-        self.panel_front.image = self.img_foreground
+        self.tk_img_background = Vision.resize_tk_image(self.tab_bg.vision.cvImage.image, self.size)
+        self.panel_back.configure(image=self.tk_img_background)
+        self.panel_back.image = self.tk_img_background
+        if self.tab_fg is not None:
+            self.tk_img_foreground = Vision.resize_tk_image(self.tab_fg.vision.cvImage.image, self.size)
+            self.panel_front.configure(image=self.tk_img_foreground)
+            self.panel_front.image = self.tk_img_foreground
 
-        self.img_result = ImageTk.PhotoImage(Image.fromarray(self.tab.vision.cvImage.image))
-        self.panel_result.configure(image=self.img_result)
-        self.panel_result.image = self.img_result
+        self.can.update_idletasks()
+        # self.img_result = ImageTk.PhotoImage(Image.fromarray(self.tab.vision.cvImage.image))
+        # self.panel_result.configure(image=self.img_result)
+        # self.panel_result.image = self.img_result
 
     def control_plugin(self):
         """
