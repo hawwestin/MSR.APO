@@ -31,7 +31,7 @@ class TabPicture:
 
         self.name = name
 
-        self.vision = Vision(tab_frame, main_window)
+        self.vision = Vision()
         self.size = (500, 600)
 
         self.tkImage = None

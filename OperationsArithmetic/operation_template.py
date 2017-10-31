@@ -21,6 +21,8 @@ class OperationTemplate:
 
         self.tab_bg = tab
         self.tab_fg = None
+        self.vision_result = Vision()
+        self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
         self.size = (300, 300)
         self.tk_img_background = None
         self.tk_img_foreground = None
@@ -70,11 +72,11 @@ class OperationTemplate:
         self.panel_front = tk.Label(master=lf_front)
         self.panel_front.pack()
 
-        # todo add ^^ with transparent % - LUT With MASK on Gamma.
+        # todo with transparent
         lf_result = tk.LabelFrame(master=self.panels, text='Result')
         lf_result.pack()
         self.can = ScrolledCanvas(lf_result)
-        self.can.create_image(0, 0, image=self.img_result, tags="img_b", anchor='nw')
+        self.can.create_image(0, 0, image=self.img_result, tags="img_bg", anchor='nw')
         self.can.pack(side=tk.TOP, fill=tk.BOTH, expand=True, anchor='nw')
         self.outer_pan.add(lf_result, minsize=100)
 
@@ -85,9 +87,15 @@ class OperationTemplate:
 
         self.window.mainloop()
 
+    def _drag_img(self, event):
+        self.can.coords('img_f', event.x, event.y)
+
     def blend(self):
         self.img_fg = self.tab_fg.vision.cvImage.tk_image
-        self.can.create_image(0, 0, image=self.img_fg, tags="img_f", anchor='nw')
+        if len(self.can.find_above('img_bg')) > 0:
+            self.can.delete('img_f')
+        self.can.create_image(100, 100, image=self.img_fg, tags="img_f", anchor='nw')
+        self.can.tag_bind("img_f", "<B1-Motion>", self._drag_img)
         y = self.img_fg.height() if self.img_fg.height() > self.img_result.height() else self.img_result.height()
         x = self.img_fg.width() if self.img_fg.width() > self.img_result.width() else self.img_result.width()
         self.can.configure(scrollregion=(0, 0, x, y))
@@ -102,8 +110,11 @@ class OperationTemplate:
             self.tab_bg.vision.cvImage.redo(self.status_message)
             self.refresh_panel_img()
 
+        def preview():
+            place = self.can.coords('img_f')
+            self.vision_result.ar_add(self.tab_fg.vision.cvImage.image, place)
+
         def confirm():
-            # todo blend two image with OpenCV.
             name = tk.StringVar()
             name.set("*" + self.tab_bg.name.get())
             tab_frame = self.tab_bg.main_window.new_tab(name.get())
@@ -111,8 +122,13 @@ class OperationTemplate:
                 tab_pic = TabColorPicture(tab_frame, self.tab_bg.main_window, name)
             else:
                 tab_pic = TabGreyPicture(tab_frame, self.tab_bg.main_window, name)
-            tab_pic.vision.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)  # todo write new img
+            place = self.can.coords('img_f')
+            self.vision_result.ar_add(self.tab_fg.vision.cvImage.image, place, False)
+            self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
+            tab_pic.vision = self.vision_result
             tab_pic.refresh()
+            self.vision_result = Vision()
+            self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
 
         def _exit():
             self.tab_bg.vision.cvImage_tmp.image = None
@@ -143,6 +159,8 @@ class OperationTemplate:
 
         b_confirm = ttk.Button(self.buttons, text="Confirm", command=confirm)
         b_confirm.pack(side=tk.LEFT, padx=2, after=om_choose)
+        b_preview = ttk.Button(self.buttons, text="Preview", command=preview)
+        b_preview.pack(side=tk.LEFT, padx=2, after=b_confirm)
 
         b_exit = ttk.Button(self.buttons, text="Exit", command=_exit)
         b_exit.pack(side=tk.RIGHT, padx=2)

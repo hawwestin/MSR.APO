@@ -1,3 +1,4 @@
+import copy
 from tkinter import filedialog
 
 from repeater import Repeater
@@ -54,9 +55,7 @@ class Vision:
 
     """
 
-    def __init__(self, parent, controller):
-        self.master = parent
-        self.controller = controller
+    def __init__(self):
         self.path = None
         self.color = None
 
@@ -271,3 +270,76 @@ class Vision:
         lut = np.ma.filled(lut, 0).astype('uint8')
         self.cvImage_tmp.image = lut[self.cvImage.image]
         return lut
+
+    def _mask_to_size(self, img_bg, img_fg, place):
+        print("{} {}".format(place[0], place[1]))
+        print("{} {}".format(np.abs(place[0]), abs(place[1])))
+
+        place_x = int(place[0])
+        place_y = int(place[1])
+
+        # img size , height and width
+        img_y, img_x = img_fg.shape
+        if place_x < 0:
+            img_fg = img_fg[0:img_y, np.abs(place_x):img_x]
+        if place_y < 0:
+            img_fg = img_fg[np.abs(place_y):img_y, 0:img_x]
+
+        if place_x + img_x > img_bg.shape[1]:
+            img_fg = img_fg[0:img_y, 0:img_x - (place_x + img_x - img_bg.shape[1])]
+        if place_y + img_y > img_bg.shape[0]:
+            img_fg = img_fg[0:img_y - (place_y + img_y - img_bg.shape[0]), 0:img_x]
+
+        x1 = place_x if place_x > 0 else 0
+        x2 = place_x + img_x if place_x + img_x <= self.cvImage.image.shape[1] else self.cvImage.image.shape[1]
+        y1 = place_y if place_y > 0 else 0
+        y2 = place_y + img_y if place_y + img_y <= self.cvImage.image.shape[0] else self.cvImage.image.shape[0]
+
+        img_bg[y1:y2, x1:x2] = img_fg
+
+        return img_bg
+
+    def ar_add(self, img, place, preview=True):
+        self.cvImage_tmp.image = copy.copy(self.cvImage.image)
+        self.cvImage_tmp.image = self._mask_to_size(self.cvImage_tmp.image, img, place)
+        # img = cv2.addWeighted(self.cvImage.image, 0.7, img, 0.3, 0)
+        # cv2.imshow('1', img)
+        if preview:
+            cv2.imshow('preview', self.cvImage_tmp.image)
+
+    def ar_sub(self):
+        pass
+
+    def ar_diff(self):
+        pass
+
+    def logic_and(self, img, place):
+        # img_bg = np.zeros(self.cvImage.image.shape, np.uint8)
+        # rows, cols = img_bg.shape
+        rows, cols = self.cvImage.image.shape
+        roi = self.cvImage.image[0:rows, 0:cols]
+        # Now create a mask of logo and create its inverse mask also
+        # try:
+        #     img2gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # except Exception as e:
+        #     print(e)
+        img2gray = img
+        ret, mask = cv2.threshold(img2gray, 10, 255, cv2.THRESH_BINARY)
+        mask_inv = cv2.bitwise_not(mask)
+        # Now black-out the area of logo in ROI
+        img1_bg = cv2.bitwise_and(roi, roi, mask=mask_inv)
+        # Take only region of logo from logo image.
+        img2_fg = cv2.bitwise_and(img, img, mask=mask)
+        # Put logo in ROI and modify the main image
+        dst = cv2.add(img1_bg, img2_fg)
+        self.cvImage.image[place[0]:rows, place[0]:cols] = dst
+        cv2.imshow('res', img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        pass
+
+    def logic_or(self):
+        pass
+
+    def logic_xor(self):
+        pass
