@@ -272,9 +272,6 @@ class Vision:
         return lut
 
     def _mask_to_size(self, img_bg, img_fg, place):
-        print("{} {}".format(place[0], place[1]))
-        print("{} {}".format(np.abs(place[0]), abs(place[1])))
-
         place_x = int(place[0])
         place_y = int(place[1])
 
@@ -307,8 +304,10 @@ class Vision:
         if preview:
             cv2.imshow('preview', self.cvImage_tmp.image)
 
-    def ar_sub(self):
-        pass
+    def ar_sub(self, place, preview=True):
+        self.cvImage_tmp.image = self.cvImage.image[int(place[1]):int(place[3]), int(place[0]):int(place[2])]
+        if preview:
+            cv2.imshow('preview', self.cvImage_tmp.image)
 
     def ar_diff(self):
         pass

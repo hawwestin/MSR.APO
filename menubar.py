@@ -43,7 +43,7 @@ class MainMenu(tk.Frame):
         edit.add_command(label="Redo", command=self.menu_cmd.redo_image)
         edit.add_separator()
         edit.add_command(label="Duplicate", command=self.menu_cmd.duplicate)
-        edit.add_command(label="Color picker", command=self._menucmd.picker)
+        edit.add_command(label="Color picker", command=self.menu_cmd.picker)
 
         # view = tk.Menu(self.menu, tearoff=0)
         # view.add_command(label="Full screen")
@@ -51,22 +51,23 @@ class MainMenu(tk.Frame):
         # self.menu.add_cascade(label="View", menu=view)
 
         histogram = tk.Menu(self.menu, tearoff=0)
-        histogram.add_command(label="Wewnatrz histogram", command=self._menucmd.inHist)
-        histogram.add_command(label="Popup hist", command=self._menucmd.outHist)
-        histogram.add_command(label="Hist Equalization", command=self._menucmd.hist_Equ)
+        histogram.add_command(label="Wewnatrz histogram", command=self.menu_cmd.inHist)
+        histogram.add_command(label="Popup hist", command=self.menu_cmd.outHist)
+        histogram.add_command(label="Hist Equalization", command=self.menu_cmd.hist_Equ)
 
         points = tk.Menu(self.menu, tearoff=0)
-        points.add_command(label="Negacja", command=self._menucmd.negation)
-        points.add_command(label="Binaryzacja", command=self._menucmd.light_threshold)
+        points.add_command(label="Negacja", command=self.menu_cmd.negation)
+        points.add_command(label="Binaryzacja", command=self.menu_cmd.light_threshold)
         points.add_command(label="Progowanie z zachowaniem poziomów szarości",
-                           command=self._menucmd.progowanie_z_zachowaniem)
-        points.add_command(label="Redukcja poziomów szarości", command=self._menucmd.redukcja_p_s)
-        points.add_command(label="Rozciąganie", command=self._menucmd.stretching)
-        points.add_command(label="Progowanie adaptacyjne", command=self._menucmd.adaptive_light_threshold)
-        points.add_command(label="Uniwersalna operacja jednopunktowa", command=self._menucmd.uop)
+                           command=self.menu_cmd.progowanie_z_zachowaniem)
+        points.add_command(label="Redukcja poziomów szarości", command=self.menu_cmd.redukcja_p_s)
+        points.add_command(label="Rozciąganie", command=self.menu_cmd.stretching)
+        points.add_command(label="Progowanie adaptacyjne", command=self.menu_cmd.adaptive_light_threshold)
+        points.add_command(label="Uniwersalna operacja jednopunktowa", command=self.menu_cmd.uop)
 
         arithmetic = tk.Menu(self.menu, tearoff=0)
-        arithmetic.add_command(label="Dodawanie", command=self._menucmd.add_img)
+        arithmetic.add_command(label="Dodawanie", command=self.menu_cmd.add_img)
+        arithmetic.add_command(label="Wycinanie", command=self.menu_cmd.sub_img)
         # arithmetic.add_command(label="Image Blending", command=self._menucmd.not_implemented)
         # arithmetic.add_command(label="Bitwise", command=self._menucmd.not_implemented)
 
@@ -82,7 +83,7 @@ class MainMenu(tk.Frame):
         # operation.add_cascade(label="Opis kszztałtu")
 
         help = tk.Menu(self.menu, tearoff=0)
-        help.add_command(label="Info", command=self._menucmd.info)
+        help.add_command(label="Info", command=self.menu_cmd.info)
         help.add_command(label="debug", command=self.tkController.tab_index)
 
         self.menu.add_cascade(label="File", menu=file)

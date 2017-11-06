@@ -10,7 +10,8 @@ from tkinter import filedialog
 from tkinter import simpledialog
 import os
 from OperationsLinear import adap_prog, histEq, red_poz_sza, prog, UOP, stretching, prog_zach
-from OperationsArithmetic import add_img
+from OperationsArithmetic.add_img import AddImage
+from OperationsArithmetic.subtraction import Substraction
 from tabpicture import TabColorPicture, TabGreyPicture, TabPicture
 from computer_vision import *
 
@@ -210,4 +211,9 @@ class MenuCmd:
 
     def add_img(self):
         tab = self._current_tab()
-        add_img.AddImage(tab)
+        AddImage(tab)
+
+    def sub_img(self):
+        tab = self._current_tab()
+        Substraction(tab)
+
