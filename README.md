@@ -20,7 +20,7 @@ Currently code is developed on these version of packages from pip:
 Current version of application has not bean released yet. Development and testing is mostly from interactive session in command line or from IDE. 
 
 ## Contribute
-Soon I write  contributing.md :)
+Soon I will write  contributing.md :)
 
 ## Built With
 
