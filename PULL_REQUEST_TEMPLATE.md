@@ -4,8 +4,8 @@
   A few sentensec describing the overall goals of the pull request's commits.
 
 Todos list
-* [] Test
-* [] Documentation
+* [ ] Test
+* [ ] Documentation
 
 
 ## Deploy Notes
