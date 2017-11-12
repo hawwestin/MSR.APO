@@ -18,6 +18,6 @@ cx_Freeze.setup(
     options={"build_exe": {"packages": ["tkinter", "matplotlib", "numpy", "cv2"]}},
     # , "include_files":["clienticon.ico"]}},
     version="0.01",
-    description="RobaszewLab16_17",
+    description="RobaszewLab17_18)",
     executables=executables
 )

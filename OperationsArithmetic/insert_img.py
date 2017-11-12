@@ -13,10 +13,10 @@ from tabpicture import TabPicture, TabColorPicture, TabGreyPicture
 from scrolled_frame import ScrolledCanvas
 
 
-class OperationTemplate:
-    def __init__(self, name, tab: TabPicture):
+class InsertImage:
+    def __init__(self, tab: TabPicture):
         self.window = tk.Toplevel()
-        self.window.title(name)
+        self.window.title("Wstawianie obrazów")
         self.window.geometry(resolution)
 
         self.tab_bg = tab
