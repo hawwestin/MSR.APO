@@ -3,6 +3,8 @@ import os
 
 import gui.operations.OperationsArithmetic.add_weighted_img as add_weighted_img
 import matplotlib
+
+from gui.operations.OperationsArithmetic import operation_or
 from .operations.OperationsArithmetic import difference_image
 from .operations.OperationsArithmetic.insert_img import InsertImg
 from .operations.OperationsArithmetic.subtraction import Substraction
@@ -222,3 +224,8 @@ class MenuCmd:
     def diff_image(self):
         tab = self._current_tab()
         difference_image.DifferenceImage(tab)
+
+    def logic_or(self):
+        tab = self._current_tab()
+        operation_or.LogicOr(tab)
+

@@ -71,10 +71,14 @@ class MainMenu(tk.Frame):
         arithmetic.add_command(label="łączenie", command=self.menu_cmd.add_weighted_img)
         arithmetic.add_command(label="Odejmowanie", command=self.menu_cmd.diff_image)
 
+        logic = tk.Menu(self.menu, tearoff=0)
+        logic.add_command(label="Or", command=self.menu_cmd.logic_or)
+
         operation = tk.Menu(self.menu, tearoff=0)
         operation.add_cascade(label="Histogram", menu=histogram)
         operation.add_cascade(label="Punktowe", menu=points)
         operation.add_cascade(label="Arithmetic Operations", menu=arithmetic)
+        operation.add_cascade(label="Logic Operations", menu=logic)
         # operation.add_command(label="Sąsiedztwa")
         # operation.add_command(label="Korekcja")
         # operation.add_cascade(label="Segmentacja")

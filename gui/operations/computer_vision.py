@@ -271,11 +271,11 @@ class Vision:
         self.cvImage_tmp.image = lut[self.cvImage.image]
         return lut
 
-    def _mask_to_size(self, img_bg, img_fg, place):
+    def _mask_to_size(self, target, source, place: tuple):
         """
-        Cut img_fg to borders of img_bg
-        :param img_bg:
-        :param img_fg:
+        Cut source to borders of img_bg
+        :param target:
+        :param source:
         :param place: tuple of top left x, y on target img_bg
         :return:
         """
@@ -283,67 +283,81 @@ class Vision:
         place_y = int(place[1])
 
         # img size , height and width
-        img_y, img_x = img_fg.shape
+        img_y, img_x = source.shape
         if place_x < 0:
-            img_fg = img_fg[0:img_y, np.abs(place_x):img_x]
+            source = source[0:img_y, np.abs(place_x):img_x]
         if place_y < 0:
-            img_fg = img_fg[np.abs(place_y):img_y, 0:img_x]
+            source = source[np.abs(place_y):img_y, 0:img_x]
 
-        if place_x + img_x > img_bg.shape[1]:
-            img_fg = img_fg[0:img_y, 0:img_x - (place_x + img_x - img_bg.shape[1])]
-        if place_y + img_y > img_bg.shape[0]:
-            img_fg = img_fg[0:img_y - (place_y + img_y - img_bg.shape[0]), 0:img_x]
-        return img_fg
+        if place_x + img_x > target.shape[1]:
+            source = source[0:img_y, 0:img_x - (place_x + img_x - target.shape[1])]
+        if place_y + img_y > target.shape[0]:
+            source = source[0:img_y - (place_y + img_y - target.shape[0]), 0:img_x]
+        return source
 
-    def _target_place(self, place, target_shape: tuple, source_shape: tuple):
+    def _target_place(self, place: tuple, target_shape: tuple, source_shape: tuple):
         """
         Calculate valid shape on target
         :param place: tuple of top left x, y on target img
-        :param target_shape: tuple (width, height) of target image.
-        :param source_shape: tuple (width, height) of source image.
+        :param source_shape: tuple (width, height) of target image.
+        :param target_shape: tuple (width, height) of source image.
         :return: tuple y, x
         """
         place_x = int(place[0])
         place_y = int(place[1])
-        img_y, img_x = target_shape
+        img_y, img_x = source_shape
         x1 = place_x if place_x > 0 else 0
-        x2 = place_x + img_x if place_x + img_x <= source_shape[1] else source_shape[1]
+        x2 = place_x + img_x if place_x + img_x <= target_shape[1] else target_shape[1]
         y1 = place_y if place_y > 0 else 0
-        y2 = place_y + img_y if place_y + img_y <= source_shape[0] else source_shape[0]
+        y2 = place_y + img_y if place_y + img_y <= target_shape[0] else target_shape[0]
 
         return (y1, y2), (x1, x2)
 
-    def img_paste(self, img, place, preview=True):
+    def img_paste(self, source, place, preview=True):
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
-        y, x = self._target_place(place, img.shape, self.cvImage.image.shape)
-        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] = self._mask_to_size(self.cvImage_tmp.image, img, place)
+        y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
+        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] = self._mask_to_size(self.cvImage_tmp.image, source, place)
         if preview:
             cv2.imshow('preview', self.cvImage_tmp.image)
 
-    def ar_add(self, img, place, weight, preview=True):
+    def ar_add(self, source, place, weight, preview=True):
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
-        y, x = self._target_place(place, img.shape, self.cvImage.image.shape)
-        self.img_paste(cv2.addWeighted(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], weight[0],
-                                       self._mask_to_size(self.cvImage_tmp.image, img, place), weight[1], 0),
+        y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
+        self.img_paste(cv2.addWeighted(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]],
+                                       weight[0],
+                                       self._mask_to_size(self.cvImage_tmp.image,
+                                                          source,
+                                                          place),
+                                       weight[1],
+                                       0),
                        place,
                        preview=False)
-
-        # self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] = self._mask_to_size(self.cvImage_tmp.image, cv2.addWeighted(
-        #     self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], weight[0],
-        #     self._mask_to_size(self.cvImage_tmp.image, img, place), weight[1], 0), place)
         if preview:
             cv2.imshow('preview', self.cvImage_tmp.image)
         pass
 
     def image_cut(self, place, preview=True):
+        """
+        Cut piece of self.cvImage on given place.
+        :param place: tuple of top left x, y on target img
+        :param preview: Flag for additional preview window
+        :return:
+        """
         self.cvImage_tmp.image = self.cvImage.image[int(place[1]):int(place[3]), int(place[0]):int(place[2])]
         if preview:
             cv2.imshow('preview', self.cvImage_tmp.image)
 
-    def ar_diff(self, img, place, preview=True):
+    def ar_diff(self, source, place, preview=True):
+        """
+        Arithmetic subtraction of source image on given place.
+        :param source: Image to be added on top of current self.cvImage
+        :param place: tuple of top left x, y on target img
+        :param preview: Flag for additional preview window
+        :return:
+        """
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
-        y, x = self._target_place(place, img.shape, self.cvImage.image.shape)
-        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] -= self._mask_to_size(self.cvImage_tmp.image, img, place)
+        y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
+        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] -= self._mask_to_size(self.cvImage_tmp.image, source, place)
         if preview:
             cv2.imshow('preview', self.cvImage_tmp.image)
 
@@ -372,8 +386,19 @@ class Vision:
         cv2.destroyAllWindows()
         pass
 
-    def logic_or(self):
-        pass
+    def logic_or(self, target, source, place, preview=True):
+        self.cvImage_tmp.image = copy.copy(target)
+        y, x = self._target_place(place, target.shape, source.shape)
+        # ... , mask =cv2.threshold(source, 10, 255, cv2.THRESH_BINARY)
+        a = target[y[0]:y[1], x[0]:x[1]]
+        b = self._mask_to_size(target, source, place)
+        cv2.bitwise_or(a,
+                       b,
+                       self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
+        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place, preview=False)
+
+        if preview:
+            cv2.imshow('preview', self.cvImage_tmp.image)
 
     def logic_xor(self):
         pass
