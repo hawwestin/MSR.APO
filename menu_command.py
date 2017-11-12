@@ -1,20 +1,19 @@
 import matplotlib
 import tkinter as tk
-
+import OperationsArithmetic.add_weighted_img as add_weighted_img
 
 import utils
 
-matplotlib.use("TkAgg")
-
-from tkinter import filedialog
-from tkinter import simpledialog
-import os
 from OperationsLinear import adap_prog, histEq, red_poz_sza, prog, UOP, stretching, prog_zach
-from OperationsArithmetic.insert_img import InsertImage
+from OperationsArithmetic.insert_img import InsertImg
 from OperationsArithmetic.subtraction import Substraction
 from tabpicture import TabColorPicture, TabGreyPicture, TabPicture
 from computer_vision import *
+from tkinter import filedialog
+from tkinter import simpledialog
+import os
 
+matplotlib.use("TkAgg")
 LARGE_FONT = utils.LARGE_FONT
 NORM_FONT = utils.NORM_FONT
 SMALL_FONT = utils.SMALL_FONT
@@ -83,7 +82,6 @@ class MenuCmd:
         tab_pic.open_image(tab.vision.path)
         tab_pic.refresh()
 
-
     def open_color_image(self):
         self._open_img(True)
 
@@ -111,28 +109,29 @@ class MenuCmd:
         popup = tk.Tk()
         popup.wm_title("Info")
         # popup.geometry("240x180")
-        label = ttk.Label(popup, text=msg, font=NORM_FONT, justify=tk.CENTER)
+        label = tk.Label(popup, text=msg, font=NORM_FONT, justify=tk.CENTER)
         label.pack(pady=20, padx=20)
-        B1 = ttk.Button(popup, text="ok", command=popup.destroy)
-        B1.pack(side=tk.BOTTOM, pady=20)
+        b1 = tk.Button(popup, text="ok", command=popup.destroy)
+        b1.pack(side=tk.BOTTOM, pady=20)
         popup.mainloop()
 
-    def imgList(self):
+    def img_list(self):
         print(self.main_window.notebook.index("current"))
         print(self.main_window.notebook.index("end"))
         print(self.main_window.notebook.tab(self.main_window.notebook.index("current")))
         print(self.main_window.notebook.tabs())
         print(self.main_window.notebook.select())
 
-    def inHist(self):
+    def in_hist(self):
         tab = self._current_tab()
         tab.histogram(tab.vision.cvImage.image)
 
-    def outHist(self):
+    def out_hist(self):
         self._current_tab().show_hist()
 
     def info(self):
         self.popupmsg("APO Made by\nMichał Robaszewski\n2016/2017")
+        # simpledialog.SimpleDialog(master=self.main_window, text="APO Made by\nMichał Robaszewski\n2016/2017")
 
     def picker(self):
         tab_id = self.main_window.notebook.select()
@@ -140,7 +139,7 @@ class MenuCmd:
         # id = self.main_window.notebook.index("current")
         TabPicture.gallery[tab_id].vision.color_picker()
 
-    def hist_Equ(self):
+    def hist_equ(self):
         tab = self._current_tab()
         histEq.OperationHistEQ(tab)
 
@@ -211,9 +210,12 @@ class MenuCmd:
 
     def add_img(self):
         tab = self._current_tab()
-        InsertImage(tab)
+        InsertImg(tab)
 
     def sub_img(self):
         tab = self._current_tab()
         Substraction(tab)
 
+    def add_weighted_img(self):
+        tab = self._current_tab()
+        add_weighted_img.AddWeighted(tab)

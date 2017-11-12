@@ -47,13 +47,13 @@ class MainMenu(tk.Frame):
 
         # view = tk.Menu(self.menu, tearoff=0)
         # view.add_command(label="Full screen")
-        # view.add_command(label="tab num", command=self._menucmd.imgList)
+        # view.add_command(label="tab num", command=self._menucmd.img_list)
         # self.menu.add_cascade(label="View", menu=view)
 
         histogram = tk.Menu(self.menu, tearoff=0)
-        histogram.add_command(label="Wewnatrz histogram", command=self.menu_cmd.inHist)
-        histogram.add_command(label="Popup hist", command=self.menu_cmd.outHist)
-        histogram.add_command(label="Hist Equalization", command=self.menu_cmd.hist_Equ)
+        histogram.add_command(label="Wewnatrz histogram", command=self.menu_cmd.in_hist)
+        histogram.add_command(label="Popup hist", command=self.menu_cmd.out_hist)
+        histogram.add_command(label="Hist Equalization", command=self.menu_cmd.hist_equ)
 
         points = tk.Menu(self.menu, tearoff=0)
         points.add_command(label="Negacja", command=self.menu_cmd.negation)
@@ -66,10 +66,9 @@ class MainMenu(tk.Frame):
         points.add_command(label="Uniwersalna operacja jednopunktowa", command=self.menu_cmd.uop)
 
         arithmetic = tk.Menu(self.menu, tearoff=0)
-        arithmetic.add_command(label="Dodawanie", command=self.menu_cmd.add_img)
+        arithmetic.add_command(label="Wstawianie", command=self.menu_cmd.add_img)
         arithmetic.add_command(label="Wycinanie", command=self.menu_cmd.sub_img)
-        # arithmetic.add_command(label="Image Blending", command=self._menucmd.not_implemented)
-        # arithmetic.add_command(label="Bitwise", command=self._menucmd.not_implemented)
+        arithmetic.add_command(label="łączenie", command=self.menu_cmd.add_weighted_img)
 
         operation = tk.Menu(self.menu, tearoff=0)
         operation.add_cascade(label="Histogram", menu=histogram)
