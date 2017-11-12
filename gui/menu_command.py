@@ -4,7 +4,7 @@ import os
 import gui.operations.OperationsArithmetic.add_weighted_img as add_weighted_img
 import matplotlib
 
-from gui.operations.OperationsArithmetic import operation_or
+from gui.operations.OperationsArithmetic import logic_operations
 from .operations.OperationsArithmetic import difference_image
 from .operations.OperationsArithmetic.insert_img import InsertImg
 from .operations.OperationsArithmetic.subtraction import Substraction
@@ -227,5 +227,13 @@ class MenuCmd:
 
     def logic_or(self):
         tab = self._current_tab()
-        operation_or.LogicOr(tab)
+        logic_operations.LogicOr(tab)
 
+    def logic_and(self):
+        tab = self._current_tab()
+        logic_operations.LogicAnd(tab)
+
+    def logic_xor(self):
+        tab = self._current_tab()
+        logic_operations.LogicXor(tab)
+        

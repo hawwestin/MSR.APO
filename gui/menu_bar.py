@@ -73,6 +73,8 @@ class MainMenu(tk.Frame):
 
         logic = tk.Menu(self.menu, tearoff=0)
         logic.add_command(label="Or", command=self.menu_cmd.logic_or)
+        logic.add_command(label="And", command=self.menu_cmd.logic_and)
+        logic.add_command(label="Xor", command=self.menu_cmd.logic_xor)
 
         operation = tk.Menu(self.menu, tearoff=0)
         operation.add_cascade(label="Histogram", menu=histogram)

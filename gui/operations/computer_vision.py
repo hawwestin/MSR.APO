@@ -361,44 +361,35 @@ class Vision:
         if preview:
             cv2.imshow('preview', self.cvImage_tmp.image)
 
-    def logic_and(self, img, place):
-        # img_bg = np.zeros(self.cvImage.image.shape, np.uint8)
-        # rows, cols = img_bg.shape
-        rows, cols = self.cvImage.image.shape
-        roi = self.cvImage.image[0:rows, 0:cols]
-        # Now create a mask of logo and create its inverse mask also
-        # try:
-        #     img2gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # except Exception as e:
-        #     print(e)
-        img2gray = img
-        ret, mask = cv2.threshold(img2gray, 10, 255, cv2.THRESH_BINARY)
-        mask_inv = cv2.bitwise_not(mask)
-        # Now black-out the area of logo in ROI
-        img1_bg = cv2.bitwise_and(roi, roi, mask=mask_inv)
-        # Take only region of logo from logo image.
-        img2_fg = cv2.bitwise_and(img, img, mask=mask)
-        # Put logo in ROI and modify the main image
-        dst = cv2.add(img1_bg, img2_fg)
-        self.cvImage.image[place[0]:rows, place[0]:cols] = dst
-        cv2.imshow('res', img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-        pass
-
-    def logic_or(self, target, source, place, preview=True):
+    def logic_and(self, target, source, place, preview=True):
         self.cvImage_tmp.image = copy.copy(target)
         y, x = self._target_place(place, target.shape, source.shape)
-        # ... , mask =cv2.threshold(source, 10, 255, cv2.THRESH_BINARY)
-        a = target[y[0]:y[1], x[0]:x[1]]
-        b = self._mask_to_size(target, source, place)
-        cv2.bitwise_or(a,
-                       b,
+        cv2.bitwise_and(target[y[0]:y[1], x[0]:x[1]],
+                       self._mask_to_size(target, source, place),
                        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
         self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place, preview=False)
 
         if preview:
             cv2.imshow('preview', self.cvImage_tmp.image)
 
-    def logic_xor(self):
-        pass
+    def logic_or(self, target, source, place, preview=True):
+        self.cvImage_tmp.image = copy.copy(target)
+        y, x = self._target_place(place, target.shape, source.shape)
+        cv2.bitwise_or(target[y[0]:y[1], x[0]:x[1]],
+                       self._mask_to_size(target, source, place),
+                       self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
+        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place, preview=False)
+
+        if preview:
+            cv2.imshow('preview', self.cvImage_tmp.image)
+
+    def logic_xor(self, target, source, place, preview=True):
+        self.cvImage_tmp.image = copy.copy(target)
+        y, x = self._target_place(place, target.shape, source.shape)
+        cv2.bitwise_xor(target[y[0]:y[1], x[0]:x[1]],
+                       self._mask_to_size(target, source, place),
+                       self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
+        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place, preview=False)
+
+        if preview:
+            cv2.imshow('preview', self.cvImage_tmp.image)
