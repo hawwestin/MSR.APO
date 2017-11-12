@@ -3,6 +3,7 @@ import tkinter as tk
 import OperationsArithmetic.add_weighted_img as add_weighted_img
 
 import utils
+from OperationsArithmetic import difference_image
 
 from OperationsLinear import adap_prog, histEq, red_poz_sza, prog, UOP, stretching, prog_zach
 from OperationsArithmetic.insert_img import InsertImg
@@ -219,3 +220,7 @@ class MenuCmd:
     def add_weighted_img(self):
         tab = self._current_tab()
         add_weighted_img.AddWeighted(tab)
+
+    def diff_image(self):
+        tab = self._current_tab()
+        difference_image.DifferenceImage(tab)

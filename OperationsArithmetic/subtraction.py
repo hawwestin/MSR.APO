@@ -76,7 +76,7 @@ class Substraction:
 
         def preview():
             place = self.can.coords('img_f')
-            self.vision_result.ar_sub(place)
+            self.vision_result.image_cut(place)
 
         def confirm():
             name = tk.StringVar()
@@ -87,7 +87,7 @@ class Substraction:
             else:
                 tab_pic = TabGreyPicture(tab_frame, self.tab_bg.main_window, name)
             place = self.can.coords('img_f')
-            self.vision_result.ar_sub(place, False)
+            self.vision_result.image_cut(place, False)
             self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
             tab_pic.vision = self.vision_result
             tab_pic.refresh()

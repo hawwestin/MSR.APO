@@ -335,13 +335,17 @@ class Vision:
             cv2.imshow('preview', self.cvImage_tmp.image)
         pass
 
-    def ar_sub(self, place, preview=True):
+    def image_cut(self, place, preview=True):
         self.cvImage_tmp.image = self.cvImage.image[int(place[1]):int(place[3]), int(place[0]):int(place[2])]
         if preview:
             cv2.imshow('preview', self.cvImage_tmp.image)
 
-    def ar_diff(self):
-        pass
+    def ar_diff(self, img, place, preview=True):
+        self.cvImage_tmp.image = copy.copy(self.cvImage.image)
+        y, x = self._target_place(place, img.shape, self.cvImage.image.shape)
+        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] -= self._mask_to_size(self.cvImage_tmp.image, img, place)
+        if preview:
+            cv2.imshow('preview', self.cvImage_tmp.image)
 
     def logic_and(self, img, place):
         # img_bg = np.zeros(self.cvImage.image.shape, np.uint8)

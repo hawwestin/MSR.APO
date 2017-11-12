@@ -69,6 +69,7 @@ class MainMenu(tk.Frame):
         arithmetic.add_command(label="Wstawianie", command=self.menu_cmd.add_img)
         arithmetic.add_command(label="Wycinanie", command=self.menu_cmd.sub_img)
         arithmetic.add_command(label="łączenie", command=self.menu_cmd.add_weighted_img)
+        arithmetic.add_command(label="Odejmowanie", command=self.menu_cmd.diff_image)
 
         operation = tk.Menu(self.menu, tearoff=0)
         operation.add_cascade(label="Histogram", menu=histogram)
