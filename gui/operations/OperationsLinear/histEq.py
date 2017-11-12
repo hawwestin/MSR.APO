@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
-from OperationsLinear.operation_template import OperationTemplate
-from tabpicture import TabPicture
+from gui.operations.OperationsLinear.operation_template import OperationTemplate
+from gui.tabpicture import TabPicture
 
 
 class OperationHistEQ(OperationTemplate):

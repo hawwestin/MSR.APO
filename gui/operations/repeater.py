@@ -1,5 +1,5 @@
 from queue import LifoQueue
-import utils
+import app_config
 import tkinter as tk
 
 

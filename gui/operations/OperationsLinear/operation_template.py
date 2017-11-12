@@ -1,13 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
 
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-from matplotlib.figure import Figure
-
-from computer_vision import Vision
-from histogram import Histogram
-from utils import resolution
-from tabpicture import TabPicture
+from gui.histogram import Histogram
+from gui.operations.computer_vision import Vision
+from gui.tabpicture import TabPicture
+from app_config import resolution
 
 
 class OperationTemplate:

@@ -1,19 +1,19 @@
 import tkinter
 
-from OperationsLinear.operation_template import OperationTemplate
-from tabpicture import TabPicture
+from gui.operations.OperationsLinear.operation_template import OperationTemplate
+from gui.tabpicture import TabPicture
 
 
-class OperationStretching(OperationTemplate):
+class OperationLightThresholdKeepingValue(OperationTemplate):
     def __init__(self, tab: TabPicture):
-        super().__init__("Rozciąganie", tab)
+        super().__init__("Progowanie z zachowaniem poziomów szarości", tab)
 
     def control_plugin(self):
         def stretch():
             if int(p1.get()) == int(p2.get()):
                 self.status_message.set("p1 and p2 can't by equal")
                 return
-            self.tab.vision.image_stretching(int(p1.get()), int(p2.get()))
+            self.tab.vision.progowanie_z_zachowaniem_poziomow(int(p1.get()), int(p2.get()))
             self.refresh()
 
         p1 = tkinter.IntVar()

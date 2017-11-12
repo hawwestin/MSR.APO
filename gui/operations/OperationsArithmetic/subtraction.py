@@ -2,16 +2,11 @@ import copy
 import tkinter as tk
 from tkinter import ttk
 
-from PIL import ImageTk
-from PIL import Image
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-from matplotlib.figure import Figure
-
-from computer_vision import Vision
-from utils import resolution
-from tabpicture import TabPicture, TabColorPicture, TabGreyPicture
-from scrolled_frame import ScrolledCanvas
+from app_config import resolution
+from gui.operations.computer_vision import Vision
+from gui.tabpicture import TabPicture, TabColorPicture, TabGreyPicture
 from img_utils.rect_tracker import RectTracker
+from img_utils.scrolled_frame import ScrolledCanvas
 
 
 class Substraction:

@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from menu_command import MenuCmd
+from gui.menu_command import MenuCmd
 
 
 class MainMenu(tk.Frame):

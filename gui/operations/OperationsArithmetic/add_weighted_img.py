@@ -1,7 +1,7 @@
 import tkinter as tk
 
-from OperationsArithmetic.add_template import AddTemplate
-from tabpicture import TabPicture
+from gui.operations.OperationsArithmetic.add_template import AddTemplate
+from gui.tabpicture import TabPicture
 
 
 class AddWeighted(AddTemplate):

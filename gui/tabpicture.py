@@ -4,9 +4,8 @@ from tkinter import ttk
 import matplotlib
 import matplotlib.pyplot as plt
 
-import utils
-from computer_vision import Vision
-from histogram import Histogram
+from gui.histogram import Histogram
+from gui.operations.computer_vision import Vision
 
 matplotlib.use("TkAgg")
 

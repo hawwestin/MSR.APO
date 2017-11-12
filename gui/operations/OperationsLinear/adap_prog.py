@@ -1,9 +1,10 @@
 import tkinter as tk
-from cv2 import *
-import cv2
 
-from OperationsLinear.operation_template import OperationTemplate
-from tabpicture import TabPicture
+import cv2
+from cv2 import *
+
+from gui.operations.OperationsLinear.operation_template import OperationTemplate
+from gui.tabpicture import TabPicture
 
 
 class OperationAdaptiveThreshold(OperationTemplate):

@@ -1,23 +1,21 @@
-import matplotlib
 import tkinter as tk
-import OperationsArithmetic.add_weighted_img as add_weighted_img
-
-import utils
-from OperationsArithmetic import difference_image
-
-from OperationsLinear import adap_prog, histEq, red_poz_sza, prog, UOP, stretching, prog_zach
-from OperationsArithmetic.insert_img import InsertImg
-from OperationsArithmetic.subtraction import Substraction
-from tabpicture import TabColorPicture, TabGreyPicture, TabPicture
-from computer_vision import *
-from tkinter import filedialog
-from tkinter import simpledialog
 import os
 
+import gui.operations.OperationsArithmetic.add_weighted_img as add_weighted_img
+import matplotlib
+from .operations.OperationsArithmetic import difference_image
+from .operations.OperationsArithmetic.insert_img import InsertImg
+from .operations.OperationsArithmetic.subtraction import Substraction
+from .operations.OperationsLinear import adap_prog, histEq, red_poz_sza, prog, UOP, stretching, prog_zach
+
+import app_config
+from .operations.computer_vision import *
+from .tabpicture import TabColorPicture, TabGreyPicture, TabPicture
+
 matplotlib.use("TkAgg")
-LARGE_FONT = utils.LARGE_FONT
-NORM_FONT = utils.NORM_FONT
-SMALL_FONT = utils.SMALL_FONT
+LARGE_FONT = app_config.LARGE_FONT
+NORM_FONT = app_config.NORM_FONT
+SMALL_FONT = app_config.SMALL_FONT
 
 
 class MenuCmd:

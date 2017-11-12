@@ -1,13 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
 
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 
-from OperationsLinear.operation_template import OperationTemplate
-from tabpicture import TabPicture
+from gui.operations.OperationsLinear.operation_template import OperationTemplate
+from gui.tabpicture import TabPicture
 
 
 class UOPOperation(OperationTemplate):

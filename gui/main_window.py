@@ -1,12 +1,13 @@
 # coding=utf-8
 # my py
-import utils
 import tkinter as tk
-from menubar import MainMenu
 from tkinter import ttk
-from menu_command import MenuCmd
-from style import StyleGuide
-from tabpicture import TabPicture
+
+from .menu_command import MenuCmd
+
+from gui.menu_bar import MainMenu
+from gui.style import StyleGuide
+from gui.tabpicture import TabPicture
 
 
 class MainWindow(tk.Tk):

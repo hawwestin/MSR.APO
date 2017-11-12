@@ -1,13 +1,13 @@
 import copy
 from tkinter import filedialog
 
-from repeater import Repeater
-
-from cv2 import *
 import cv2
 import numpy as np
 from PIL import Image
 from PIL import ImageTk
+from cv2 import *
+
+from gui.operations.repeater import Repeater
 
 colors = {"COLOR": 1,
           "GREY": 0}
