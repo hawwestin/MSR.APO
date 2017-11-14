@@ -365,8 +365,8 @@ class Vision:
         self.cvImage_tmp.image = copy.copy(target)
         y, x = self._target_place(place, target.shape, source.shape)
         cv2.bitwise_and(target[y[0]:y[1], x[0]:x[1]],
-                       self._mask_to_size(target, source, place),
-                       self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
+                        self._mask_to_size(target, source, place),
+                        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
         self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place, preview=False)
 
         if preview:
@@ -387,9 +387,14 @@ class Vision:
         self.cvImage_tmp.image = copy.copy(target)
         y, x = self._target_place(place, target.shape, source.shape)
         cv2.bitwise_xor(target[y[0]:y[1], x[0]:x[1]],
-                       self._mask_to_size(target, source, place),
-                       self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
+                        self._mask_to_size(target, source, place),
+                        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
         self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place, preview=False)
 
+        if preview:
+            cv2.imshow('preview', self.cvImage_tmp.image)
+
+    def filter(self, kernel, preview=True):
+        self.cvImage_tmp.image = cv2.filter2D(self.cvImage.image, -1, kernel, self.cvImage_tmp.image)
         if preview:
             cv2.imshow('preview', self.cvImage_tmp.image)

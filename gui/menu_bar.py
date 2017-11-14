@@ -81,7 +81,7 @@ class MainMenu(tk.Frame):
         operation.add_cascade(label="Punktowe", menu=points)
         operation.add_cascade(label="Arithmetic Operations", menu=arithmetic)
         operation.add_cascade(label="Logic Operations", menu=logic)
-        # operation.add_command(label="Sąsiedztwa")
+        operation.add_command(label="Sąsiedztwa", command=self.menu_cmd.smoth)
         # operation.add_command(label="Korekcja")
         # operation.add_cascade(label="Segmentacja")
         # operation.add_cascade(label="Stegangorafia")

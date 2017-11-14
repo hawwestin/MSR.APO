@@ -4,6 +4,7 @@ import os
 import gui.operations.OperationsArithmetic.add_weighted_img as add_weighted_img
 import matplotlib
 
+from gui.operations.filters import smoothing
 from gui.operations.OperationsArithmetic import logic_operations
 from .operations.OperationsArithmetic import difference_image
 from .operations.OperationsArithmetic.insert_img import InsertImg
@@ -236,4 +237,7 @@ class MenuCmd:
     def logic_xor(self):
         tab = self._current_tab()
         logic_operations.LogicXor(tab)
-        
+
+    def smoth(self):
+        tab = self._current_tab()
+        smoothing.Smoothing(tab)
