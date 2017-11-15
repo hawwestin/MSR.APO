@@ -20,6 +20,13 @@ class Smoothing:
                                         [1, -8, 1],
                                         [1, 1, 1]])}
 
+    Kernel_Size = {"3x3": (3, 3),
+                   "3x5": (3, 5),
+                   "5x3": (5, 3),
+                   "5x5": (5, 5),
+                   "7x7": (7, 7),
+                   }
+
     def __init__(self, tab: TabPicture):
         self.window = tk.Toplevel()
         self.window.title("Smoothing")
@@ -37,6 +44,9 @@ class Smoothing:
         self.operation_name = tk.StringVar()
         self.operation_name.set(list(Smoothing.KERNELS.keys())[0])
         self.kernel = Smoothing.KERNELS.get(self.operation_name.get())
+        self.kernel_size = tk.StringVar()
+        self.kernel_size.set(list(Smoothing.Kernel_Size.keys())[0])
+
         self.refresh_krenel()
 
         self.body = tk.Frame(master=self.window)
@@ -74,9 +84,17 @@ class Smoothing:
         self.panel_back = tk.Label(master=lf_back)
         self.panel_back.pack()
 
-        self.lf_front = tk.LabelFrame(master=self.panels, text='Kernel')
-        self.lf_front.pack()
-        self.kernel_panel.add(self.lf_front, minsize=100)
+        self.lf_kernel = tk.LabelFrame(master=self.panels, text='Kernel')
+        self.lf_kernel.pack()
+        self.kernel_panel.add(self.lf_kernel, minsize=100)
+        om_choose = tk.OptionMenu(self.lf_kernel, self.kernel_size,
+                                  *Smoothing.Kernel_Size.keys())
+        om_choose.pack(side=tk.TOP, padx=2, anchor='nw')
+        self.kernel_size.trace("w", lambda *args: self.draw_kernel_grid())
+        self.kernel_grid = tk.Frame(self.lf_kernel)
+        self.kernel_grid.pack(side=tk.TOP)
+
+        # todo implement displaying current Kernel
 
         lf_result = tk.LabelFrame(master=self.panels, text='Result')
         lf_result.pack()
@@ -85,12 +103,22 @@ class Smoothing:
         self.can.pack(side=tk.TOP, fill=tk.BOTH, expand=True, anchor='nw')
         self.outer_pan.add(lf_result, minsize=100)
 
+        self.draw_kernel_grid()
         self.widget_buttons()
 
         self.control_plugin()
         self.refresh_panel_img()
 
         self.window.mainloop()
+
+    def draw_kernel_grid(self):
+        self.kernel_grid.destroy()
+        self.kernel_grid = tk.Frame(self.lf_kernel)
+        self.kernel_grid.pack(side=tk.TOP)
+        _x, _y = Smoothing.Kernel_Size.get(self.kernel_size.get())
+        for x in range(_x):
+            for y in range(_y):
+                Bucket(self.kernel_grid, x, y)
 
     def operation(self):
         kernel = Smoothing.KERNELS.get(self.operation_name.get(), None)
@@ -175,3 +203,28 @@ class Smoothing:
         :return:
         """
         pass
+
+
+class Bucket:
+    GALLERY = {}
+
+    def __init__(self, master: tk.Frame, x, y, value=0):
+        self.master = master
+        self.x = x
+        self.y = y
+        self.value = tk.StringVar()
+        self.value.set(value)
+        self.bucket = tk.Entry(master, textvariable=self.value, width=5)
+        vcmd = self.bucket.register(self.check_entry)
+        self.bucket.configure(validate='key', validatecommand=(vcmd, '%d', '%S'))
+        self.bucket.grid(column=x, row=y, padx=2, pady=2)
+
+    @staticmethod
+    def check_entry(why, what):
+        if int(why) >= 0:
+            if what in '0123456789-.':
+                return True
+            else:
+                return False
+        else:
+            return True
