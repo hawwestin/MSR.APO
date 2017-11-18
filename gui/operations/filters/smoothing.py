@@ -47,8 +47,6 @@ class Smoothing:
         self.kernel_size = tk.StringVar()
         self.kernel_size.set(list(Smoothing.Kernel_Size.keys())[0])
 
-        self.refresh_krenel()
-
         self.body = tk.Frame(master=self.window)
 
         self.body.pack(fill=tk.BOTH, expand=True)
@@ -72,29 +70,26 @@ class Smoothing:
         ###############
         self.outer_pan = tk.PanedWindow(self.panels, handlesize=10, showhandle=True, handlepad=12, sashwidth=3)
         self.outer_pan.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        self.kernel_panel = tk.PanedWindow(self.outer_pan, handlesize=10, showhandle=True, handlepad=12, sashwidth=3,
-                                           orient=tk.VERTICAL)
-        self.kernel_panel.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        self.outer_pan.add(self.kernel_panel, minsize=100)
+        self.left_panned_window = tk.PanedWindow(self.outer_pan, handlesize=10, showhandle=True, handlepad=12,
+                                                 sashwidth=3,
+                                                 orient=tk.VERTICAL)
+        self.left_panned_window.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.outer_pan.add(self.left_panned_window, minsize=100)
 
         # todo switch self.panels to self.kernel_panel
         lf_back = tk.LabelFrame(master=self.panels, text='Image')
         lf_back.pack()
-        self.kernel_panel.add(lf_back, minsize=100)
+        self.left_panned_window.add(lf_back, minsize=100)
+
         self.panel_back = tk.Label(master=lf_back)
         self.panel_back.pack()
 
         self.lf_kernel = tk.LabelFrame(master=self.panels, text='Kernel')
         self.lf_kernel.pack()
-        self.kernel_panel.add(self.lf_kernel, minsize=100)
-        om_choose = tk.OptionMenu(self.lf_kernel, self.kernel_size,
-                                  *Smoothing.Kernel_Size.keys())
-        om_choose.pack(side=tk.TOP, padx=2, anchor='nw')
-        self.kernel_size.trace("w", lambda *args: self.draw_kernel_grid())
-        self.kernel_grid = tk.Frame(self.lf_kernel)
-        self.kernel_grid.pack(side=tk.TOP)
+        self.left_panned_window.add(self.lf_kernel, minsize=100)
 
-        # todo implement displaying current Kernel
+        self.kernel_options = tk.Frame(self.lf_kernel)
+        self.kernel_grid = tk.Frame(self.lf_kernel)
 
         lf_result = tk.LabelFrame(master=self.panels, text='Result')
         lf_result.pack()
@@ -103,13 +98,29 @@ class Smoothing:
         self.can.pack(side=tk.TOP, fill=tk.BOTH, expand=True, anchor='nw')
         self.outer_pan.add(lf_result, minsize=100)
 
-        self.draw_kernel_grid()
         self.widget_buttons()
+        self.kernel_panel()
 
         self.control_plugin()
         self.refresh_panel_img()
 
         self.window.mainloop()
+
+    def kernel_panel(self):
+        om_kernel = tk.OptionMenu(self.kernel_options, self.kernel_size,
+                                  *Smoothing.Kernel_Size.keys())
+        self.kernel_size.trace("w", lambda *args: self.draw_kernel_grid())
+
+        om_operation_name = tk.OptionMenu(self.kernel_options, self.operation_name,
+                                          *Smoothing.KERNELS.keys())
+        self.operation_name.trace("w", lambda *args: self.operation())
+
+        om_kernel.pack(side=tk.LEFT, padx=2, anchor='nw')
+        om_operation_name.pack(side=tk.LEFT, padx=2, anchor='nw')
+        self.kernel_options.pack(side=tk.TOP)
+        self.kernel_grid.pack(side=tk.TOP, anchor='center')
+
+        self.draw_kernel_grid()
 
     def draw_kernel_grid(self):
         self.kernel_grid.destroy()
@@ -122,9 +133,10 @@ class Smoothing:
 
     def operation(self):
         kernel = Smoothing.KERNELS.get(self.operation_name.get(), None)
+        # todo setup kernel from kernel grid
         if kernel is not None:
             self.kernel = kernel
-            self.refresh_krenel()
+            self.draw_kernel_grid()
         else:
             self.status_message.set('Kernel not found!')
 
@@ -170,13 +182,8 @@ class Smoothing:
         b_refresh = ttk.Button(self.buttons, text="Refresh images", command=self.refresh_panel_img)
         b_refresh.pack(side=tk.LEFT, padx=2, after=b_redo)
 
-        om_choose = tk.OptionMenu(self.buttons, self.operation_name,
-                                  *Smoothing.KERNELS.keys())
-        om_choose.pack(side=tk.LEFT, padx=2, after=b_refresh)
-        self.operation_name.trace("w", lambda *args: self.operation())
-
         b_confirm = ttk.Button(self.buttons, text="Confirm", command=confirm)
-        b_confirm.pack(side=tk.LEFT, padx=2, after=om_choose)
+        b_confirm.pack(side=tk.LEFT, padx=2, after=b_refresh)
         b_preview = ttk.Button(self.buttons, text="Preview", command=preview)
         b_preview.pack(side=tk.LEFT, padx=2, after=b_confirm)
 
@@ -189,13 +196,6 @@ class Smoothing:
         self.panel_back.image = self.tk_img_background
 
         self.can.update_idletasks()
-
-    def refresh_krenel(self):
-        """
-        Refresh kernel grid values.
-        :return:
-        """
-        pass
 
     def control_plugin(self):
         """
@@ -213,8 +213,8 @@ class Bucket:
         self.x = x
         self.y = y
         self.value = tk.StringVar()
-        self.value.set(value)
-        self.bucket = tk.Entry(master, textvariable=self.value, width=5)
+        self.value.set("{}.{}".format(x, y))
+        self.bucket = tk.Entry(master, textvariable=self.value, width=3)
         vcmd = self.bucket.register(self.check_entry)
         self.bucket.configure(validate='key', validatecommand=(vcmd, '%d', '%S'))
         self.bucket.grid(column=x, row=y, padx=2, pady=2)
@@ -223,6 +223,7 @@ class Bucket:
     def check_entry(why, what):
         if int(why) >= 0:
             if what in '0123456789-.':
+                # todo Modify Kernel in Filter
                 return True
             else:
                 return False
