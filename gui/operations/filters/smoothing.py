@@ -1,5 +1,6 @@
 import copy
 import tkinter as tk
+from pprint import pprint
 from tkinter import ttk
 import numpy as np
 
@@ -13,12 +14,12 @@ class Smoothing:
     """
     Dictionary to hold all valid filter operations with kernel
     """
-    KERNELS = {"Wygładzanie": np.array([[-1, -1, -1],
-                                        [-1, 9, -1],
-                                        [-1, -1, -1]]),
-               "Wyostrzanie": np.array([[1, 1, 1],
-                                        [1, -8, 1],
-                                        [1, 1, 1]])}
+    KERNELS = {"Wygładzanie": ("3x3", np.array([[-1, -1, -1],
+                                                [-1, 9, -1],
+                                                [-1, -1, -1]])),
+               "Wyostrzanie": ("3x3", np.array([[1, 1, 1],
+                                                [1, -8, 1],
+                                                [1, 1, 1]]))}
 
     Kernel_Size = {"3x3": (3, 3),
                    "3x5": (3, 5),
@@ -32,7 +33,8 @@ class Smoothing:
         self.window.title("Smoothing")
         self.window.geometry(resolution)
 
-        self.kernel = None
+        self.raw_kernel = None
+        self.np_kernel = None
         self.tab_bg = tab
         self.vision_result = Vision()
         self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
@@ -43,7 +45,7 @@ class Smoothing:
 
         self.operation_name = tk.StringVar()
         self.operation_name.set(list(Smoothing.KERNELS.keys())[0])
-        self.kernel = Smoothing.KERNELS.get(self.operation_name.get())
+        self.np_kernel = Smoothing.KERNELS.get(self.operation_name.get())
         self.kernel_size = tk.StringVar()
         self.kernel_size.set(list(Smoothing.Kernel_Size.keys())[0])
 
@@ -106,6 +108,14 @@ class Smoothing:
 
         self.window.mainloop()
 
+    def kernel(self):
+        _x, _y = Smoothing.Kernel_Size.get(self.kernel_size.get())
+        self.np_kernel = np.zeros((_x, _y))
+        for x in range(_x):
+            for y in range(_y):
+                self.np_kernel[x][y] = self.raw_kernel[x][y].get()
+        return self.np_kernel
+
     def kernel_panel(self):
         om_kernel = tk.OptionMenu(self.kernel_options, self.kernel_size,
                                   *Smoothing.Kernel_Size.keys())
@@ -113,7 +123,7 @@ class Smoothing:
 
         om_operation_name = tk.OptionMenu(self.kernel_options, self.operation_name,
                                           *Smoothing.KERNELS.keys())
-        self.operation_name.trace("w", lambda *args: self.operation())
+        self.operation_name.trace("w", lambda *args: self.kernel_from_list())
 
         om_kernel.pack(side=tk.LEFT, padx=2, anchor='nw')
         om_operation_name.pack(side=tk.LEFT, padx=2, anchor='nw')
@@ -122,21 +132,27 @@ class Smoothing:
 
         self.draw_kernel_grid()
 
-    def draw_kernel_grid(self):
+    def draw_kernel_grid(self, values=None):
         self.kernel_grid.destroy()
+        self.raw_kernel = []
+
         self.kernel_grid = tk.Frame(self.lf_kernel)
         self.kernel_grid.pack(side=tk.TOP)
         _x, _y = Smoothing.Kernel_Size.get(self.kernel_size.get())
         for x in range(_x):
             for y in range(_y):
-                Bucket(self.kernel_grid, x, y)
+                value = values[x][y] if values is not None else 0
+                Bucket(raw=self.raw_kernel, master=self.kernel_grid, x=x, y=y, value=value)
 
-    def operation(self):
+        self.raw_kernel.append(copy.copy(Bucket.ROW))
+        Bucket.ROW = []
+        # pprint(self.raw_kernel)
+
+    def kernel_from_list(self):
         kernel = Smoothing.KERNELS.get(self.operation_name.get(), None)
-        # todo setup kernel from kernel grid
         if kernel is not None:
-            self.kernel = kernel
-            self.draw_kernel_grid()
+            self.kernel_size.set(kernel[0])
+            self.draw_kernel_grid(kernel[1])
         else:
             self.status_message.set('Kernel not found!')
 
@@ -150,7 +166,7 @@ class Smoothing:
             else:
                 tab_pic = TabGreyPicture(tab_frame, self.tab_bg.main_window, name)
 
-            self.vision_result.filter(kernel=self.kernel,
+            self.vision_result.filter(kernel=self.kernel(),
                                       preview=False)
             tab_pic.vision = self.vision_result
             tab_pic.refresh()
@@ -166,7 +182,7 @@ class Smoothing:
             self.refresh_panel_img()
 
         def preview():
-            self.vision_result.filter(kernel=self.kernel,
+            self.vision_result.filter(kernel=self.kernel(),
                                       preview=True)
 
         def _exit():
@@ -206,24 +222,32 @@ class Smoothing:
 
 
 class Bucket:
-    GALLERY = {}
+    ROW = []
 
-    def __init__(self, master: tk.Frame, x, y, value=0):
+    def __init__(self, raw, master: tk.Frame, x, y, value=0):
         self.master = master
         self.x = x
         self.y = y
         self.value = tk.StringVar()
-        self.value.set("{}.{}".format(x, y))
+        self.value.set(value)
         self.bucket = tk.Entry(master, textvariable=self.value, width=3)
         vcmd = self.bucket.register(self.check_entry)
         self.bucket.configure(validate='key', validatecommand=(vcmd, '%d', '%S'))
         self.bucket.grid(column=x, row=y, padx=2, pady=2)
 
+        """
+        Append to GRID
+        """
+        if y >= len(Bucket.ROW):
+            Bucket.ROW.append(self.value)
+        else:
+            raw.append(copy.copy(Bucket.ROW))
+            Bucket.ROW = [self.value]
+
     @staticmethod
     def check_entry(why, what):
         if int(why) >= 0:
             if what in '0123456789-.':
-                # todo Modify Kernel in Filter
                 return True
             else:
                 return False
