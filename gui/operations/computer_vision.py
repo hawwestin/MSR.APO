@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image
 from PIL import ImageTk
 from cv2 import *
+from matplotlib import pyplot as plt
 
 from gui.operations.repeater import Repeater
 
@@ -314,11 +315,19 @@ class Vision:
         return (y1, y2), (x1, x2)
 
     def img_paste(self, source, place, preview=True):
+        """
+        Place given source on current version in cvImage.image and store new image cvImage_tmp.image
+        Target is default cvImage_tmp
+        :param source: Image which will be placed , Must by already cut to target size.
+        :param place: left top corner of source image on target image
+        :param preview:
+        :return:
+        """
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
         y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
         self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] = self._mask_to_size(self.cvImage_tmp.image, source, place)
         if preview:
-            cv2.imshow('preview', self.cvImage_tmp.image)
+            self.preview()
 
     def ar_add(self, source, place, weight, preview=True):
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
@@ -333,8 +342,7 @@ class Vision:
                        place,
                        preview=False)
         if preview:
-            cv2.imshow('preview', self.cvImage_tmp.image)
-        pass
+            self.preview()
 
     def image_cut(self, place, preview=True):
         """
@@ -345,7 +353,7 @@ class Vision:
         """
         self.cvImage_tmp.image = self.cvImage.image[int(place[1]):int(place[3]), int(place[0]):int(place[2])]
         if preview:
-            cv2.imshow('preview', self.cvImage_tmp.image)
+            self.preview()
 
     def ar_diff(self, source, place, preview=True):
         """
@@ -359,7 +367,7 @@ class Vision:
         y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
         self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] -= self._mask_to_size(self.cvImage_tmp.image, source, place)
         if preview:
-            cv2.imshow('preview', self.cvImage_tmp.image)
+            self.preview()
 
     def logic_and(self, target, source, place, preview=True):
         self.cvImage_tmp.image = copy.copy(target)
@@ -370,7 +378,7 @@ class Vision:
         self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place, preview=False)
 
         if preview:
-            cv2.imshow('preview', self.cvImage_tmp.image)
+            self.preview()
 
     def logic_or(self, target, source, place, preview=True):
         self.cvImage_tmp.image = copy.copy(target)
@@ -381,9 +389,17 @@ class Vision:
         self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place, preview=False)
 
         if preview:
-            cv2.imshow('preview', self.cvImage_tmp.image)
+            self.preview()
 
     def logic_xor(self, target, source, place, preview=True):
+        """
+        Logic operation Xor on given images.
+        :param target: Image on which should by applied change
+        :param source: Image which will be aplied on target image.
+        :param place: Left top corner where source Image will be placed on target.
+        :param preview: Bool Flag
+        :return:
+        """
         self.cvImage_tmp.image = copy.copy(target)
         y, x = self._target_place(place, target.shape, source.shape)
         cv2.bitwise_xor(target[y[0]:y[1], x[0]:x[1]],
@@ -392,9 +408,35 @@ class Vision:
         self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place, preview=False)
 
         if preview:
-            cv2.imshow('preview', self.cvImage_tmp.image)
+            self.preview()
 
     def filter(self, kernel, preview=True):
+        """
+        Apply given kernel on current cvImage.image and store new in cvImage_tmp.image.
+
+        :param kernel: numpy array
+        :param preview: bool flag
+        :return:
+        """
         self.cvImage_tmp.image = cv2.filter2D(self.cvImage.image, -1, kernel, self.cvImage_tmp.image)
         if preview:
-            cv2.imshow('preview', self.cvImage_tmp.image)
+            self.preview()
+
+    def preview(self):
+        """
+        Display current tmp image.
+
+        Linux 4.4 with openCv 3.1 have broken cv2.imshow function.
+        For different platform support matplotlib imshow is used.
+        :return:
+        """
+        # cv2.startWindowThread()
+        # cv2.namedWindow('preview', cv2.WINDOW_NORMAL)
+        # cv2.imshow('preview', self.cvImage_tmp.image)
+        plt.imshow(self.cvImage_tmp.image,
+                   cmap='gray',
+                   interpolation='none',
+                   vmin=0,
+                   vmax=255)
+        plt.show()
+
