@@ -420,7 +420,7 @@ class Vision:
         if preview:
             self.preview()
 
-    def filter(self, kernel, border_type, preview=True):
+    def filter(self, kernel, border_type):
         """
         Apply given kernel on current cvImage.image and store new in cvImage_tmp.image.
 
@@ -431,8 +431,10 @@ class Vision:
         """
         self.cvImage_tmp.image = cv2.filter2D(self.cvImage.image, -1, kernel, self.cvImage_tmp.image,
                                               borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
-        if preview:
-            self.preview()
+
+    def blur(self, kernel, border_type):
+        self.cvImage_tmp.image = cv2.blur(src=self.cvImage.image, ksize=kernel,
+                                          borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
 
     def preview(self):
         """

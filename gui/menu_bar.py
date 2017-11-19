@@ -76,12 +76,16 @@ class MainMenu(tk.Frame):
         logic.add_command(label="And", command=self.menu_cmd.logic_and)
         logic.add_command(label="Xor", command=self.menu_cmd.logic_xor)
 
+        kernels = tk.Menu(self.menu, tearoff=0)
+        kernels.add_command(label="Uniwersalne filtry", command=self.menu_cmd.filter)
+        kernels.add_command(label="Wygładzanie", command=self.menu_cmd.smooth)
+
         operation = tk.Menu(self.menu, tearoff=0)
         operation.add_cascade(label="Histogram", menu=histogram)
         operation.add_cascade(label="Punktowe", menu=points)
         operation.add_cascade(label="Arithmetic Operations", menu=arithmetic)
         operation.add_cascade(label="Logic Operations", menu=logic)
-        operation.add_command(label="Sąsiedztwa", command=self.menu_cmd.smoth)
+        operation.add_cascade(label="Sąsiedztwa", menu=kernels)
         # operation.add_command(label="Korekcja")
         # operation.add_cascade(label="Segmentacja")
         # operation.add_cascade(label="Stegangorafia")
