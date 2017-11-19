@@ -17,6 +17,16 @@ supported_ext = [
     ".jpg",
     ".png"
 ]
+"""
+https://docs.opencv.org/3.3.0/d2/de8/group__core__array.html#ga209f2f4869e304c82d07739337eae7c5
+"""
+borderType = {
+    "CONSTANT": cv2.BORDER_CONSTANT,
+    "ISOLATED": cv2.BORDER_ISOLATED,
+    "REFLECT": cv2.BORDER_REFLECT,
+    "REFLECT101": cv2.BORDER_REFLECT101,
+    "REPLICATE": cv2.BORDER_REPLICATE
+}
 
 
 class MemoImageData(Repeater):
@@ -410,15 +420,17 @@ class Vision:
         if preview:
             self.preview()
 
-    def filter(self, kernel, preview=True):
+    def filter(self, kernel, border_type, preview=True):
         """
         Apply given kernel on current cvImage.image and store new in cvImage_tmp.image.
 
         :param kernel: numpy array
         :param preview: bool flag
+        :param border_type:
         :return:
         """
-        self.cvImage_tmp.image = cv2.filter2D(self.cvImage.image, -1, kernel, self.cvImage_tmp.image)
+        self.cvImage_tmp.image = cv2.filter2D(self.cvImage.image, -1, kernel, self.cvImage_tmp.image,
+                                              borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
         if preview:
             self.preview()
 
@@ -439,4 +451,3 @@ class Vision:
                    vmin=0,
                    vmax=255)
         plt.show()
-

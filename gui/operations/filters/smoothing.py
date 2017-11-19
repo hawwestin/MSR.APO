@@ -5,7 +5,7 @@ from tkinter import ttk
 import numpy as np
 
 from app_config import resolution
-from gui.operations.computer_vision import Vision
+from gui.operations import computer_vision
 from gui.tabpicture import TabPicture, TabColorPicture, TabGreyPicture
 from img_utils.scrolled_frame import ScrolledCanvas
 
@@ -14,19 +14,39 @@ class Smoothing:
     """
     Dictionary to hold all valid filter operations with kernel
     """
-    KERNELS = {"Wygładzanie": ("3x3", np.array([[-1, -1, -1],
-                                                [-1, 9, -1],
+    KERNELS = {"Laplasjan Detekcja krawędzi B": ("3x3", np.array([[-1, -1, -1],
+                                                                  [-1, 9, -1],
+                                                                  [-1, -1, -1]])),
+               "Laplasjan a": ("3x3", np.array([[0, -1, 0],
+                                                [-1, 4, -1],
+                                                [0, -1, 0]])),
+               "Laplasjan b": ("3x3", np.array([[-1, -1, -1],
+                                                [-1, 8, -1],
                                                 [-1, -1, -1]])),
-               "Wyostrzanie": ("3x3", np.array([[1, 1, 1],
-                                                [1, -8, 1],
-                                                [1, 1, 1]]))}
+               "Laplasjan c": ("3x3", np.array([[1, -2, 1],
+                                                [-2, 4, -2],
+                                                [1, -2, 1]])),
+               "Laplasjan Detekcja Krawędzi C": ("3x3", np.array([[0, -1, 0],
+                                                                  [-1, 5, -1],
+                                                                  [0, -1, 0]])),
+               "Wygładzanie a": ("3x3", np.array([[1, 1, 1],
+                                                  [1, 2, 1],
+                                                  [1, 2, 1]])),
+               "Wygładzanie b": ("3x3", np.array([[1, 2, 1],
+                                                  [2, 4, 2],
+                                                  [1, 2, 1]])),
+               "Detekcja Krawędzi": ("3x3", np.array([[1, -2, 1],
+                                                      [-2, 5, -2],
+                                                      [1, -2, 1]]))
+               }
 
-    Kernel_Size = {"3x3": (3, 3),
-                   "3x5": (3, 5),
-                   "5x3": (5, 3),
-                   "5x5": (5, 5),
-                   "7x7": (7, 7),
-                   }
+    Kernel_Size = {
+        "3x3": (3, 3),
+        "3x5": (3, 5),
+        "5x3": (5, 3),
+        "5x5": (5, 5),
+        "7x7": (7, 7),
+    }
 
     def __init__(self, tab: TabPicture):
         self.window = tk.Toplevel()
@@ -36,7 +56,7 @@ class Smoothing:
         self.raw_kernel = None
         self.np_kernel = None
         self.tab_bg = tab
-        self.vision_result = Vision()
+        self.vision_result = computer_vision.Vision()
         self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
         self.size = (300, 300)
         self.tk_img_background = None
@@ -48,6 +68,8 @@ class Smoothing:
         self.np_kernel = Smoothing.KERNELS.get(self.operation_name.get())
         self.kernel_size = tk.StringVar()
         self.kernel_size.set(list(Smoothing.Kernel_Size.keys())[0])
+        self.border_type = tk.StringVar()
+        self.border_type.set(list(computer_vision.borderType.keys())[0])
 
         self.body = tk.Frame(master=self.window)
 
@@ -125,8 +147,12 @@ class Smoothing:
                                           *Smoothing.KERNELS.keys())
         self.operation_name.trace("w", lambda *args: self.kernel_from_list())
 
+        om_border = tk.OptionMenu(self.kernel_options, self.border_type,
+                                  *computer_vision.borderType.keys())
+
         om_kernel.pack(side=tk.LEFT, padx=2, anchor='nw')
         om_operation_name.pack(side=tk.LEFT, padx=2, anchor='nw')
+        om_border.pack(side=tk.LEFT, padx=2, anchor='nw')
         self.kernel_options.pack(side=tk.TOP)
         self.kernel_grid.pack(side=tk.TOP, anchor='center')
 
@@ -167,10 +193,11 @@ class Smoothing:
                 tab_pic = TabGreyPicture(tab_frame, self.tab_bg.main_window, name)
 
             self.vision_result.filter(kernel=self.kernel(),
+                                      border_type=self.border_type.get(),
                                       preview=False)
             tab_pic.vision = self.vision_result
             tab_pic.refresh()
-            self.vision_result = Vision()
+            self.vision_result = computer_vision.Vision()
             self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
 
         def undo():
@@ -183,6 +210,7 @@ class Smoothing:
 
         def preview():
             self.vision_result.filter(kernel=self.kernel(),
+                                      border_type=self.border_type.get(),
                                       preview=True)
 
         def _exit():
@@ -207,7 +235,7 @@ class Smoothing:
         b_exit.pack(side=tk.RIGHT, padx=2)
 
     def refresh_panel_img(self):
-        self.tk_img_background = Vision.resize_tk_image(self.tab_bg.vision.cvImage.image, self.size)
+        self.tk_img_background = computer_vision.Vision.resize_tk_image(self.tab_bg.vision.cvImage.image, self.size)
         self.panel_back.configure(image=self.tk_img_background)
         self.panel_back.image = self.tk_img_background
 
