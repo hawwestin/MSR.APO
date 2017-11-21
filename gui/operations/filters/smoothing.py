@@ -19,16 +19,16 @@ class Smoothing(FiltersTemplate):
     def control(self):
         om_kernel = tk.OptionMenu(self.lf_bottom, self.kernel_size,
                                   *FiltersTemplate.Kernel_Size.keys())
-        self.kernel_size.trace("w", lambda *args: self.operation())
+        self.kernel_size.trace("w", lambda *args: self.operation_command())
 
         om_border = tk.OptionMenu(self.lf_bottom, self.border_type,
                                   *computer_vision.borderType.keys())
-        self.border_type.trace("w", lambda *args: self.operation())
+        self.border_type.trace("w", lambda *args: self.operation_command())
 
         om_kernel.pack(side=tk.LEFT, padx=2, anchor='nw')
         om_border.pack(side=tk.LEFT, padx=2, anchor='nw')
 
-    def operation(self):
+    def operation_command(self):
         """
         Mock method to be filled by concrete operation.
         :return:

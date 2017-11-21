@@ -103,7 +103,7 @@ class FiltersTemplate:
             else:
                 tab_pic = TabGreyPicture(tab_frame, self.tab_bg.main_window, name)
 
-            self.operation()
+            self.operation_command()
             tab_pic.vision = self.vision_result
             tab_pic.refresh()
             self.vision_result = computer_vision.Vision()
@@ -118,7 +118,7 @@ class FiltersTemplate:
             self.refresh_panel_img()
 
         def preview():
-            self.operation()
+            self.operation_command()
 
         def _exit():
             self.tab_bg.vision.cvImage_tmp.image = None
@@ -148,7 +148,7 @@ class FiltersTemplate:
 
         self.can.update_idletasks()
 
-    def operation(self):
+    def operation_command(self):
         """
         Mock method to be filled by concrete operation.
         :return:

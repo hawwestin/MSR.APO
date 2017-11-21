@@ -106,7 +106,7 @@ class Filter(FiltersTemplate):
         else:
             self.status_message.set('Kernel not found!')
 
-    def operation(self):
+    def operation_command(self):
         """
         Mock method to be filled by concrete operation.
         :return:
