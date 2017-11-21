@@ -70,8 +70,7 @@ class Substraction:
             self.refresh_panel_img()
 
         def preview():
-            place = self.can.coords('img_f')
-            self.vision_result.image_cut(place)
+            self.operation_command(True)
 
         def confirm():
             name = tk.StringVar()
@@ -81,8 +80,7 @@ class Substraction:
                 tab_pic = TabColorPicture(tab_frame, self.tab_bg.main_window, name)
             else:
                 tab_pic = TabGreyPicture(tab_frame, self.tab_bg.main_window, name)
-            place = self.can.coords('img_f')
-            self.vision_result.image_cut(place, False)
+            self.operation_command(False)
             self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
             tab_pic.vision = self.vision_result
             tab_pic.refresh()
@@ -119,3 +117,9 @@ class Substraction:
         :return:
         """
         pass
+
+    def operation_command(self, preview):
+        place = self.can.coords('img_f')
+        self.vision_result.image_cut(place)
+        if preview:
+            self.vision_result.preview()

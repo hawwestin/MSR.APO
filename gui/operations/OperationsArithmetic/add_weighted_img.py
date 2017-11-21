@@ -29,4 +29,7 @@ class AddWeighted(AddTemplate):
     def operation_command(self, preview):
         place = self.can.coords('img_f')
         self.vision_result.ar_add(self.tab_fg.vision.cvImage.image, place,
-                                  weight=(self.weight_img_1.get(), self.weight_img_2.get()), preview=preview)
+                                  weight=(self.weight_img_1.get(), self.weight_img_2.get()))
+
+        if preview:
+            self.vision_result.preview()

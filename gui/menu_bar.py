@@ -71,11 +71,6 @@ class MainMenu(tk.Frame):
         arithmetic.add_command(label="łączenie", command=self.menu_cmd.add_weighted_img)
         arithmetic.add_command(label="Odejmowanie", command=self.menu_cmd.diff_image)
 
-        logic = tk.Menu(self.menu, tearoff=0)
-        logic.add_command(label="Or", command=self.menu_cmd.logic_or)
-        logic.add_command(label="And", command=self.menu_cmd.logic_and)
-        logic.add_command(label="Xor", command=self.menu_cmd.logic_xor)
-
         kernels = tk.Menu(self.menu, tearoff=0)
         kernels.add_command(label="Uniwersalne filtry", command=self.menu_cmd.filter)
         kernels.add_command(label="Wygładzanie", command=self.menu_cmd.smooth)
@@ -84,7 +79,7 @@ class MainMenu(tk.Frame):
         operation.add_cascade(label="Histogram", menu=histogram)
         operation.add_cascade(label="Punktowe", menu=points)
         operation.add_cascade(label="Arithmetic Operations", menu=arithmetic)
-        operation.add_cascade(label="Logic Operations", menu=logic)
+        operation.add_command(label="Logic Operations", command=self.menu_cmd.logic_all)
         operation.add_cascade(label="Sąsiedztwa", menu=kernels)
         # operation.add_command(label="Korekcja")
         # operation.add_cascade(label="Segmentacja")

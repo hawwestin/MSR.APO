@@ -226,17 +226,9 @@ class MenuCmd:
         tab = self._current_tab()
         difference_image.DifferenceImage(tab)
 
-    def logic_or(self):
+    def logic_all(self):
         tab = self._current_tab()
-        logic_operations.LogicOr(tab)
-
-    def logic_and(self):
-        tab = self._current_tab()
-        logic_operations.LogicAnd(tab)
-
-    def logic_xor(self):
-        tab = self._current_tab()
-        logic_operations.LogicXor(tab)
+        logic_operations.LogicOperations(tab)
 
     def filter(self):
         tab = self._current_tab()
@@ -245,5 +237,3 @@ class MenuCmd:
     def smooth(self):
         tab = self._current_tab()
         smoothing.Smoothing(tab)
-
-

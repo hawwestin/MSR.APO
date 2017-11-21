@@ -11,4 +11,7 @@ class InsertImg(AddTemplate):
 
     def operation_command(self, preview):
         place = self.can.coords('img_f')
-        self.vision_result.img_paste(self.tab_fg.vision.cvImage.image, place, preview)
+        self.vision_result.img_paste(self.tab_fg.vision.cvImage.image, place)
+
+        if preview:
+            self.vision_result.preview()

@@ -324,22 +324,19 @@ class Vision:
 
         return (y1, y2), (x1, x2)
 
-    def img_paste(self, source, place, preview=True):
+    def img_paste(self, source, place):
         """
         Place given source on current version in cvImage.image and store new image cvImage_tmp.image
         Target is default cvImage_tmp
         :param source: Image which will be placed , Must by already cut to target size.
         :param place: left top corner of source image on target image
-        :param preview:
         :return:
         """
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
         y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
         self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] = self._mask_to_size(self.cvImage_tmp.image, source, place)
-        if preview:
-            self.preview()
 
-    def ar_add(self, source, place, weight, preview=True):
+    def ar_add(self, source, place, weight):
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
         y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
         self.img_paste(cv2.addWeighted(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]],
@@ -348,13 +345,9 @@ class Vision:
                                                           source,
                                                           place),
                                        weight[1],
-                                       0),
-                       place,
-                       preview=False)
-        if preview:
-            self.preview()
+                                       0), place)
 
-    def image_cut(self, place, preview=True):
+    def image_cut(self, place):
         """
         Cut piece of self.cvImage on given place.
         :param place: tuple of top left x, y on target img
@@ -362,10 +355,8 @@ class Vision:
         :return:
         """
         self.cvImage_tmp.image = self.cvImage.image[int(place[1]):int(place[3]), int(place[0]):int(place[2])]
-        if preview:
-            self.preview()
 
-    def ar_diff(self, source, place, preview=True):
+    def ar_diff(self, source, place):
         """
         Arithmetic subtraction of source image on given place.
         :param source: Image to be added on top of current self.cvImage
@@ -376,32 +367,24 @@ class Vision:
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
         y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
         self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] -= self._mask_to_size(self.cvImage_tmp.image, source, place)
-        if preview:
-            self.preview()
 
-    def logic_and(self, target, source, place, preview=True):
+    def logic_and(self, target, source, place):
         self.cvImage_tmp.image = copy.copy(target)
         y, x = self._target_place(place, target.shape, source.shape)
         cv2.bitwise_and(target[y[0]:y[1], x[0]:x[1]],
                         self._mask_to_size(target, source, place),
                         self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
-        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place, preview=False)
+        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place)
 
-        if preview:
-            self.preview()
-
-    def logic_or(self, target, source, place, preview=True):
+    def logic_or(self, target, source, place):
         self.cvImage_tmp.image = copy.copy(target)
         y, x = self._target_place(place, target.shape, source.shape)
         cv2.bitwise_or(target[y[0]:y[1], x[0]:x[1]],
                        self._mask_to_size(target, source, place),
                        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
-        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place, preview=False)
+        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place)
 
-        if preview:
-            self.preview()
-
-    def logic_xor(self, target, source, place, preview=True):
+    def logic_xor(self, target, source, place):
         """
         Logic operation Xor on given images.
         :param target: Image on which should by applied change
@@ -415,10 +398,7 @@ class Vision:
         cv2.bitwise_xor(target[y[0]:y[1], x[0]:x[1]],
                         self._mask_to_size(target, source, place),
                         self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
-        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place, preview=False)
-
-        if preview:
-            self.preview()
+        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place)
 
     def filter(self, kernel, border_type):
         """

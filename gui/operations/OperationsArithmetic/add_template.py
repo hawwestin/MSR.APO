@@ -108,7 +108,7 @@ class AddTemplate:
             else:
                 tab_pic = TabGreyPicture(tab_frame, self.tab_bg.main_window, name)
 
-            self.operation_command(preview=False)
+            self.operation_command(False)
 
             self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
             tab_pic.vision = self.vision_result
@@ -125,7 +125,7 @@ class AddTemplate:
             self.refresh_panel_img()
 
         def preview():
-            self.operation_command(preview=True)
+            self.operation_command(True)
 
         def _exit():
             self.tab_bg.vision.cvImage_tmp.image = None
@@ -186,6 +186,7 @@ class AddTemplate:
     def operation_command(self, preview):
         """
         Mock method to be filled by concrete operation.
+        :param preview:
         :return:
         """
         pass
