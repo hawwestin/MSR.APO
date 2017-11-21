@@ -46,12 +46,14 @@ class Filter(FiltersTemplate):
         self.operation_name.set(list(Filter.KERNELS.keys())[0])
         self.kernel_size.set(list(Filter.Kernel_Size.keys())[0])
 
+
         self.np_kernel = Filter.KERNELS.get(self.operation_name.get())
 
         self.kernel_options = tk.Frame(self.lf_bottom)
         self.kernel_grid = tk.Frame(self.lf_bottom)
 
         self.kernel_panel()
+        self.border_type.trace('w', lambda *args: self.operation_command())
 
         self.window.mainloop()
 
@@ -103,6 +105,7 @@ class Filter(FiltersTemplate):
         if kernel is not None:
             self.kernel_size.set(kernel[0])
             self.draw_kernel_grid(kernel[1])
+            self.operation_command()
         else:
             self.status_message.set('Kernel not found!')
 
