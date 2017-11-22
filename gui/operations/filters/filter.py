@@ -76,9 +76,12 @@ class Filter(FiltersTemplate):
         om_border = tk.OptionMenu(self.kernel_options, self.border_type,
                                   *computer_vision.borderType.keys())
 
+        b_preview = tk.Button(self.lf_bottom, text="Preview", command=self.operation_command)
+
         om_kernel.pack(side=tk.LEFT, padx=2, anchor='nw')
         om_operation_name.pack(side=tk.LEFT, padx=2, anchor='nw')
         om_border.pack(side=tk.LEFT, padx=2, anchor='nw')
+        b_preview.pack(side=tk.BOTTOM, padx=2, anchor='s')
         self.kernel_options.pack(side=tk.TOP)
         self.kernel_grid.pack(side=tk.TOP, anchor='center')
 

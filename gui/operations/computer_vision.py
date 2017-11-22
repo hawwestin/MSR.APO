@@ -17,6 +17,7 @@ supported_ext = [
     ".jpg",
     ".png"
 ]
+
 """
 https://docs.opencv.org/3.3.0/d2/de8/group__core__array.html#ga209f2f4869e304c82d07739337eae7c5
 """
