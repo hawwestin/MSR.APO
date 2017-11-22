@@ -2,6 +2,9 @@ import copy
 import tkinter as tk
 from tkinter import ttk
 
+import matplotlib
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.pyplot import Figure
 
 from app_config import resolution
 from gui.operations import computer_vision
@@ -31,7 +34,7 @@ class FiltersTemplate:
         self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
         self.size = (300, 300)
         self.tk_img_background = None
-        self.img_result = self.tab_bg.vision.cvImage.tk_image
+        self.img_result = self.tab_bg.vision.cvImage.image
 
         self.operation_name = tk.StringVar()
         self.kernel_size = tk.StringVar()
@@ -80,18 +83,23 @@ class FiltersTemplate:
         self.lf_bottom.pack()
         self.left_panned_window.add(self.lf_bottom, minsize=100)
 
-        lf_result = tk.LabelFrame(master=self.panels, text='Result')
-        lf_result.pack()
-        self.can = ScrolledCanvas(lf_result)
-        self.can.create_image(0, 0, image=self.img_result, tags="img_bg", anchor='nw')
-        self.can.pack(side=tk.TOP, fill=tk.BOTH, expand=True, anchor='nw')
-        self.outer_pan.add(lf_result, minsize=100)
+        self.lf_result = tk.LabelFrame(master=self.panels, text='Result')
+        self.lf_result.pack()
+        self.outer_pan.add(self.lf_result, minsize=100)
 
-        self.can.configure(scrollregion=(0, 0, self.img_result.width(), self.img_result.height()))
+        self.fig = Figure(tight_layout=True)
+        self.fig_subplot = self.fig.add_subplot(111)
+
+        self.ml_canvas = FigureCanvasTkAgg(self.fig, self.lf_result)
+        self.ml_canvas.show()
+        self.ml_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True, anchor='nw')
+        self.toolbar = NavigationToolbar2TkAgg(self.ml_canvas, self.lf_result)
+        self.toolbar.update()
 
         self.widget_buttons()
 
         self.refresh_panel_img()
+        self.draw_result()
 
     def widget_buttons(self):
         def confirm():
@@ -103,7 +111,7 @@ class FiltersTemplate:
             else:
                 tab_pic = TabGreyPicture(tab_frame, self.tab_bg.main_window, name)
 
-            self.operation_command()
+            self.operation_command(True)
             tab_pic.vision = self.vision_result
             tab_pic.refresh()
             self.vision_result = computer_vision.Vision()
@@ -146,12 +154,25 @@ class FiltersTemplate:
         self.panel_back.configure(image=self.tk_img_background)
         self.panel_back.image = self.tk_img_background
 
-        self.can.update_idletasks()
+    def draw_result(self):
+        """
 
-    def operation_command(self):
+        :return:
+        """
+        # FIXME With no clearing subplot ram is rising in usages!!!
+        # self.fig_subplot.clear()
+        self.fig_subplot.imshow(self.img_result,
+                                cmap='gray',
+                                interpolation='none',
+                                vmin=0,
+                                vmax=255,
+                                aspect='equal')
+        self.toolbar.draw()
+
+    def operation_command(self, persist=False):
         """
         Mock method to be filled by concrete operation.
+        :param persist:
         :return:
         """
         pass
-

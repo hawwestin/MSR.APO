@@ -17,7 +17,7 @@ class Histogram:
         self.hist_frame.pack(side=tk.RIGHT, expand=True)
         self.histCanvas = None
         self.toolbar = None
-        self.fig = Figure()
+        self.fig = Figure(tight_layout=True)
         self.fig_subplot = self.fig.add_subplot(111)
 
         self.hist_pos_label = tk.Label(master=self.hist_frame)

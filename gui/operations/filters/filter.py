@@ -46,7 +46,6 @@ class Filter(FiltersTemplate):
         self.operation_name.set(list(Filter.KERNELS.keys())[0])
         self.kernel_size.set(list(Filter.Kernel_Size.keys())[0])
 
-
         self.np_kernel = Filter.KERNELS.get(self.operation_name.get())
 
         self.kernel_options = tk.Frame(self.lf_bottom)
@@ -109,17 +108,18 @@ class Filter(FiltersTemplate):
         else:
             self.status_message.set('Kernel not found!')
 
-    def operation_command(self):
+    def operation_command(self, persist=False):
         """
         Mock method to be filled by concrete operation.
+        :param persist:
         :return:
         """
         self.vision_result.filter(kernel=self.kernel(),
                                   border_type=self.border_type.get())
-        self.can.delete("img_bg")
-        self.img_result = self.vision_result.cvImage_tmp.tk_image
-        self.can.update_idletasks()
-        self.can.create_image(0, 0, image=self.img_result, tags="img_bg", anchor='nw')
+        self.img_result = self.vision_result.cvImage_tmp.image
+        self.draw_result()
+        if persist:
+            self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
 
 
 class Bucket:
