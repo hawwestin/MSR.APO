@@ -1,15 +1,11 @@
 import tkinter as tk
 import os
 
-import gui.operations.OperationsArithmetic.add_weighted_img as add_weighted_img
 import matplotlib
 
 from gui.operations.filters import filter, smoothing
 from gui.operations.OperationsArithmetic import logic_operations
 from gui.operations.OperationsArithmetic import arithmertic_operations
-from .operations.OperationsArithmetic import difference_image
-from .operations.OperationsArithmetic.insert_img import InsertImg
-from .operations.OperationsArithmetic.subtraction import Substraction
 from .operations.OperationsLinear import adap_prog, histEq, red_poz_sza, prog, UOP, stretching, prog_zach
 
 import app_config
@@ -210,22 +206,6 @@ class MenuCmd:
     def progowanie_z_zachowaniem(self):
         tab = self._current_tab()
         prog_zach.OperationLightThresholdKeepingValue(tab)
-
-    def add_img(self):
-        tab = self._current_tab()
-        InsertImg(tab)
-
-    def sub_img(self):
-        tab = self._current_tab()
-        Substraction(tab)
-
-    def add_weighted_img(self):
-        tab = self._current_tab()
-        add_weighted_img.AddWeighted(tab)
-
-    def diff_image(self):
-        tab = self._current_tab()
-        difference_image.DifferenceImage(tab)
 
     def logic_all(self):
         tab = self._current_tab()
