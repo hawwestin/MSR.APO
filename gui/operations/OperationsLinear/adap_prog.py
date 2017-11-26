@@ -3,7 +3,7 @@ import tkinter as tk
 import cv2
 from cv2 import *
 
-from gui.operations.OperationsLinear.operation_template import OperationTemplate
+from gui.operations.operation_template import OperationTemplate
 from gui.tabpicture import TabPicture
 
 

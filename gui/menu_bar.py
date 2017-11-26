@@ -78,7 +78,7 @@ class MainMenu(tk.Frame):
         operation = tk.Menu(self.menu, tearoff=0)
         operation.add_cascade(label="Histogram", menu=histogram)
         operation.add_cascade(label="Punktowe", menu=points)
-        operation.add_cascade(label="Arithmetic Operations", menu=arithmetic)
+        operation.add_command(label="Arithmetic Operations", command=self.menu_cmd.arithmetics)
         operation.add_command(label="Logic Operations", command=self.menu_cmd.logic_all)
         operation.add_cascade(label="Sąsiedztwa", menu=kernels)
         # operation.add_command(label="Korekcja")

@@ -1,4 +1,4 @@
-from gui.operations.OperationsArithmetic.add_template import AddTemplate
+from gui.operations.add_template import AddTemplate
 from gui.tabpicture import TabPicture
 
 

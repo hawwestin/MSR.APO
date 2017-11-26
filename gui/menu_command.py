@@ -6,6 +6,7 @@ import matplotlib
 
 from gui.operations.filters import filter, smoothing
 from gui.operations.OperationsArithmetic import logic_operations
+from gui.operations.OperationsArithmetic import arithmertic_operations
 from .operations.OperationsArithmetic import difference_image
 from .operations.OperationsArithmetic.insert_img import InsertImg
 from .operations.OperationsArithmetic.subtraction import Substraction
@@ -237,3 +238,7 @@ class MenuCmd:
     def smooth(self):
         tab = self._current_tab()
         smoothing.Smoothing(tab)
+
+    def arithmetics(self):
+        tab = self._current_tab()
+        arithmertic_operations.ArithmeticOperations(tab)

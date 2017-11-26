@@ -3,7 +3,7 @@ import tkinter as tk
 import numpy as np
 
 from gui.operations import computer_vision
-from gui.operations.filters.filters_template import FiltersTemplate
+from gui.operations.filters_template import FiltersTemplate
 from gui.tabpicture import TabPicture
 
 

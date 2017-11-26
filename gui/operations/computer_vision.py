@@ -325,49 +325,58 @@ class Vision:
 
         return (y1, y2), (x1, x2)
 
-    def img_paste(self, source, place):
+    def img_paste(self, **kwargs):
         """
         Place given source on current version in cvImage.image and store new image cvImage_tmp.image
         Target is default cvImage_tmp
         :param source: Image which will be placed , Must by already cut to target size.
-        :param place: left top corner of source image on target image
+        :param img_place: left top corner of source image on target image
         :return:
         """
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
-        y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
-        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] = self._mask_to_size(self.cvImage_tmp.image, source, place)
+        y, x = self._target_place(kwargs.get('img_place'), self.cvImage.image.shape, kwargs.get('source').shape)
+        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] = self._mask_to_size(self.cvImage_tmp.image, kwargs.get('source'),
+                                                                          kwargs.get('img_place'))
 
-    def ar_add(self, source, place, weight):
+    def ar_add(self, **kwargs):
+        """
+        Arytmethic add of two images . Source on top of internal cvImage.image
+        :param source:
+        :param place:
+        :param weight:
+        :return:
+        """
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
-        y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
-        self.img_paste(cv2.addWeighted(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]],
-                                       weight[0],
-                                       self._mask_to_size(self.cvImage_tmp.image,
-                                                          source,
-                                                          place),
-                                       weight[1],
-                                       0), place)
+        y, x = self._target_place(kwargs.get('img_place'), self.cvImage.image.shape, kwargs.get('source').shape)
+        self.img_paste(source=cv2.addWeighted(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]],
+                                              kwargs.get('weight')[0],
+                                              self._mask_to_size(self.cvImage_tmp.image,
+                                                                 kwargs.get('source'),
+                                                                 kwargs.get('img_place')),
+                                              kwargs.get('weight')[1],
+                                              0),
+                       img_place=kwargs.get('img_place'))
 
-    def image_cut(self, place):
+    def image_cut(self, **kwargs):
         """
         Cut piece of self.cvImage on given place.
-        :param place: tuple of top left x, y on target img
-        :param preview: Flag for additional preview window
+        :param rect_place: tuple of top left x, y on target img
         :return:
         """
-        self.cvImage_tmp.image = self.cvImage.image[int(place[1]):int(place[3]), int(place[0]):int(place[2])]
+        self.cvImage_tmp.image = self.cvImage.image[int(kwargs.get('rect_place')[1]):int(kwargs.get('rect_place')[3]),
+                                 int(kwargs.get('rect_place')[0]):int(kwargs.get('rect_place')[2])]
 
-    def ar_diff(self, source, place):
+    def ar_diff(self, **kwargs):
         """
         Arithmetic subtraction of source image on given place.
         :param source: Image to be added on top of current self.cvImage
-        :param place: tuple of top left x, y on target img
-        :param preview: Flag for additional preview window
+        :param img_place: tuple of top left x, y on target img
         :return:
         """
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
-        y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
-        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] -= self._mask_to_size(self.cvImage_tmp.image, source, place)
+        y, x = self._target_place(kwargs.get('img_place'), self.cvImage.image.shape, kwargs.get('source').shape)
+        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] -= self._mask_to_size(self.cvImage_tmp.image, kwargs.get('source'),
+                                                                           kwargs.get('img_place'))
 
     def logic_and(self, target, source, place):
         self.cvImage_tmp.image = copy.copy(target)

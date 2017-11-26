@@ -1,9 +1,9 @@
 import tkinter as tk
 
-from gui.operations.OperationsArithmetic.add_template import AddTemplate
+from gui.operations.add_template import AddTemplate
 from gui.tabpicture import TabPicture
 
-
+# Todo merge all arithmetics operations.
 class AddWeighted(AddTemplate):
     def __init__(self, tab: TabPicture):
         self.weight_img_1 = tk.DoubleVar()
@@ -28,7 +28,8 @@ class AddWeighted(AddTemplate):
 
     def operation_command(self, preview):
         place = self.can.coords('img_f')
-        self.vision_result.ar_add(self.tab_fg.vision.cvImage.image, place,
+        self.vision_result.ar_add(source=self.tab_fg.vision.cvImage.image,
+                                  place=place,
                                   weight=(self.weight_img_1.get(), self.weight_img_2.get()))
 
         if preview:

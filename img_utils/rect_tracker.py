@@ -38,7 +38,7 @@ class RectTracker:
         self.items = None
         self.x = self.y = None
         self.canvas.bind('<Motion>', self.cool_design, '+')
-        self.autodraw(fill="", width=2, tags="img_f")
+        self.autodraw(fill="", width=2, tags="rect")
 
     def draw(self, start, end, **opts):
         """Draw the rectangle"""

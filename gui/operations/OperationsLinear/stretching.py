@@ -1,6 +1,6 @@
 import tkinter
 
-from gui.operations.OperationsLinear.operation_template import OperationTemplate
+from gui.operations.operation_template import OperationTemplate
 from gui.tabpicture import TabPicture
 
 

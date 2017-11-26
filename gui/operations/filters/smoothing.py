@@ -2,7 +2,7 @@ import copy
 import tkinter as tk
 
 from gui.operations import computer_vision
-from gui.operations.filters.filters_template import FiltersTemplate
+from gui.operations.filters_template import FiltersTemplate
 
 
 class Smoothing(FiltersTemplate):
