@@ -34,7 +34,41 @@ class Filter(FiltersTemplate):
                                                   [1, 2, 1]])),
                "Detekcja Krawędzi": ("3x3", np.array([[1, -2, 1],
                                                       [-2, 5, -2],
-                                                      [1, -2, 1]]))
+                                                      [1, -2, 1]])),
+               "Roberts Gx": ("2x2", np.array([[1, 0],
+                                               [0, -1]])),
+               "Roberts Gy": ("2x2", np.array([[0, -1],
+                                               [1, 0]])),
+               "Sobel Gx": ("3x3", np.array([[-1, 0, 1],
+                                             [-2, 0, 2],
+                                             [-1, 0, 1]])),
+               "Soble Gy": ("3x3", np.array([[-1, -2, -1],
+                                             [0, 0, 0],
+                                             [1, 2, 1]])),
+               "Prewitta N": ("3x3", np.array([[1, 1, 1],
+                                               [1, -2, 1],
+                                               [-1, -1, -1]])),
+               "Prewitta NE": ("3x3", np.array([[1, 1, 1],
+                                                [-1, -2, 1],
+                                                [-1, -1, 1]])),
+               "Prewitta E": ("3x3", np.array([[-1, 1, 1],
+                                               [-1, -2, 1],
+                                               [-1, 1, 1]])),
+               "Prewitta SE": ("3x3", np.array([[-1, -1, 1],
+                                                [-1, -2, 1],
+                                                [1, 1, 1]])),
+               "Prewitta S": ("3x3", np.array([[-1, -1, -1],
+                                               [1, -2, 1],
+                                               [1, 1, 1]])),
+               "Prewitta SW": ("3x3", np.array([[1, -1, -1],
+                                                [1, -2, -1],
+                                                [1, 1, 1]])),
+               "Prewitta W": ("3x3", np.array([[1, 1, -1],
+                                               [1, -2, -1],
+                                               [1, 1, -1]])),
+               "Prewitta NW": ("3x3", np.array([[1, 1, 1],
+                                                [1, -2, -1],
+                                                [1, -1, -1]]))
                }
 
     def __init__(self, tab: TabPicture):
@@ -70,7 +104,7 @@ class Filter(FiltersTemplate):
         self.kernel_size.trace("w", lambda *args: self.draw_kernel_grid())
 
         om_operation_name = tk.OptionMenu(self.kernel_options, self.operation_name,
-                                          *Filter.KERNELS.keys())
+                                          *sorted(Filter.KERNELS.keys()))
         self.operation_name.trace("w", lambda *args: self.kernel_from_list())
 
         om_border = tk.OptionMenu(self.kernel_options, self.border_type,

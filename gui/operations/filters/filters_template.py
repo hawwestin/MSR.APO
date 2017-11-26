@@ -18,6 +18,7 @@ class FiltersTemplate:
     """
     Kernel_Size = {
         "3x3": (3, 3),
+        "2x2": (2, 2),
         "3x5": (3, 5),
         "5x3": (5, 3),
         "5x5": (5, 5),
