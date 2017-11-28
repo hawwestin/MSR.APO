@@ -7,6 +7,7 @@ from gui.operations.filters import filter, smoothing
 from gui.operations.OperationsArithmetic import logic_operations
 from gui.operations.OperationsArithmetic import arithmertic_operations
 from .operations.OperationsLinear import adap_prog, histEq, red_poz_sza, prog, UOP, stretching, prog_zach
+from gui.operations.filters import hough
 
 import app_config
 from .operations.computer_vision import *
@@ -222,3 +223,7 @@ class MenuCmd:
     def arithmetics(self):
         tab = self._current_tab()
         arithmertic_operations.ArithmeticOperations(tab)
+
+    def hough(self):
+        tab = self._current_tab()
+        hough.Hough(tab)

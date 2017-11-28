@@ -68,6 +68,7 @@ class MainMenu(tk.Frame):
         kernels = tk.Menu(self.menu, tearoff=0)
         kernels.add_command(label="Uniwersalne filtry", command=self.menu_cmd.filter)
         kernels.add_command(label="Wygładzanie", command=self.menu_cmd.smooth)
+        kernels.add_command(label="hough", command=self.menu_cmd.hough)
 
         operation = tk.Menu(self.menu, tearoff=0)
         operation.add_cascade(label="Histogram", menu=histogram)

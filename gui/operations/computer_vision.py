@@ -1,4 +1,5 @@
 import copy
+from pprint import pprint
 from tkinter import filedialog
 
 import cv2
@@ -443,3 +444,31 @@ class Vision:
                    vmin=0,
                    vmax=255)
         plt.show()
+
+    def hough(self, threshold1=50, threshold2=150, threshold3=200, apertureSize=3, color=(0, 255, 0), thickness=2):
+        self.cvImage_tmp.image = copy.copy(self.cvImage.image)
+        edges = cv2.Canny(self.cvImage_tmp.image, threshold1, threshold2, apertureSize=apertureSize)
+        lines = cv2.HoughLinesP(image=edges,
+                                rho=1,
+                                theta=np.pi / 180,
+                                threshold=threshold3,
+                                minLineLength=20,
+                                maxLineGap=20)
+
+        for line in lines:
+            x1, y1, x2, y2 = line[0]
+            cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+        # for line in lines:
+        #     rho, theta = line[0]
+        #     a = np.cos(theta)
+        #     b = np.sin(theta)
+        #     x0 = a * rho
+        #     y0 = b * rho
+        #     x1 = int(x0 + self.cvImage_tmp.image.shape[1] * 1.5 * (-b))
+        #     y1 = int(y0 + self.cvImage_tmp.image.shape[0] * 1.5 * a)
+        #     x2 = int(x0 - self.cvImage_tmp.image.shape[1] * 1.5 * (-b))
+        #     y2 = int(y0 - self.cvImage_tmp.image.shape[0] * 1.5 * a)
+        #     cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), color, thickness=thickness)
+
+        return self.cvImage_tmp.image
