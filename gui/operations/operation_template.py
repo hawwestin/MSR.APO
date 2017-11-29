@@ -109,7 +109,7 @@ class OperationTemplate:
 
     def control_plugin(self):
         """
-        Mock method to be filled by concrete operation.
+        Mock method for gui widgets to be filled by concrete operation.
         :return:
         """
         pass
