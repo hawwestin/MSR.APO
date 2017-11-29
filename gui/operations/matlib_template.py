@@ -12,7 +12,7 @@ from gui.tabpicture import TabPicture, TabColorPicture, TabGreyPicture
 from img_utils.scrolled_frame import ScrolledCanvas
 
 
-class FiltersTemplate:
+class MatLibTemplate:
     """
     Dictionary to hold all valid filter operations with kernel
     """
@@ -135,18 +135,14 @@ class FiltersTemplate:
 
         b_undo = ttk.Button(self.buttons, text="Undo", command=undo)
         b_undo.pack(side=tk.LEFT, padx=2)
-
         b_redo = ttk.Button(self.buttons, text="Redo", command=redo)
         b_redo.pack(side=tk.LEFT, padx=2, after=b_undo)
-
         b_refresh = ttk.Button(self.buttons, text="Refresh images", command=self.refresh_panel_img)
         b_refresh.pack(side=tk.LEFT, padx=2, after=b_redo)
-
         b_confirm = ttk.Button(self.buttons, text="Confirm", command=confirm)
         b_confirm.pack(side=tk.LEFT, padx=2, after=b_refresh)
         b_preview = ttk.Button(self.buttons, text="Preview", command=preview)
         b_preview.pack(side=tk.LEFT, padx=2, after=b_confirm)
-
         b_exit = ttk.Button(self.buttons, text="Exit", command=_exit)
         b_exit.pack(side=tk.RIGHT, padx=2)
 

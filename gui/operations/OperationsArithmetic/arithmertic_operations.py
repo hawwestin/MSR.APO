@@ -1,11 +1,11 @@
-from gui.operations.add_template import AddTemplate
+from gui.operations.canvas_template import CanvasTemplate
 from gui.tabpicture import TabPicture
 import tkinter as tk
 
 from img_utils.rect_tracker import RectTracker
 
 
-class ArithmeticOperations(AddTemplate):
+class ArithmeticOperations(CanvasTemplate):
     def __init__(self, tab: TabPicture):
         self.operations = {}
         self.operation_name = tk.StringVar()

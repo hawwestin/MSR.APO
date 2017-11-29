@@ -8,7 +8,7 @@ from gui.tabpicture import TabPicture, TabColorPicture, TabGreyPicture
 from img_utils.scrolled_frame import ScrolledCanvas
 
 
-class AddTemplate:
+class CanvasTemplate:
     def __init__(self, name, tab: TabPicture):
         self.window = tk.Toplevel()
         self.window.title(name)

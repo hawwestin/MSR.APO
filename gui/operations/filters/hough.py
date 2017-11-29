@@ -21,12 +21,12 @@ Informacja o dopuszczalnym zakresie zmian poziomów szarości.
 Optymalny zakres parametrów z punktu widzenia dokładności aproksymacji
 
 """
-from gui.operations.filters_template import FiltersTemplate
+from gui.operations.matlib_template import MatLibTemplate
 import copy
 import tkinter as tk
 
 
-class Hough(FiltersTemplate):
+class Hough(MatLibTemplate):
     def __init__(self, tab):
         super(Hough, self).__init__("Hough Transform", tab)
 

@@ -1,10 +1,10 @@
 import tkinter as tk
 
-from gui.operations.add_template import AddTemplate
+from gui.operations.canvas_template import CanvasTemplate
 from gui.tabpicture import TabPicture
 
 
-class LogicOperations(AddTemplate):
+class LogicOperations(CanvasTemplate):
     def __init__(self, tab: TabPicture):
         self.OPERATIONS = {}
         self.operation_name = tk.StringVar()

@@ -3,11 +3,11 @@ import tkinter as tk
 import numpy as np
 
 from gui.operations import computer_vision
-from gui.operations.filters_template import FiltersTemplate
+from gui.operations.matlib_template import MatLibTemplate
 from gui.tabpicture import TabPicture
 
 
-class Filter(FiltersTemplate):
+class Filter(MatLibTemplate):
     """
     Dictionary to hold all valid filter operations with kernel
     """
