@@ -6,7 +6,7 @@ import matplotlib
 from gui.operations.filters import filter, smoothing
 from gui.operations.OperationsArithmetic import logic_operations
 from gui.operations.OperationsArithmetic import arithmertic_operations
-from .operations.OperationsLinear import adap_prog, histEq, red_poz_sza, prog, UOP, stretching, prog_zach
+from .operations.OperationsLinear import adap_prog, histEq, red_poz_sza, binary_operation, UOP, stretching, prog_zach
 from gui.operations.filters import hough
 
 import app_config
@@ -156,7 +156,7 @@ class MenuCmd:
         :return:
         """
         tab = self._current_tab()
-        prog.OperationLightThreshold(tab)
+        binary_operation.OperationLightThreshold(tab)
 
     def adaptive_light_threshold(self):
         tab = self._current_tab()
