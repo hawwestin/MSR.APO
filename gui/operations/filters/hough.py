@@ -49,26 +49,26 @@ class Hough(FiltersTemplate):
             else:
                 return True
 
-        label_1 = tk.Label(self.plugins, text="th1")
-        label_1.pack(side=tk.LEFT)
+        label_1 = tk.Label(self.plugins, text="dolny próg szarości")
+        label_1.pack(side=tk.LEFT, padx=2)
 
         entry_1 = tk.Entry(self.plugins, textvariable=self.th1, width=10)
-        entry_1.pack(side=tk.LEFT)
+        entry_1.pack(side=tk.LEFT, padx=2)
 
-        label_2 = tk.Label(self.plugins, text="th2")
-        label_2.pack(side=tk.LEFT)
+        label_2 = tk.Label(self.plugins, text="górny próg szarości")
+        label_2.pack(side=tk.LEFT, padx=2)
 
         entry_2 = tk.Entry(self.plugins, textvariable=self.th2, width=10)
-        entry_2.pack(side=tk.LEFT)
+        entry_2.pack(side=tk.LEFT, padx=2)
 
-        label_2 = tk.Label(self.plugins, text="th3")
-        label_2.pack(side=tk.LEFT)
+        label_2 = tk.Label(self.plugins, text="min. wartość akumulatora")
+        label_2.pack(side=tk.LEFT, padx=2)
 
         entry_3 = tk.Entry(self.plugins, textvariable=self.th3, width=10)
-        entry_3.pack(side=tk.LEFT)
+        entry_3.pack(side=tk.LEFT, padx=2)
 
-        label_4 = tk.Label(self.plugins, text="apertureSize")
-        label_4.pack(side=tk.LEFT)
+        label_4 = tk.Label(self.plugins, text="apertureSize \nwartości (3, 5, 7) :")
+        label_4.pack(side=tk.LEFT, padx=2)
 
         entry_4 = tk.Entry(self.plugins,
                            textvariable=self.apertureSize,

@@ -122,13 +122,6 @@ class MenuCmd:
         print(self.main_window.notebook.tabs())
         print(self.main_window.notebook.select())
 
-    def in_hist(self):
-        tab = self._current_tab()
-        tab.histogram(tab.vision.cvImage.image)
-
-    def out_hist(self):
-        self._current_tab().show_hist()
-
     def info(self):
         self.popupmsg("APO Made by\nMichał Robaszewski\n2016/2017")
         # simpledialog.SimpleDialog(master=self.main_window, text="APO Made by\nMichał Robaszewski\n2016/2017")

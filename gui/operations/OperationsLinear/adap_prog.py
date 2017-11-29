@@ -21,7 +21,9 @@ class OperationAdaptiveThreshold(OperationTemplate):
             self.tab.vision.adaptive_prog(OperationAdaptiveThreshold.adaptiveMethodOptions[amo_v.get()],
                                           OperationAdaptiveThreshold.thresholdTypeOptions[tto_v.get()])
             self.refresh()
-
+        # todo add block size and constant to gui that
+        # is posible to set in adaptive prog
+        # block size need to be odd number
         amo_v = tk.StringVar()
         amo_v.set('Mean')
 

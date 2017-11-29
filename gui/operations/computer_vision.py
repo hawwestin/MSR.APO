@@ -171,15 +171,23 @@ class Vision:
         # LUT Table cdf
         self.cvImage_tmp.image = cdf[self.cvImage.image]
 
-    def negation(self):
-        # cv2.invert(self.cvImage, self.cvImage_tmp)
-
+    def negation2(self):
         hist, bins = np.histogram(self.cvImage.image.flatten(), 256, [0, 256])
-        # cdf = hist.cumsum()
         cdf_m = (255 - bins)
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
         # LUT Table cdf
         self.cvImage.image = cdf[self.cvImage.image]
+
+    def negation(self):
+        cv2.bitwise_not(self.cvImage.image, self.cvImage.image)
+
+    def negation3(self):
+        """
+        error in curent params
+        error: (-215) type == CV_32F || type == CV_64F in function cv::invert
+        :return:
+        """
+        cv2.invert(self.cvImage.image, self.cvImage.image)
 
     def hist_rand(self):
         hist, bins = np.histogram(self.cvImage.image.flatten(), 256, [0, 256])
@@ -385,7 +393,7 @@ class Vision:
         cv2.bitwise_and(target[y[0]:y[1], x[0]:x[1]],
                         self._mask_to_size(target, source, place),
                         self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
-        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place)
+        self.img_paste(source=self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], img_place=place)
 
     def logic_or(self, target, source, place):
         self.cvImage_tmp.image = copy.copy(target)
@@ -393,7 +401,7 @@ class Vision:
         cv2.bitwise_or(target[y[0]:y[1], x[0]:x[1]],
                        self._mask_to_size(target, source, place),
                        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
-        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place)
+        self.img_paste(source=self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], img_place=place)
 
     def logic_xor(self, target, source, place):
         """
@@ -409,7 +417,7 @@ class Vision:
         cv2.bitwise_xor(target[y[0]:y[1], x[0]:x[1]],
                         self._mask_to_size(target, source, place),
                         self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
-        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place)
+        self.img_paste(source=self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], img_place=place)
 
     def filter(self, kernel, border_type):
         """
@@ -453,7 +461,7 @@ class Vision:
                                 theta=np.pi / 180,
                                 threshold=threshold3,
                                 minLineLength=20,
-                                maxLineGap=20)
+                                maxLineGap=10)
 
         for line in lines:
             x1, y1, x2, y2 = line[0]

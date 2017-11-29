@@ -50,11 +50,6 @@ class MainMenu(tk.Frame):
         # view.add_command(label="tab num", command=self._menucmd.img_list)
         # self.menu.add_cascade(label="View", menu=view)
 
-        histogram = tk.Menu(self.menu, tearoff=0)
-        histogram.add_command(label="Wewnatrz histogram", command=self.menu_cmd.in_hist)
-        histogram.add_command(label="Popup hist", command=self.menu_cmd.out_hist)
-        histogram.add_command(label="Hist Equalization", command=self.menu_cmd.hist_equ)
-
         points = tk.Menu(self.menu, tearoff=0)
         points.add_command(label="Negacja", command=self.menu_cmd.negation)
         points.add_command(label="Binaryzacja", command=self.menu_cmd.light_threshold)
@@ -67,14 +62,14 @@ class MainMenu(tk.Frame):
 
         kernels = tk.Menu(self.menu, tearoff=0)
         kernels.add_command(label="Uniwersalne filtry", command=self.menu_cmd.filter)
-        kernels.add_command(label="Wygładzanie", command=self.menu_cmd.smooth)
-        kernels.add_command(label="hough", command=self.menu_cmd.hough)
+        kernels.add_command(label="Blurowanie", command=self.menu_cmd.smooth)
+        kernels.add_command(label="Hough", command=self.menu_cmd.hough)
 
         operation = tk.Menu(self.menu, tearoff=0)
-        operation.add_cascade(label="Histogram", menu=histogram)
-        operation.add_cascade(label="Punktowe", menu=points)
-        operation.add_command(label="Arithmetic Operations", command=self.menu_cmd.arithmetics)
-        operation.add_command(label="Logic Operations", command=self.menu_cmd.logic_all)
+        operation.add_command(label="Equalizacja Histogram", command=self.menu_cmd.hist_equ)
+        operation.add_cascade(label="Metody Punktowe", menu=points)
+        operation.add_command(label="Arytmetyczne", command=self.menu_cmd.arithmetics)
+        operation.add_command(label="Logiczne", command=self.menu_cmd.logic_all)
         operation.add_cascade(label="Sąsiedztwa", menu=kernels)
         # operation.add_command(label="Korekcja")
         # operation.add_cascade(label="Segmentacja")
