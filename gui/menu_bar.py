@@ -53,10 +53,9 @@ class MainMenu(tk.Frame):
         points = tk.Menu(self.menu, tearoff=0)
         points.add_command(label="Negacja", command=self.menu_cmd.negation)
         points.add_command(label="Binaryzacja", command=self.menu_cmd.light_threshold)
-        points.add_command(label="Progowanie z zachowaniem poziomów szarości",
+        points.add_command(label="Dwu argumentowe metody",
                            command=self.menu_cmd.progowanie_z_zachowaniem)
         points.add_command(label="Redukcja poziomów szarości", command=self.menu_cmd.redukcja_p_s)
-        points.add_command(label="Rozciąganie", command=self.menu_cmd.stretching)
         points.add_command(label="Progowanie adaptacyjne", command=self.menu_cmd.adaptive_light_threshold)
         points.add_command(label="Uniwersalna operacja jednopunktowa", command=self.menu_cmd.uop)
 

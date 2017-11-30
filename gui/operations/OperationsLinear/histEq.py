@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
 
 from gui.operations.operation_template import OperationTemplate
 from gui.tabpicture import TabPicture

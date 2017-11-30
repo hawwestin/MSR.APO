@@ -6,7 +6,7 @@ import matplotlib
 from gui.operations.filters import filter, smoothing
 from gui.operations.OperationsArithmetic import logic_operations
 from gui.operations.OperationsArithmetic import arithmertic_operations
-from .operations.OperationsLinear import adap_prog, histEq, red_poz_sza, binary_operation, UOP, stretching, prog_zach
+from .operations.OperationsLinear import adap_prog, histEq, red_poz_sza, binary_operation, UOP, prog_zach
 from gui.operations.filters import hough
 
 import app_config
@@ -193,13 +193,9 @@ class MenuCmd:
         # tab_pic.open_image(path)
         tab_pic.refresh()
 
-    def stretching(self):
-        tab = self._current_tab()
-        stretching.OperationStretching(tab)
-
     def progowanie_z_zachowaniem(self):
         tab = self._current_tab()
-        prog_zach.OperationLightThresholdKeepingValue(tab)
+        prog_zach.TwoArgLightThreshold(tab)
 
     def logic_all(self):
         tab = self._current_tab()
