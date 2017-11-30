@@ -47,3 +47,6 @@ class OperationHistEQ(OperationTemplate):
     def operation_command(self, persist=False):
         operation = self.operations[self.operation_name.get()]
         operation()
+        if persist:
+            self.tab.persist_tmp()
+            self.refresh()

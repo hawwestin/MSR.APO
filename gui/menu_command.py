@@ -6,7 +6,7 @@ import matplotlib
 from gui.operations.filters import filter, smoothing
 from gui.operations.OperationsArithmetic import logic_operations
 from gui.operations.OperationsArithmetic import arithmertic_operations
-from .operations.OperationsLinear import adap_prog, histEq, red_poz_sza, binary_operation, UOP, prog_zach
+from .operations.OperationsLinear import adap_prog, histEq, red_poz_sza, binary_operation, UOP, two_arg_threshold
 from gui.operations.filters import hough
 
 import app_config
@@ -195,7 +195,7 @@ class MenuCmd:
 
     def progowanie_z_zachowaniem(self):
         tab = self._current_tab()
-        prog_zach.TwoArgLightThreshold(tab)
+        two_arg_threshold.TwoArgLightThreshold(tab)
 
     def logic_all(self):
         tab = self._current_tab()

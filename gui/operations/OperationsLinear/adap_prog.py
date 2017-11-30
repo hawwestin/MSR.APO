@@ -75,5 +75,8 @@ class OperationAdaptiveThreshold(OperationTemplate):
                                           C=self.constant.get())
             self.refresh()
             self.status_message.set("*")
+            if persist:
+                self.tab.persist_tmp()
+                self.refresh()
         else:
             self.status_message.set("Rozmiar bloku musi być liczbą nieparzysta i większą od 1")

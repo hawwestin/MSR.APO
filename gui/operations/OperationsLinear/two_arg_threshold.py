@@ -22,8 +22,9 @@ class TwoArgLightThreshold(OperationTemplate):
             else:
                 return True
 
-        self.operations ={"Progowanie z zachowaniem poziomów szarości":self.tab.vision.progowanie_z_zachowaniem_poziomow,
-                          "Rozciąganie":self.tab.vision.image_stretching}
+        self.operations = {
+            "Progowanie z zachowaniem poziomów szarości": self.tab.vision.progowanie_z_zachowaniem_poziomow,
+            "Rozciąganie": self.tab.vision.image_stretching}
         self.operation_name.set(sorted(self.operations.keys())[0])
         self.p1.set(50)
         self.p2.set(150)
@@ -58,3 +59,5 @@ class TwoArgLightThreshold(OperationTemplate):
                 operation(int(self.p1.get()), int(self.p2.get()))
                 self.refresh()
                 self.status_message.set("*")
+                if persist:
+                    self.tab.persist_tmp()

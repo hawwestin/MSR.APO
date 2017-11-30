@@ -54,4 +54,5 @@ class OperationLightThreshold(OperationTemplate):
         tto_v.set('Binary')
 
     def operation_command(self, persist=False):
-        pass
+        if persist:
+            self.tab.persist_tmp()

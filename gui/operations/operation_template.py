@@ -71,8 +71,6 @@ class OperationTemplate:
 
         def confirm():
             self.operation_command(True)
-            self.tab.persist_tmp()
-            self.refresh()
 
         def preview():
             self.operation_command()
@@ -87,7 +85,7 @@ class OperationTemplate:
         b_redo.pack(side=tk.LEFT, padx=2, after=b_undo)
         b_refresh = ttk.Button(self.buttons, text="Refresh images", command=self.refresh)
         b_refresh.pack(side=tk.LEFT, padx=2, after=b_redo)
-        b_confirm = ttk.Button(self.buttons, text="Confirm", command=confirm)
+        b_confirm = ttk.Button(self.buttons, text="Update", command=confirm)
         b_confirm.pack(side=tk.LEFT, padx=2, after=b_refresh)
         b_preview = ttk.Button(self.buttons, text="Preview", command=preview)
         b_preview.pack(side=tk.LEFT, padx=2, after=b_confirm)

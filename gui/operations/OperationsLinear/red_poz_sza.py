@@ -25,4 +25,6 @@ class OperationLightLeveling(OperationTemplate):
     def operation_command(self, persist=False):
         self.tab.vision.rps(int(self.scale_value.get()))
         self.refresh()
+        if persist:
+            self.tab.persist_tmp()
 

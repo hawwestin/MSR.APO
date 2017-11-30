@@ -31,15 +31,31 @@ class UOPOperation(OperationTemplate):
         self.lut = np.array(UOPOperation.bins)
         self.lut = self.tab.vision.uop(self.gamma.get(), self.brightness.get(), self.contrast.get())
         self.lut_line(self.lut)
-        self.tab.vision.tone_curve(self.lut)
-        self.refresh()
+        self.operation_command()
 
     def control_plugin(self):
         def draw(flag):
             self.draw = flag
             if flag is False:
-                self.tab.vision.tone_curve(self.lut)
-                self.refresh()
+                self.operation_command()
+
+        def check_entry(why, what):
+            if int(why) >= 0:
+                if what in "0123456789.-":
+                    return True
+                else:
+                    return False
+            else:
+                return True
+
+        def check_entry_positive(why, what):
+            if int(why) >= 0:
+                if what in "0123456789.":
+                    return True
+                else:
+                    return False
+            else:
+                return True
 
         menu = tk.Frame(self.plugins)
         menu.pack(side=tk.LEFT, padx=2, anchor='nw')
@@ -60,6 +76,13 @@ class UOPOperation(OperationTemplate):
         contrast_l.pack(side=tk.TOP)
         contrast_e = tk.Entry(menu, textvariable=self.contrast, width=_width)
         contrast_e .pack(side=tk.TOP)
+
+        vcmd1 = gamma_e.register(check_entry_positive)
+        vcmd2 = brightness_e.register(check_entry)
+        vcmd3 = contrast_e.register(check_entry_positive)
+        gamma_e.configure(validate='key', validatecommand=(vcmd1, '%d', '%S'))
+        brightness_e.configure(validate='key', validatecommand=(vcmd2, '%d', '%S'))
+        contrast_e.configure(validate='key', validatecommand=(vcmd3, '%d', '%S'))
 
         self.lut_pos_label = tk.Label(master=self.plugins)
         self.lut_pos_label.pack(side=tk.TOP, anchor='n')
@@ -86,3 +109,9 @@ class UOPOperation(OperationTemplate):
             self.lut_canvas = FigureCanvasTkAgg(self.fig, self.plugins)
             self.lut_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.lut_canvas.show()
+
+    def operation_command(self, persist=False):
+        self.tab.vision.tone_curve(self.lut)
+        self.refresh()
+        if persist:
+            self.tab.persist_tmp()
