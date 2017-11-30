@@ -50,7 +50,7 @@ class OperationTemplate:
         self.panel_tmp.pack()
 
         self.panel_hist = tk.Frame(master=self.panels)
-        self.panel_hist.pack(side=tk.RIGHT)
+        self.panel_hist.pack(side=tk.RIGHT, expand=True)
         self.histogram = Histogram(self.panel_hist)
 
         self.widget_buttons()

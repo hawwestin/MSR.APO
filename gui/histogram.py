@@ -14,7 +14,6 @@ class Histogram:
         self.image = None
 
         self.hist_frame = parent
-        self.hist_frame.pack(side=tk.RIGHT, expand=True)
         self.histCanvas = None
         self.toolbar = None
         self.fig = Figure(tight_layout=True)
@@ -35,7 +34,6 @@ class Histogram:
         self.fig_subplot.clear()
 
         self.fig_subplot.bar(range(0, 256), self.calculate_hist(), width=1)
-        # self.fig_subplot.hist(self.image.current().ravel(), bins=256, range=[0.0, 256.0])
         self.fig_subplot.set_xlim([-1, 256])
 
         if self.histCanvas is None:

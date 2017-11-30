@@ -7,6 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.pyplot import Figure
 
 from app_config import resolution
+from gui.histogram import Histogram
 from gui.operations import computer_vision
 from gui.tabpicture import TabPicture, TabColorPicture, TabGreyPicture
 from img_utils.scrolled_frame import ScrolledCanvas
@@ -88,19 +89,30 @@ class MatLibTemplate:
         self.lf_result.pack()
         self.outer_pan.add(self.lf_result, minsize=100)
 
+        self.result_tabs = ttk.Notebook(self.lf_result)
+        self.result_tabs.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+        self.img_frame = tk.Frame(self.result_tabs)
+        self.img_frame.pack(fill=tk.BOTH, expand=1)
+        self.result_tabs.add(self.img_frame, text="Resulat Image")
+        self.hist_frame = tk.Frame(self.result_tabs)
+        self.hist_frame.pack(fill=tk.BOTH, expand=1)
+        self.result_tabs.add(self.hist_frame, text="Hiastogram")
+
         self.fig = Figure(tight_layout=True)
         self.fig_subplot = self.fig.add_subplot(111)
 
-        self.ml_canvas = FigureCanvasTkAgg(self.fig, self.lf_result)
+        self.ml_canvas = FigureCanvasTkAgg(self.fig, self.img_frame)
         self.ml_canvas.show()
         self.ml_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True, anchor='nw')
-        self.toolbar = NavigationToolbar2TkAgg(self.ml_canvas, self.lf_result)
+        self.toolbar = NavigationToolbar2TkAgg(self.ml_canvas, self.img_frame)
         self.toolbar.update()
+
+        self.histogram = Histogram(self.hist_frame)
 
         self.widget_buttons()
 
         self.refresh_panel_img()
-        self.draw_result()
 
     def widget_buttons(self):
         def confirm():
@@ -150,6 +162,8 @@ class MatLibTemplate:
         self.tk_img_background = computer_vision.Vision.resize_tk_image(self.tab_bg.vision.cvImage.image, self.size)
         self.panel_back.configure(image=self.tk_img_background)
         self.panel_back.image = self.tk_img_background
+        self.img_result = self.tab_bg.vision.cvImage.image
+        self.draw_result()
 
     def draw_result(self):
         """
@@ -165,6 +179,7 @@ class MatLibTemplate:
                                 vmax=255,
                                 aspect='equal')
         self.toolbar.draw()
+        self.histogram(image=self.img_result)
 
     def operation_command(self, persist=False):
         """

@@ -36,7 +36,7 @@ class MainWindow(tk.Tk):
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
         self.notebook = ttk.Notebook(self)
-        self.notebook.pack(side="top", fill="both", expand=True)
+        self.notebook.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
     def new_tab(self, tab_name):
         """
