@@ -179,7 +179,7 @@ class Vision:
         self.cvImage.image = cdf[self.cvImage.image]
 
     def negation(self):
-        cv2.bitwise_not(self.cvImage.image, self.cvImage.image)
+        self.cvImage.image = cv2.bitwise_not(self.cvImage.image)
 
     def negation3(self):
         """
