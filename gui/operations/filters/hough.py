@@ -2,24 +2,31 @@
 Detekcja krawędzi (z ograniczeniem do odcinków linii prostych) z wykorzystaniem transformacji Hough'a (HOUGH)
 
 A
-Wizualizacja tablic akumulatorów,
-zadawanie parametrów z użyciem suwaka przy jednoczesnym  podglądzie tablicy akumulatorów oraz konturu wynikowego ,
-obrazy bmp, (tworzone, przetworzone),
-tablice, działanie na bmp oraz na tablicach,
- eksport tablicy pikseli do Excela,
-  Programy /:P Hough 1, 2, - histogram, suwak oraz konkretny poziom szarości,
-  kąt;
-  tablica akumulatorów w formie liczbowej - redukcja fragmentów prostych
-(wyznaczonych z wykorzystaniem transformaty Hougha) leżących poza wykrywanym konturem.
+    Wizualizacja tablic akumulatorów,
+-   zadawanie parametrów z użyciem suwaka przy jednoczesnym  podglądzie tablicy
+    akumulatorów oraz konturu wynikowego ,
+X   obrazy bmp, (tworzone, przetworzone),
+    tablice,
+-   działanie na bmp oraz na tablicach,
+-   eksport tablicy pikseli do Excela,
+    Programy /:P Hough 1, 2,
+    - histogram,
+-   suwak oraz konkretny poziom szarości,
+-   kąt;
+    tablica akumulatorów w formie liczbowej
+    - redukcja fragmentów prostych
+    (wyznaczonych z wykorzystaniem transformaty Hougha) leżących poza wykrywanym konturem.
 
 B
-Zadanie  (automatyczne lub manualne) parametrów pozwalających na jak najbardziej efektywną
-realizację transformacji w danej klasie.
-Interaktywne zaznaczanie obszaru w obrazie bmp wizualizującym tablicę akumulatorów w
-celu wyświetlenia żądanej części tej tablicy.
-Informacja o dopuszczalnym zakresie zmian poziomów szarości.
-Optymalny zakres parametrów z punktu widzenia dokładności aproksymacji
+-   Zadanie  (automatyczne lub manualne) parametrów pozwalających na jak najbardziej efektywną
+    realizację transformacji w **danej klasie**.
 
+-   Interaktywne zaznaczanie obszaru w obrazie bmp wizualizującym tablicę akumulatorów w
+    celu wyświetlenia żądanej części tej tablicy.
+
+X   Informacja o dopuszczalnym zakresie zmian poziomów szarości.
+
+-   Optymalny zakres parametrów z punktu widzenia dokładności aproksymacji
 """
 from gui.operations.matlib_template import MatLibTemplate
 import copy
