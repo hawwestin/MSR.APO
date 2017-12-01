@@ -1,9 +1,12 @@
+"""
+Binaryzacja
+"""
 import tkinter as tk
 
 import cv2
 from cv2 import *
 
-from gui.operations.OperationsLinear.operation_template import OperationTemplate
+from gui.operations.operation_template import OperationTemplate
 from gui.tabpicture import TabPicture
 
 
@@ -15,6 +18,8 @@ class OperationLightThreshold(OperationTemplate):
                             'Tozero inv': cv2.THRESH_TOZERO_INV}
 
     def __init__(self, tab: TabPicture):
+        self.operations = {}
+        self.operation_name = tk.StringVar()
         super().__init__("Progowanie", tab)
 
     def control_plugin(self):
@@ -27,6 +32,9 @@ class OperationLightThreshold(OperationTemplate):
         def threshold_bind():
             self.tab.vision.global_prog(float(scale.get()), OperationLightThreshold.thresholdTypeOptions[tto_v.get()])
             self.refresh()
+
+        self.operations = {"threshold": lambda x: threshold(x),
+                           "threshold_bind": threshold_bind}
 
         tto_v = tk.StringVar()
         tto_v.set('Binary')
@@ -43,5 +51,8 @@ class OperationLightThreshold(OperationTemplate):
         scale.configure(command=lambda x: threshold(x))
         scale.pack(expand=1)
         tto_v.trace("w", lambda *args: threshold_bind())
-
         tto_v.set('Binary')
+
+    def operation_command(self, persist=False):
+        if persist:
+            self.tab.persist_tmp()

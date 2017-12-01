@@ -1,15 +1,13 @@
 import tkinter as tk
 import os
 
-import gui.operations.OperationsArithmetic.add_weighted_img as add_weighted_img
 import matplotlib
 
 from gui.operations.filters import filter, smoothing
 from gui.operations.OperationsArithmetic import logic_operations
-from .operations.OperationsArithmetic import difference_image
-from .operations.OperationsArithmetic.insert_img import InsertImg
-from .operations.OperationsArithmetic.subtraction import Substraction
-from .operations.OperationsLinear import adap_prog, histEq, red_poz_sza, prog, UOP, stretching, prog_zach
+from gui.operations.OperationsArithmetic import arithmertic_operations
+from .operations.OperationsLinear import adap_prog, histEq, red_poz_sza, binary_operation, UOP, two_arg_threshold
+from gui.operations.filters import hough
 
 import app_config
 from .operations.computer_vision import *
@@ -124,13 +122,6 @@ class MenuCmd:
         print(self.main_window.notebook.tabs())
         print(self.main_window.notebook.select())
 
-    def in_hist(self):
-        tab = self._current_tab()
-        tab.histogram(tab.vision.cvImage.image)
-
-    def out_hist(self):
-        self._current_tab().show_hist()
-
     def info(self):
         self.popupmsg("APO Made by\nMichał Robaszewski\n2016/2017")
         # simpledialog.SimpleDialog(master=self.main_window, text="APO Made by\nMichał Robaszewski\n2016/2017")
@@ -165,7 +156,7 @@ class MenuCmd:
         :return:
         """
         tab = self._current_tab()
-        prog.OperationLightThreshold(tab)
+        binary_operation.OperationLightThreshold(tab)
 
     def adaptive_light_threshold(self):
         tab = self._current_tab()
@@ -202,29 +193,9 @@ class MenuCmd:
         # tab_pic.open_image(path)
         tab_pic.refresh()
 
-    def stretching(self):
-        tab = self._current_tab()
-        stretching.OperationStretching(tab)
-
     def progowanie_z_zachowaniem(self):
         tab = self._current_tab()
-        prog_zach.OperationLightThresholdKeepingValue(tab)
-
-    def add_img(self):
-        tab = self._current_tab()
-        InsertImg(tab)
-
-    def sub_img(self):
-        tab = self._current_tab()
-        Substraction(tab)
-
-    def add_weighted_img(self):
-        tab = self._current_tab()
-        add_weighted_img.AddWeighted(tab)
-
-    def diff_image(self):
-        tab = self._current_tab()
-        difference_image.DifferenceImage(tab)
+        two_arg_threshold.TwoArgLightThreshold(tab)
 
     def logic_all(self):
         tab = self._current_tab()
@@ -237,3 +208,11 @@ class MenuCmd:
     def smooth(self):
         tab = self._current_tab()
         smoothing.Smoothing(tab)
+
+    def arithmetics(self):
+        tab = self._current_tab()
+        arithmertic_operations.ArithmeticOperations(tab)
+
+    def hough(self):
+        tab = self._current_tab()
+        hough.Hough(tab)

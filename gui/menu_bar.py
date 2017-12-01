@@ -50,36 +50,25 @@ class MainMenu(tk.Frame):
         # view.add_command(label="tab num", command=self._menucmd.img_list)
         # self.menu.add_cascade(label="View", menu=view)
 
-        histogram = tk.Menu(self.menu, tearoff=0)
-        histogram.add_command(label="Wewnatrz histogram", command=self.menu_cmd.in_hist)
-        histogram.add_command(label="Popup hist", command=self.menu_cmd.out_hist)
-        histogram.add_command(label="Hist Equalization", command=self.menu_cmd.hist_equ)
-
         points = tk.Menu(self.menu, tearoff=0)
         points.add_command(label="Negacja", command=self.menu_cmd.negation)
         points.add_command(label="Binaryzacja", command=self.menu_cmd.light_threshold)
-        points.add_command(label="Progowanie z zachowaniem poziomów szarości",
+        points.add_command(label="Dwu argumentowe metody",
                            command=self.menu_cmd.progowanie_z_zachowaniem)
         points.add_command(label="Redukcja poziomów szarości", command=self.menu_cmd.redukcja_p_s)
-        points.add_command(label="Rozciąganie", command=self.menu_cmd.stretching)
         points.add_command(label="Progowanie adaptacyjne", command=self.menu_cmd.adaptive_light_threshold)
         points.add_command(label="Uniwersalna operacja jednopunktowa", command=self.menu_cmd.uop)
 
-        arithmetic = tk.Menu(self.menu, tearoff=0)
-        arithmetic.add_command(label="Wstawianie", command=self.menu_cmd.add_img)
-        arithmetic.add_command(label="Wycinanie", command=self.menu_cmd.sub_img)
-        arithmetic.add_command(label="łączenie", command=self.menu_cmd.add_weighted_img)
-        arithmetic.add_command(label="Odejmowanie", command=self.menu_cmd.diff_image)
-
         kernels = tk.Menu(self.menu, tearoff=0)
         kernels.add_command(label="Uniwersalne filtry", command=self.menu_cmd.filter)
-        kernels.add_command(label="Wygładzanie", command=self.menu_cmd.smooth)
+        kernels.add_command(label="Blurowanie", command=self.menu_cmd.smooth)
+        kernels.add_command(label="Hough", command=self.menu_cmd.hough)
 
         operation = tk.Menu(self.menu, tearoff=0)
-        operation.add_cascade(label="Histogram", menu=histogram)
-        operation.add_cascade(label="Punktowe", menu=points)
-        operation.add_cascade(label="Arithmetic Operations", menu=arithmetic)
-        operation.add_command(label="Logic Operations", command=self.menu_cmd.logic_all)
+        operation.add_command(label="Equalizacja Histogram", command=self.menu_cmd.hist_equ)
+        operation.add_cascade(label="Metody Punktowe", menu=points)
+        operation.add_command(label="Arytmetyczne", command=self.menu_cmd.arithmetics)
+        operation.add_command(label="Logiczne", command=self.menu_cmd.logic_all)
         operation.add_cascade(label="Sąsiedztwa", menu=kernels)
         # operation.add_command(label="Korekcja")
         # operation.add_cascade(label="Segmentacja")

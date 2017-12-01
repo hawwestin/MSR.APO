@@ -50,7 +50,7 @@ class OperationTemplate:
         self.panel_tmp.pack()
 
         self.panel_hist = tk.Frame(master=self.panels)
-        self.panel_hist.pack(side=tk.RIGHT)
+        self.panel_hist.pack(side=tk.RIGHT, expand=True)
         self.histogram = Histogram(self.panel_hist)
 
         self.widget_buttons()
@@ -70,8 +70,10 @@ class OperationTemplate:
             self.refresh()
 
         def confirm():
-            self.tab.persist_tmp()
-            self.refresh()
+            self.operation_command(True)
+
+        def preview():
+            self.operation_command()
 
         def _exit():
             self.tab.vision.cvImage_tmp.image = None
@@ -79,16 +81,14 @@ class OperationTemplate:
 
         b_undo = ttk.Button(self.buttons, text="Undo", command=undo)
         b_undo.pack(side=tk.LEFT, padx=2)
-
         b_redo = ttk.Button(self.buttons, text="Redo", command=redo)
         b_redo.pack(side=tk.LEFT, padx=2, after=b_undo)
-
         b_refresh = ttk.Button(self.buttons, text="Refresh images", command=self.refresh)
         b_refresh.pack(side=tk.LEFT, padx=2, after=b_redo)
-
-        b_confirm = ttk.Button(self.buttons, text="Confirm", command=confirm)
+        b_confirm = ttk.Button(self.buttons, text="Update", command=confirm)
         b_confirm.pack(side=tk.LEFT, padx=2, after=b_refresh)
-
+        b_preview = ttk.Button(self.buttons, text="Preview", command=preview)
+        b_preview.pack(side=tk.LEFT, padx=2, after=b_confirm)
         b_exit = ttk.Button(self.buttons, text="Exit", command=_exit)
         b_exit.pack(side=tk.RIGHT, padx=2)
 
@@ -107,7 +107,15 @@ class OperationTemplate:
 
     def control_plugin(self):
         """
+        Mock method for gui widgets to be filled by concrete operation.
+        :return:
+        """
+        pass
+
+    def operation_command(self, persist=False):
+        """
         Mock method to be filled by concrete operation.
+        :param persist:
         :return:
         """
         pass

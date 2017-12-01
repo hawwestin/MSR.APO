@@ -8,7 +8,7 @@ from gui.tabpicture import TabPicture, TabColorPicture, TabGreyPicture
 from img_utils.scrolled_frame import ScrolledCanvas
 
 
-class AddTemplate:
+class CanvasTemplate:
     def __init__(self, name, tab: TabPicture):
         self.window = tk.Toplevel()
         self.window.title(name)
@@ -91,7 +91,7 @@ class AddTemplate:
         self.img_fg = self.tab_fg.vision.cvImage.tk_image
         if len(self.can.find_above('img_bg')) > 0:
             self.can.delete('img_f')
-        self.can.create_image(100, 100, image=self.img_fg, tags="img_f", anchor='nw')
+        self.can.create_image(0, 0, image=self.img_fg, tags="img_f", anchor='nw')
         self.can.tag_bind("img_f", "<B1-Motion>", self._drag_img, add=True)
         y = self.img_fg.height() if self.img_fg.height() > self.img_result.height() else self.img_result.height()
         x = self.img_fg.width() if self.img_fg.width() > self.img_result.width() else self.img_result.width()

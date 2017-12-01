@@ -1,4 +1,5 @@
 import copy
+from pprint import pprint
 from tkinter import filedialog
 
 import cv2
@@ -17,6 +18,7 @@ supported_ext = [
     ".jpg",
     ".png"
 ]
+
 """
 https://docs.opencv.org/3.3.0/d2/de8/group__core__array.html#ga209f2f4869e304c82d07739337eae7c5
 """
@@ -169,15 +171,23 @@ class Vision:
         # LUT Table cdf
         self.cvImage_tmp.image = cdf[self.cvImage.image]
 
-    def negation(self):
-        # cv2.invert(self.cvImage, self.cvImage_tmp)
-
+    def negation2(self):
         hist, bins = np.histogram(self.cvImage.image.flatten(), 256, [0, 256])
-        # cdf = hist.cumsum()
         cdf_m = (255 - bins)
         cdf = np.ma.filled(cdf_m, 0).astype('uint8')
         # LUT Table cdf
         self.cvImage.image = cdf[self.cvImage.image]
+
+    def negation(self):
+        self.cvImage.image = cv2.bitwise_not(self.cvImage.image)
+
+    def negation3(self):
+        """
+        error in curent params
+        error: (-215) type == CV_32F || type == CV_64F in function cv::invert
+        :return:
+        """
+        cv2.invert(self.cvImage.image, self.cvImage.image)
 
     def hist_rand(self):
         hist, bins = np.histogram(self.cvImage.image.flatten(), 256, [0, 256])
@@ -324,49 +334,58 @@ class Vision:
 
         return (y1, y2), (x1, x2)
 
-    def img_paste(self, source, place):
+    def img_paste(self, **kwargs):
         """
         Place given source on current version in cvImage.image and store new image cvImage_tmp.image
         Target is default cvImage_tmp
         :param source: Image which will be placed , Must by already cut to target size.
-        :param place: left top corner of source image on target image
+        :param img_place: left top corner of source image on target image
         :return:
         """
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
-        y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
-        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] = self._mask_to_size(self.cvImage_tmp.image, source, place)
+        y, x = self._target_place(kwargs.get('img_place'), self.cvImage.image.shape, kwargs.get('source').shape)
+        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] = self._mask_to_size(self.cvImage_tmp.image, kwargs.get('source'),
+                                                                          kwargs.get('img_place'))
 
-    def ar_add(self, source, place, weight):
+    def ar_add(self, **kwargs):
+        """
+        Arytmethic add of two images . Source on top of internal cvImage.image
+        :param source:
+        :param place:
+        :param weight:
+        :return:
+        """
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
-        y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
-        self.img_paste(cv2.addWeighted(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]],
-                                       weight[0],
-                                       self._mask_to_size(self.cvImage_tmp.image,
-                                                          source,
-                                                          place),
-                                       weight[1],
-                                       0), place)
+        y, x = self._target_place(kwargs.get('img_place'), self.cvImage.image.shape, kwargs.get('source').shape)
+        self.img_paste(source=cv2.addWeighted(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]],
+                                              kwargs.get('weight')[0],
+                                              self._mask_to_size(self.cvImage_tmp.image,
+                                                                 kwargs.get('source'),
+                                                                 kwargs.get('img_place')),
+                                              kwargs.get('weight')[1],
+                                              0),
+                       img_place=kwargs.get('img_place'))
 
-    def image_cut(self, place):
+    def image_cut(self, **kwargs):
         """
         Cut piece of self.cvImage on given place.
-        :param place: tuple of top left x, y on target img
-        :param preview: Flag for additional preview window
+        :param rect_place: tuple of top left x, y on target img
         :return:
         """
-        self.cvImage_tmp.image = self.cvImage.image[int(place[1]):int(place[3]), int(place[0]):int(place[2])]
+        self.cvImage_tmp.image = self.cvImage.image[int(kwargs.get('rect_place')[1]):int(kwargs.get('rect_place')[3]),
+                                 int(kwargs.get('rect_place')[0]):int(kwargs.get('rect_place')[2])]
 
-    def ar_diff(self, source, place):
+    def ar_diff(self, **kwargs):
         """
         Arithmetic subtraction of source image on given place.
         :param source: Image to be added on top of current self.cvImage
-        :param place: tuple of top left x, y on target img
-        :param preview: Flag for additional preview window
+        :param img_place: tuple of top left x, y on target img
         :return:
         """
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
-        y, x = self._target_place(place, self.cvImage.image.shape, source.shape)
-        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] -= self._mask_to_size(self.cvImage_tmp.image, source, place)
+        y, x = self._target_place(kwargs.get('img_place'), self.cvImage.image.shape, kwargs.get('source').shape)
+        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]] -= self._mask_to_size(self.cvImage_tmp.image, kwargs.get('source'),
+                                                                           kwargs.get('img_place'))
 
     def logic_and(self, target, source, place):
         self.cvImage_tmp.image = copy.copy(target)
@@ -374,7 +393,7 @@ class Vision:
         cv2.bitwise_and(target[y[0]:y[1], x[0]:x[1]],
                         self._mask_to_size(target, source, place),
                         self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
-        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place)
+        self.img_paste(source=self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], img_place=place)
 
     def logic_or(self, target, source, place):
         self.cvImage_tmp.image = copy.copy(target)
@@ -382,7 +401,7 @@ class Vision:
         cv2.bitwise_or(target[y[0]:y[1], x[0]:x[1]],
                        self._mask_to_size(target, source, place),
                        self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
-        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place)
+        self.img_paste(source=self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], img_place=place)
 
     def logic_xor(self, target, source, place):
         """
@@ -398,7 +417,7 @@ class Vision:
         cv2.bitwise_xor(target[y[0]:y[1], x[0]:x[1]],
                         self._mask_to_size(target, source, place),
                         self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
-        self.img_paste(self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], place)
+        self.img_paste(source=self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], img_place=place)
 
     def filter(self, kernel, border_type):
         """
@@ -433,3 +452,31 @@ class Vision:
                    vmin=0,
                    vmax=255)
         plt.show()
+
+    def hough(self, threshold1=50, threshold2=150, threshold3=200, apertureSize=3, color=(0, 255, 0), thickness=2):
+        self.cvImage_tmp.image = copy.copy(self.cvImage.image)
+        edges = cv2.Canny(self.cvImage_tmp.image, threshold1, threshold2, apertureSize=apertureSize)
+        lines = cv2.HoughLinesP(image=edges,
+                                rho=1,
+                                theta=np.pi / 180,
+                                threshold=threshold3,
+                                minLineLength=20,
+                                maxLineGap=10)
+
+        for line in lines:
+            x1, y1, x2, y2 = line[0]
+            cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+        # for line in lines:
+        #     rho, theta = line[0]
+        #     a = np.cos(theta)
+        #     b = np.sin(theta)
+        #     x0 = a * rho
+        #     y0 = b * rho
+        #     x1 = int(x0 + self.cvImage_tmp.image.shape[1] * 1.5 * (-b))
+        #     y1 = int(y0 + self.cvImage_tmp.image.shape[0] * 1.5 * a)
+        #     x2 = int(x0 - self.cvImage_tmp.image.shape[1] * 1.5 * (-b))
+        #     y2 = int(y0 - self.cvImage_tmp.image.shape[0] * 1.5 * a)
+        #     cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), color, thickness=thickness)
+
+        return self.cvImage_tmp.image
