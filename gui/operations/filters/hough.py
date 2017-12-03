@@ -14,7 +14,7 @@ X   obrazy bmp, (tworzone, przetworzone),
 -   suwak oraz konkretny poziom szarości,
 -   kąt;
     tablica akumulatorów w formie liczbowej
-    - redukcja fragmentów prostych
+X   - redukcja fragmentów prostych
     (wyznaczonych z wykorzystaniem transformaty Hougha) leżących poza wykrywanym konturem.
 
 B

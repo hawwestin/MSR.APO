@@ -5,6 +5,7 @@ import numpy as np
 from gui.operations import computer_vision
 from gui.operations.matlib_template import MatLibTemplate
 from gui.tabpicture import TabPicture
+from img_utils.TkTable import TkTable
 
 
 class Filter(MatLibTemplate):
@@ -84,19 +85,12 @@ class Filter(MatLibTemplate):
 
         self.kernel_options = tk.Frame(self.lf_bottom)
         self.kernel_grid = tk.Frame(self.lf_bottom)
+        self.table = TkTable(self.kernel_grid, Filter.Kernel_Size.get(self.kernel_size.get()))
 
         self.kernel_panel()
         self.border_type.trace('w', lambda *args: self.operation_command())
 
         self.window.mainloop()
-
-    def kernel(self):
-        _x, _y = Filter.Kernel_Size.get(self.kernel_size.get())
-        self.np_kernel = np.zeros((_x, _y))
-        for x in range(_x):
-            for y in range(_y):
-                self.np_kernel[x][y] = self.raw_kernel[x][y].get()
-        return self.np_kernel
 
     def kernel_panel(self):
         om_kernel = tk.OptionMenu(self.kernel_options, self.kernel_size,
@@ -116,25 +110,15 @@ class Filter(MatLibTemplate):
         om_operation_name.pack(side=tk.LEFT, padx=2, anchor='nw')
         om_border.pack(side=tk.LEFT, padx=2, anchor='nw')
         b_preview.pack(side=tk.BOTTOM, padx=2, anchor='s')
+
         self.kernel_options.pack(side=tk.TOP)
-        self.kernel_grid.pack(side=tk.TOP, anchor='center')
+        self.kernel_grid.pack(side=tk.TOP, anchor='center', expand=True, fill=tk.BOTH)
 
         self.draw_kernel_grid()
 
     def draw_kernel_grid(self, values=None):
-        self.kernel_grid.destroy()
-        self.raw_kernel = []
-
-        self.kernel_grid = tk.Frame(self.lf_bottom)
-        self.kernel_grid.pack(side=tk.TOP)
-        _x, _y = Filter.Kernel_Size.get(self.kernel_size.get())
-        for x in range(_x):
-            for y in range(_y):
-                value = values[x][y] if values is not None else 0
-                Bucket(raw=self.raw_kernel, master=self.kernel_grid, x=x, y=y, value=value)
-
-        self.raw_kernel.append(copy.copy(Bucket.ROW))
-        Bucket.ROW = []
+        self.table.size = Filter.Kernel_Size.get(self.kernel_size.get())
+        self.table.draw(values)
 
     def kernel_from_list(self):
         kernel = Filter.KERNELS.get(self.operation_name.get(), None)
@@ -151,7 +135,7 @@ class Filter(MatLibTemplate):
         :param persist:
         :return:
         """
-        self.vision_result.filter(kernel=self.kernel(),
+        self.vision_result.filter(kernel=self.table.get_values(),
                                   border_type=self.border_type.get())
         self.img_result = self.vision_result.cvImage_tmp.image
         self.draw_result()

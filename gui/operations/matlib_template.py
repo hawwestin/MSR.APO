@@ -10,7 +10,7 @@ from app_config import resolution
 from gui.histogram import Histogram
 from gui.operations import computer_vision
 from gui.tabpicture import TabPicture, TabColorPicture, TabGreyPicture
-from img_utils.scrolled_frame import ScrolledCanvas
+from img_utils.scrolled_canvas import ScrolledCanvas
 
 
 class MatLibTemplate:

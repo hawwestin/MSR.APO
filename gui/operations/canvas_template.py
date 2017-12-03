@@ -5,7 +5,7 @@ from tkinter import ttk
 from app_config import resolution
 from gui.operations.computer_vision import Vision
 from gui.tabpicture import TabPicture, TabColorPicture, TabGreyPicture
-from img_utils.scrolled_frame import ScrolledCanvas
+from img_utils.scrolled_canvas import ScrolledCanvas
 
 
 class CanvasTemplate:
