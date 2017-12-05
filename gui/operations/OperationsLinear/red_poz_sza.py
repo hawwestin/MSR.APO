@@ -21,6 +21,7 @@ class OperationLightLeveling(OperationTemplate):
                       variable=self.scale_value)
         self.scale_value.trace("w", lambda *args: self.operation_command())
         sl.pack(expand=1, anchor='nw')
+        sl.set(127)
 
     def operation_command(self, persist=False):
         self.tab.vision.rps(int(self.scale_value.get()))

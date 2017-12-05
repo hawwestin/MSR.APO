@@ -16,16 +16,26 @@ class OperationAdaptiveThreshold(OperationTemplate):
     def __init__(self, tab: TabPicture):
         self.amo_v = tk.StringVar()
         self.tto_v = tk.StringVar()
-        self.block = tk.IntVar()
-        self.constant = tk.IntVar()
+        self.block = tk.StringVar()
+        self.constant = tk.StringVar()
         super().__init__("Progowanie Adaptacyjne", tab)
 
     def control_plugin(self):
         # todo validate whole input not last digit.
-        def check_entry(why, what):
+        def entry_odd_number(why, what):
             if int(why) >= 0:
                 # todo value in 3<x<11
                 if int(what) % 2 == 1:
+                    return True
+                else:
+                    return False
+            else:
+                return True
+
+        def entry_numbers(why, what):
+            if int(why) >= 0:
+                # todo value in 3<x<11
+                if what in "0123456789.":
                     return True
                 else:
                     return False
@@ -53,30 +63,35 @@ class OperationAdaptiveThreshold(OperationTemplate):
         label_1.pack(side=tk.LEFT, padx=2)
 
         entry_1 = tk.Entry(self.plugins, textvariable=self.block, width=10)
-        vcmd = entry_1.register(check_entry)
+        vcmd = entry_1.register(entry_odd_number)
         entry_1.configure(validate='key', validatecommand=(vcmd, '%d', '%S'))
         entry_1.pack(side=tk.LEFT, padx=2)
 
         label_1 = tk.Label(self.plugins, text="Stała do dodania")
         label_1.pack(side=tk.LEFT, padx=2)
 
-        entry_1 = tk.Entry(self.plugins, textvariable=self.constant, width=10)
-        entry_1.pack(side=tk.LEFT, padx=2)
+        entry_2 = tk.Entry(self.plugins, textvariable=self.constant, width=10)
+        vcmdn = entry_2.register(entry_numbers)
+        entry_2.configure(validate='key', validatecommand=(vcmdn, '%d', '%S'))
+        entry_2.pack(side=tk.LEFT, padx=2)
 
         self.amo_v.trace("w", lambda *args: self.operation_command())
         self.tto_v.trace("w", lambda *args: self.operation_command())
+        self.block.trace("w", lambda *args: self.operation_command())
+        self.constant.trace("w", lambda *args: self.operation_command())
         self.tto_v.set(sorted(OperationAdaptiveThreshold.thresholdTypeOptions.keys())[0])
 
     def operation_command(self, persist=False):
-        if self.block.get() > 1:
-            self.tab.vision.adaptive_prog(OperationAdaptiveThreshold.adaptiveMethodOptions[self.amo_v.get()],
-                                          OperationAdaptiveThreshold.thresholdTypeOptions[self.tto_v.get()],
-                                          blockSize=self.block.get(),
-                                          C=self.constant.get())
-            self.refresh()
-            self.status_message.set("*")
-            if persist:
-                self.tab.persist_tmp()
+        if self.block.get() != "" and self.constant.get() != "":
+            if int(self.block.get()) > 1:
+                self.tab.vision.adaptive_prog(OperationAdaptiveThreshold.adaptiveMethodOptions[self.amo_v.get()],
+                                              OperationAdaptiveThreshold.thresholdTypeOptions[self.tto_v.get()],
+                                              blockSize=int(self.block.get()),
+                                              C=int(self.constant.get()))
                 self.refresh()
-        else:
-            self.status_message.set("Rozmiar bloku musi być liczbą nieparzysta i większą od 1")
+                self.status_message.set("*")
+                if persist:
+                    self.tab.persist_tmp()
+                    self.refresh()
+            else:
+                self.status_message.set("Rozmiar bloku musi być liczbą nieparzysta i większą od 1")

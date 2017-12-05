@@ -93,6 +93,8 @@ class UOPOperation(OperationTemplate):
         self.fig.canvas.mpl_connect('button_release_event', lambda x: draw(False))
         self.fig.canvas.mpl_connect('motion_notify_event', self._mouse_brush)
 
+        self.operation_command()
+
     def _mouse_brush(self, event):
         if event.xdata is not None:
             self.lut_pos_label.config(text="{}:{}".format(int(event.xdata), int(self.lut[int(event.xdata)])))

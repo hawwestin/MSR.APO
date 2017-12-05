@@ -141,37 +141,3 @@ class Filter(MatLibTemplate):
         self.draw_result()
         if persist:
             self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
-
-
-class Bucket:
-    ROW = []
-
-    def __init__(self, raw, master: tk.Frame, x, y, value=0):
-        self.master = master
-        self.x = x
-        self.y = y
-        self.value = tk.StringVar()
-        self.value.set(value)
-        self.bucket = tk.Entry(master, textvariable=self.value, width=3)
-        vcmd = self.bucket.register(self.check_entry)
-        self.bucket.configure(validate='key', validatecommand=(vcmd, '%d', '%S'))
-        self.bucket.grid(column=x, row=y, padx=2, pady=2)
-
-        """
-        Append to GRID
-        """
-        if y >= len(Bucket.ROW):
-            Bucket.ROW.append(self.value)
-        else:
-            raw.append(copy.copy(Bucket.ROW))
-            Bucket.ROW = [self.value]
-
-    @staticmethod
-    def check_entry(why, what):
-        if int(why) >= 0:
-            if what in '0123456789-.':
-                return True
-            else:
-                return False
-        else:
-            return True

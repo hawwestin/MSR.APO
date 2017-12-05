@@ -20,7 +20,7 @@ class OperationLightThreshold(OperationTemplate):
     def __init__(self, tab: TabPicture):
         self.operations = {}
         self.operation_name = tk.StringVar()
-        super().__init__("Progowanie", tab)
+        super().__init__("Binaryzacja", tab)
 
     def control_plugin(self):
         def threshold(x):
@@ -50,6 +50,7 @@ class OperationLightThreshold(OperationTemplate):
         scale = tk.Scale(slider, orient=tk.HORIZONTAL, to=255, length=500)
         scale.configure(command=lambda x: threshold(x))
         scale.pack(expand=1)
+        scale.set(127)
         tto_v.trace("w", lambda *args: threshold_bind())
         tto_v.set('Binary')
 

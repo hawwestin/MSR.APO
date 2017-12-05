@@ -38,9 +38,13 @@ class OperationHistEQ(OperationTemplate):
                            "Sąsiedztwa 8x8": hcl8,
                            "Metoda losowa": hrand}
 
-        om_choose = tk.OptionMenu(self.buttons, self.operation_name,
+        operation_label = tk.Label(self.plugins, text="nazwa operacji")
+        om_choose = tk.OptionMenu(self.plugins, self.operation_name,
                                   *sorted(self.operations.keys()))
+
+        operation_label.pack(side=tk.LEFT, padx=2)
         om_choose.pack(side=tk.LEFT, padx=2)
+
         self.operation_name.trace("w", lambda *args: self.operation_command())
         self.operation_name.set(sorted(self.operations.keys())[0])
 
