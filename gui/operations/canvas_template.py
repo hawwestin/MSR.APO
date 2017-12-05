@@ -48,9 +48,17 @@ class CanvasTemplate:
         ###############
         # Panels
         ###############
-        self.outer_pan = tk.PanedWindow(self.panels, handlesize=10, showhandle=True, handlepad=12, sashwidth=3)
+        self.outer_pan = tk.PanedWindow(self.panels,
+                                        handlesize=10,
+                                        showhandle=True,
+                                        handlepad=12,
+                                        sashwidth=3)
         self.outer_pan.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        self.left_pan = tk.PanedWindow(self.outer_pan, handlesize=10, showhandle=True, handlepad=12, sashwidth=3,
+        self.left_pan = tk.PanedWindow(self.outer_pan,
+                                       handlesize=10,
+                                       showhandle=True,
+                                       handlepad=12,
+                                       sashwidth=3,
                                        orient=tk.VERTICAL)
         self.left_pan.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.outer_pan.add(self.left_pan, minsize=100)
@@ -142,10 +150,8 @@ class CanvasTemplate:
 
         b_undo = ttk.Button(self.buttons, text="Undo", command=undo)
         b_undo.pack(side=tk.LEFT, padx=2)
-
         b_redo = ttk.Button(self.buttons, text="Redo", command=redo)
         b_redo.pack(side=tk.LEFT, padx=2, after=b_undo)
-
         b_refresh = ttk.Button(self.buttons, text="Refresh images", command=self.refresh_panel_img)
         b_refresh.pack(side=tk.LEFT, padx=2, after=b_redo)
 

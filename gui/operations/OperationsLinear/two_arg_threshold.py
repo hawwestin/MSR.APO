@@ -50,6 +50,8 @@ class TwoArgLightThreshold(OperationTemplate):
         self.p1.trace("w", lambda *args: self.operation_command())
         self.p2.trace("w", lambda *args: self.operation_command())
 
+        self.operation_command()
+
     def operation_command(self, persist=False):
         if self.p1.get() != "" and self.p2.get() != "":
             if int(self.p1.get()) == int(self.p2.get()):

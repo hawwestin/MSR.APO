@@ -26,7 +26,7 @@ class LogicOperations(CanvasTemplate):
     def operation_command(self, preview):
         place = self.can.coords('img_f')
 
-        self.OPERATIONS.get(self.operation_name.get())(self.tab_bg.vision.cvImage.image,
+        self.OPERATIONS[self.operation_name.get()](self.tab_bg.vision.cvImage.image,
                                                        self.tab_fg.vision.cvImage.image,
                                                        place)
         if preview:

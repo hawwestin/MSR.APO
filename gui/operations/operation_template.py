@@ -39,18 +39,38 @@ class OperationTemplate:
         ###############
         # Panels
         ###############
+        self.outer_pan = tk.PanedWindow(self.panels,
+                                        handlesize=10,
+                                        showhandle=True,
+                                        handlepad=12,
+                                        sashwidth=3)
+        self.outer_pan.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.left_pan = tk.PanedWindow(self.outer_pan,
+                                       handlesize=10,
+                                       showhandle=True,
+                                       handlepad=12,
+                                       sashwidth=3,
+                                       orient=tk.VERTICAL)
+        self.left_pan.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.outer_pan.add(self.left_pan, minsize=100)
+
+
+
         lf_original = tk.LabelFrame(master=self.panels, text='Original')
-        lf_original.pack(side=tk.LEFT)
+        lf_original.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+        self.left_pan.add(lf_original, minsize=100)
         self.panel = tk.Label(master=lf_original, image=self.tkImage)
         self.panel.pack()
 
         lf_equalised = tk.LabelFrame(master=self.panels, text='Equalised')
-        lf_equalised.pack(side=tk.LEFT, after=lf_original)
+        lf_equalised.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+        self.left_pan.add(lf_equalised, minsize=100)
         self.panel_tmp = tk.Label(master=lf_equalised)
         self.panel_tmp.pack()
 
         self.panel_hist = tk.Frame(master=self.panels)
-        self.panel_hist.pack(side=tk.RIGHT, expand=True)
+        self.panel_hist.pack(side=tk.RIGHT, expand=True, fill=tk.BOTH)
+        self.outer_pan.add(self.panel_hist, minsize=100)
         self.histogram = Histogram(self.panel_hist)
 
         self.widget_buttons()
