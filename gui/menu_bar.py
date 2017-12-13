@@ -62,7 +62,6 @@ class MainMenu(tk.Frame):
         kernels = tk.Menu(self.menu, tearoff=0)
         kernels.add_command(label="Uniwersalne filtry", command=self.menu_cmd.filter)
         kernels.add_command(label="Blurowanie", command=self.menu_cmd.smooth)
-        kernels.add_command(label="Hough", command=self.menu_cmd.hough)
 
         operation = tk.Menu(self.menu, tearoff=0)
         operation.add_command(label="Equalizacja Histogram", command=self.menu_cmd.hist_equ)
@@ -70,6 +69,8 @@ class MainMenu(tk.Frame):
         operation.add_command(label="Arytmetyczne", command=self.menu_cmd.arithmetics)
         operation.add_command(label="Logiczne", command=self.menu_cmd.logic_all)
         operation.add_cascade(label="Sąsiedztwa", menu=kernels)
+        operation.add_command(label="Hough", command=self.menu_cmd.hough)
+        operation.add_command(label="Morfologiczne", command=self.menu_cmd.morphologic)
         # operation.add_command(label="Korekcja")
         # operation.add_cascade(label="Segmentacja")
         # operation.add_cascade(label="Stegangorafia")

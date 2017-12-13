@@ -42,7 +42,7 @@ class EntryTable(tk.Frame):
         for x in range(self.size[0]):
             matrix_row = []
             for y in range(self.size[1]):
-                value = values[x][y] if values is not None else 0
+                value = values[x][y] if values is not None else 1
                 buk = Bucket(table=self, x=x, y=y, value=value)
                 buk.bucket.grid(column=x, row=y, padx=2, pady=2)
                 matrix_row.append(buk.value)

@@ -518,7 +518,7 @@ class Vision:
         num_thetas = len(thetas)
 
         # Hough accumulator array of theta vs rho
-        accumulator = np.zeros((int(2 * diag_len), int(num_thetas)), dtype=np.uint8)
+        accumulator = np.zeros((int(2 * diag_len), int(num_thetas)), dtype=np.uint64)
         y_idxs, x_idxs = np.nonzero(self.cvImage.image)  # (row, col) indexes to edges
 
         # Vote in the hough accumulator
@@ -527,8 +527,24 @@ class Vision:
             for t_idx in range(num_thetas):
                 # Calculate rho. diag_len is added for a positive index
                 rho = round(x_idxs[i] * cos_t[t_idx] + y_idxs[i] * sin_t[t_idx]) + diag_len
-                accumulator[int(rho), int(t_idx)] += 0.125
+                accumulator[int(rho), int(t_idx)] += 1
 
         self.preview(accumulator)
 
         return thetas, rhos
+
+    def erode(self, kernel, border_type, iterations=1):
+        self.cvImage_tmp.image = cv2.erode(self.cvImage.image, kernel, iterations=iterations,
+                                           borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
+
+    def dilate(self, kernel, border_type, iterations=1):
+        self.cvImage_tmp.image = cv2.dilate(self.cvImage.image, kernel, iterations=iterations,
+                                            borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
+
+    def opening(self, kernel, border_type, iterations=1):
+        self.cvImage_tmp.image = cv2.morphologyEx(self.cvImage.image, cv2.MORPH_OPEN, kernel, iterations=iterations,
+                                                  borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
+
+    def closing(self, kernel, border_type, iterations=1):
+        self.cvImage_tmp.image = cv2.morphologyEx(self.cvImage.image, cv2.MORPH_CLOSE, kernel, iterations=iterations,
+                                                  borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))

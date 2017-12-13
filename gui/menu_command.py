@@ -8,6 +8,7 @@ from gui.operations.OperationsArithmetic import logic_operations
 from gui.operations.OperationsArithmetic import arithmertic_operations
 from .operations.OperationsLinear import adap_prog, histEq, red_poz_sza, binary_operation, UOP, two_arg_threshold
 from gui.operations.filters import hough
+from gui.operations.filters import morphology
 
 import app_config
 from .operations.computer_vision import *
@@ -216,3 +217,7 @@ class MenuCmd:
     def hough(self):
         tab = self._current_tab()
         hough.Hough(tab)
+
+    def morphologic(self):
+        tab = self._current_tab()
+        morphology.Morphology(tab)
