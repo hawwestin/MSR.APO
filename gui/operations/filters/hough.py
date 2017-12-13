@@ -41,9 +41,21 @@ class Hough(MatLibTemplate):
         self.th2 = tk.IntVar()
         self.th3 = tk.IntVar()
         self.apertureSize = tk.IntVar()
+        self.prob = tk.BooleanVar()
 
+        self.operation_options()
         self.controls()
         self.window.mainloop()
+
+    def operation_options(self):
+        self.lf_bottom.configure(text='Opcje')
+
+        acc = tk.Button(self.lf_bottom, text="Show probabilistic Hough space\nSlow",
+                        command=self.vision_result.hough_accumulator)
+        acc.pack(side=tk.TOP, anchor='nw')
+
+        probabilist = tk.Checkbutton(self.lf_bottom, variable=self.prob, text='Probabilistc Hough')
+        probabilist.pack(side=tk.TOP, anchor='nw')
 
     def controls(self):
         # todo validate whole input not last digit.
@@ -91,11 +103,17 @@ class Hough(MatLibTemplate):
 
     def operation_command(self, persist=False):
         try:
-            self.img_result = self.vision_result.hough(self.th1.get(),
-                                                       self.th2.get(),
-                                                       self.th3.get(),
-                                                       self.apertureSize.get())
-            self.status_message.set("*")
+            if self.prob.get():
+                lines, self.img_result = self.vision_result.houghProbabilistic(self.th1.get(),
+                                                                               self.th2.get(),
+                                                                               self.th3.get(),
+                                                                               self.apertureSize.get())
+            else:
+                lines, self.img_result = self.vision_result.hough(self.th1.get(),
+                                                                  self.th2.get(),
+                                                                  self.th3.get(),
+                                                                  self.apertureSize.get())
+            self.status_message.set("Count of liens found in picture {}".format(lines))
         except TypeError:
             self.status_message.set("Any lines have been found on given image with current threshold")
             self.img_result = self.tab_bg.vision.cvImage.image
@@ -104,3 +122,34 @@ class Hough(MatLibTemplate):
                 self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
 
         self.draw_result()
+
+
+if __name__ == '__main__':
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots()
+
+    min_val, max_val = 0, 50
+
+    intersection_matrix = np.random.randint(0, 10, size=(max_val, max_val))
+
+
+    # ax.matshow(intersection_matrix)
+
+    def petla():
+        for i in range(max_val):
+            for j in range(max_val):
+                c = intersection_matrix[j, i]
+                ax.text(i + 0.5, j + 0.5, str(c), va='center', ha='center')
+
+
+    petla()
+
+    ax.set_xlim(min_val, max_val)
+    ax.set_ylim(min_val, max_val)
+    ax.set_xticks(np.arange(max_val))
+    ax.set_yticks(np.arange(max_val))
+    ax.grid()
+
+    plt.waitforbuttonpress()

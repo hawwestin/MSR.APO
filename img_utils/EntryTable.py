@@ -7,7 +7,7 @@ from img_utils.tk_scrolled_frame import ScrolledFrame
 from img_utils.scrolled_canvas import ScrolledCanvas
 
 
-class TkTable(tk.Frame):
+class EntryTable(tk.Frame):
     """
     Tkinter table sth like Excel matrix.
 
@@ -16,7 +16,7 @@ class TkTable(tk.Frame):
     """
 
     def __init__(self, parent, size):
-        super(TkTable, self).__init__(parent)
+        super(EntryTable, self).__init__(parent)
         self.master = parent
         self.table = ScrolledFrame(parent)
         self.table.pack(fill=tk.BOTH, expand=True)
@@ -62,7 +62,7 @@ class TkTable(tk.Frame):
 
 
 class Bucket:
-    def __init__(self, table: TkTable, x, y, value):
+    def __init__(self, table: EntryTable, x, y, value):
         self.x = x
         self.y = y
         self.value = tk.StringVar()

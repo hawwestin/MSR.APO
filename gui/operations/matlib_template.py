@@ -1,6 +1,7 @@
 import copy
 import tkinter as tk
 from tkinter import ttk
+import numpy as np
 
 import matplotlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
@@ -10,7 +11,7 @@ from app_config import resolution
 from gui.histogram import Histogram
 from gui.operations import computer_vision
 from gui.tabpicture import TabPicture, TabColorPicture, TabGreyPicture
-from img_utils.scrolled_canvas import ScrolledCanvas
+from gui.img_matrix import ImgMatrix
 
 
 class MatLibTemplate:
@@ -98,6 +99,9 @@ class MatLibTemplate:
         self.hist_frame = tk.Frame(self.result_tabs)
         self.hist_frame.pack(fill=tk.BOTH, expand=1)
         self.result_tabs.add(self.hist_frame, text="Hiastogram")
+        # self.excel_frame = tk.Frame(self.result_tabs)
+        # self.excel_frame.pack(fill=tk.BOTH, expand=1)
+        # self.result_tabs.add(self.excel_frame, text="Tablica Akumulatorów")
 
         self.fig = Figure(tight_layout=True)
         self.fig_subplot = self.fig.add_subplot(111)
@@ -109,6 +113,12 @@ class MatLibTemplate:
         self.toolbar.update()
 
         self.histogram = Histogram(self.hist_frame)
+
+        # xx = self.img_result.shape
+        # self.matrix = ImgMatrix(self.excel_frame)
+        # self.matrix(image=self.img_result)
+        # self.tkTable = EntryTable(self.excel_frame, self.img_result.shape)
+        # self.tkTable.draw(np.zeros(self.img_result.shape))
 
         self.widget_buttons()
 
@@ -180,6 +190,7 @@ class MatLibTemplate:
                                 aspect='equal')
         self.toolbar.draw()
         self.histogram(image=self.img_result)
+        # self.matrix(image=self.img_result)
 
     def operation_command(self, persist=False):
         """

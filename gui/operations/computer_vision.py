@@ -435,7 +435,7 @@ class Vision:
         self.cvImage_tmp.image = cv2.blur(src=self.cvImage.image, ksize=kernel,
                                           borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
 
-    def preview(self):
+    def preview(self, img=None):
         """
         Display current tmp image.
 
@@ -446,16 +446,26 @@ class Vision:
         # cv2.startWindowThread()
         # cv2.namedWindow('preview', cv2.WINDOW_NORMAL)
         # cv2.imshow('preview', self.cvImage_tmp.image)
-        plt.imshow(self.cvImage_tmp.image,
-                   cmap='gray',
-                   interpolation='none',
-                   vmin=0,
-                   vmax=255)
+        if img is None:
+            plt.imshow(self.cvImage_tmp.image,
+                       cmap='gray',
+                       interpolation='none')
+            # ,
+            # vmin=0,
+            # vmax=255)
+        else:
+            plt.imshow(img,
+                       cmap='gray',
+                       interpolation='none',
+                       vmin=0,
+                       vmax=255)
         plt.show()
 
-    def hough(self, threshold1=50, threshold2=150, threshold3=200, apertureSize=3, color=(0, 255, 0), thickness=2):
+    def houghProbabilistic(self, threshold1=50, threshold2=150, threshold3=200, apertureSize=3, color=(0, 255, 0),
+                           thickness=2):
         self.cvImage_tmp.image = copy.copy(self.cvImage.image)
         edges = cv2.Canny(self.cvImage_tmp.image, threshold1, threshold2, apertureSize=apertureSize)
+        # todo rho and theta as method params.
         lines = cv2.HoughLinesP(image=edges,
                                 rho=1,
                                 theta=np.pi / 180,
@@ -467,16 +477,58 @@ class Vision:
             x1, y1, x2, y2 = line[0]
             cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-        # for line in lines:
-        #     rho, theta = line[0]
-        #     a = np.cos(theta)
-        #     b = np.sin(theta)
-        #     x0 = a * rho
-        #     y0 = b * rho
-        #     x1 = int(x0 + self.cvImage_tmp.image.shape[1] * 1.5 * (-b))
-        #     y1 = int(y0 + self.cvImage_tmp.image.shape[0] * 1.5 * a)
-        #     x2 = int(x0 - self.cvImage_tmp.image.shape[1] * 1.5 * (-b))
-        #     y2 = int(y0 - self.cvImage_tmp.image.shape[0] * 1.5 * a)
-        #     cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), color, thickness=thickness)
+        return len(lines), self.cvImage_tmp.image
 
-        return self.cvImage_tmp.image
+    def hough(self, threshold1=50, threshold2=150, threshold3=200, apertureSize=3, color=(0, 255, 0), thickness=2):
+        self.cvImage_tmp.image = copy.copy(self.cvImage.image)
+        edges = cv2.Canny(self.cvImage_tmp.image, threshold1, threshold2, apertureSize=apertureSize)
+        # todo rho and theta as method params.
+
+        lines = cv2.HoughLines(image=edges,
+                               rho=1,
+                               theta=np.pi / 180,
+                               threshold=threshold3)
+
+        for line in lines:
+            rho, theta = line[0]
+            a = np.cos(theta)
+            b = np.sin(theta)
+            x0 = a * rho
+            y0 = b * rho
+            x1 = int(x0 + self.cvImage_tmp.image.shape[1] * 1.5 * (-b))
+            y1 = int(y0 + self.cvImage_tmp.image.shape[0] * 1.5 * a)
+            x2 = int(x0 - self.cvImage_tmp.image.shape[1] * 1.5 * (-b))
+            y2 = int(y0 - self.cvImage_tmp.image.shape[0] * 1.5 * a)
+            print("rho {}, theta {}, a {}, b {}, x0 {}, y0 {}, x1 {}, x2 {}, y1 {}, y2 {}".format(rho, theta, a, b, x0,
+                                                                                                  y0, x1, x2, y1, y2))
+            cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), color, thickness=thickness)
+
+        return len(lines), self.cvImage_tmp.image
+
+    def hough_accumulator(self):
+        # Rho and Theta ranges
+        thetas = np.deg2rad(np.arange(-90.0, 90.0))
+        width, height = self.cvImage.image.shape
+        diag_len = np.ceil(np.sqrt(width * width + height * height))  # max_dist
+        rhos = np.linspace(-diag_len, diag_len, diag_len * 2.0)
+
+        # Cache some resuable values
+        cos_t = np.cos(thetas)
+        sin_t = np.sin(thetas)
+        num_thetas = len(thetas)
+
+        # Hough accumulator array of theta vs rho
+        accumulator = np.zeros((int(2 * diag_len), int(num_thetas)), dtype=np.uint8)
+        y_idxs, x_idxs = np.nonzero(self.cvImage.image)  # (row, col) indexes to edges
+
+        # Vote in the hough accumulator
+        for i in range(len(x_idxs)):
+            # todo add progress bar for impatient users!
+            for t_idx in range(num_thetas):
+                # Calculate rho. diag_len is added for a positive index
+                rho = round(x_idxs[i] * cos_t[t_idx] + y_idxs[i] * sin_t[t_idx]) + diag_len
+                accumulator[int(rho), int(t_idx)] += 0.125
+
+        self.preview(accumulator)
+
+        return thetas, rhos

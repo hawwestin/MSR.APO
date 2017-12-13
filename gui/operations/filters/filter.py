@@ -5,7 +5,7 @@ import numpy as np
 from gui.operations import computer_vision
 from gui.operations.matlib_template import MatLibTemplate
 from gui.tabpicture import TabPicture
-from img_utils.TkTable import TkTable
+from img_utils.EntryTable import EntryTable
 
 
 class Filter(MatLibTemplate):
@@ -85,7 +85,7 @@ class Filter(MatLibTemplate):
 
         self.kernel_options = tk.Frame(self.lf_bottom)
         self.kernel_grid = tk.Frame(self.lf_bottom)
-        self.table = TkTable(self.kernel_grid, Filter.Kernel_Size.get(self.kernel_size.get()))
+        self.table = EntryTable(self.kernel_grid, Filter.Kernel_Size.get(self.kernel_size.get()))
 
         self.kernel_panel()
         self.border_type.trace('w', lambda *args: self.operation_command())
