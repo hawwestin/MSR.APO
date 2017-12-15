@@ -548,3 +548,66 @@ class Vision:
     def closing(self, kernel, border_type, iterations=1):
         self.cvImage_tmp.image = cv2.morphologyEx(self.cvImage.image, cv2.MORPH_CLOSE, kernel, iterations=iterations,
                                                   borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
+
+    def GRADIENT(self, kernel, border_type, iterations=1):
+        """
+        a morphological gradient
+            dst=morph_grad(src,element)=dilate(src,element)−erode(src,element)
+        :param kernel:
+        :param border_type:
+        :param iterations:
+        :return:
+        """
+        self.cvImage_tmp.image = cv2.morphologyEx(self.cvImage.image, cv2.MORPH_GRADIENT, kernel, iterations=iterations,
+                                                  borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
+
+    def TOPHAT(self, kernel, border_type, iterations=1):
+        """
+        "top hat"
+            dst=tophat(src,element)=src−open(src,element)
+        :param kernel:
+        :param border_type:
+        :param iterations:
+        :return:
+        """
+        self.cvImage_tmp.image = cv2.morphologyEx(self.cvImage.image, cv2.MORPH_TOPHAT, kernel, iterations=iterations,
+                                                  borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
+
+    def BLACKHAT(self, kernel, border_type, iterations=1):
+        """
+        "black hat"
+            dst=blackhat(src,element)=close(src,element)−src
+        :param kernel:
+        :param border_type:
+        :param iterations:
+        :return:
+        """
+        self.cvImage_tmp.image = cv2.morphologyEx(self.cvImage.image, cv2.MORPH_BLACKHAT, kernel, iterations=iterations,
+                                                  borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
+
+    def skeleton(self, kernel, border_type, iterations=1):
+        """
+        Best work after image threshold.
+            cv2.threshold(img,127,255,0)
+
+        :return:
+        """
+        img = copy.copy(self.cvImage.image)
+        size = np.size(img)
+        skel = np.zeros(img.shape, np.uint8)
+
+        element = cv2.getStructuringElement(cv2.MORPH_CROSS, kernel.shape)
+        done = False
+
+        while (not done):
+            eroded = cv2.erode(img, element, borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
+            temp = cv2.dilate(eroded, element, borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
+            temp = cv2.subtract(img, temp)
+            skel = cv2.bitwise_or(skel, temp)
+            img = eroded.copy()
+
+            zeros = size - cv2.countNonZero(img)
+            if zeros == size:
+                done = True
+
+        self.cvImage_tmp.image = skel

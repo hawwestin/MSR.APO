@@ -21,7 +21,11 @@ class Morphology(MatLibTemplate):
         self.operations = {"Erozja": self.vision_result.erode,
                            "Otwarcie": self.vision_result.opening,
                            "Zamykanie": self.vision_result.closing,
-                           "Dylatacja": self.vision_result.dilate
+                           "Dylatacja": self.vision_result.dilate,
+                           "GRADIENT": self.vision_result.GRADIENT,
+                           "TOPHAT": self.vision_result.TOPHAT,
+                           "BLACKHAT": self.vision_result.BLACKHAT,
+                           "Szkeiletyzacja": self.vision_result.skeleton
                            }
 
         self.operation_name.set(sorted(self.operations.keys())[0])

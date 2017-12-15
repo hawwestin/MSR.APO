@@ -135,10 +135,10 @@ class MatLibTemplate:
                 tab_pic = TabGreyPicture(tab_frame, self.tab_bg.main_window, name)
 
             self.operation_command(True)
-            tab_pic.vision = self.vision_result
+            tab_pic.vision = copy.copy(self.vision_result)
             tab_pic.refresh()
-            self.vision_result = computer_vision.Vision()
             self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
+            self.vision_result.cvImage_tmp.image = copy.copy(self.tab_bg.vision.cvImage.image)
 
         def undo():
             self.tab_bg.vision.cvImage.undo(self.status_message)
@@ -159,7 +159,7 @@ class MatLibTemplate:
         b_undo.pack(side=tk.LEFT, padx=2)
         b_redo = ttk.Button(self.buttons, text="Redo", command=redo)
         b_redo.pack(side=tk.LEFT, padx=2, after=b_undo)
-        b_refresh = ttk.Button(self.buttons, text="Refresh images", command=self.refresh_panel_img)
+        b_refresh = ttk.Button(self.buttons, text="Reload Original Image", command=self.refresh_panel_img)
         b_refresh.pack(side=tk.LEFT, padx=2, after=b_redo)
         b_confirm = ttk.Button(self.buttons, text="Confirm", command=confirm)
         b_confirm.pack(side=tk.LEFT, padx=2, after=b_refresh)
