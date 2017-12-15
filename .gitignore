@@ -147,4 +147,4 @@ ENV/
 .mypy_cache/
 .idea/
 doc/
-img/
+sample_img/

@@ -124,7 +124,7 @@ class MenuCmd:
         print(self.main_window.notebook.select())
 
     def info(self):
-        self.popupmsg("APO Made by\nMichał Robaszewski\n2016/2017")
+        self.popupmsg("APO Made by\nMichał Robaszewski\n2016-2018\nVersion {}".format(app_config.__VERSION__))
         # simpledialog.SimpleDialog(master=self.main_window, text="APO Made by\nMichał Robaszewski\n2016/2017")
 
     def picker(self):
