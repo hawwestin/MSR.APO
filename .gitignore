@@ -148,3 +148,5 @@ ENV/
 .idea/
 doc/
 sample_img/
+/sample_img/
+/.sync/

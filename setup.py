@@ -19,13 +19,13 @@ base = None
 if sys.platform == 'win32':
     base = "Win32GUI"
 
-executables = [cx_Freeze.Executable("gui\main.py", base=base, targetName="APO_{}".format(app_config.__VERSION__))]
+executables = [cx_Freeze.Executable("gui\main.py", base=base, shortcutName="APO_{}".format(app_config.__VERSION__))]
 
 cx_Freeze.setup(
     name="APO",
     options={"build_exe": {"packages": ["tkinter", "matplotlib", "numpy", "cv2"]}},
     # , "include_files":["clienticon.ico"]}},
     version=app_config.__VERSION__,
-    description="RobaszewLab17_18)",
+    description="APO RobaszewLab17_18",
     executables=executables
 )
