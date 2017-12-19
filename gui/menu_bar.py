@@ -30,7 +30,7 @@ class MainMenu(tk.Frame):
         file = tk.Menu(self.menu, tearoff=0)
         file.add_command(label="New", command=self.menu_cmd.new_img)
         file.add_cascade(label="Open", menu=file_open)
-        file.add_command(label="Reload", command=self.menu_cmd.load_image)
+        file.add_command(label="Reload", command=self.menu_cmd.reload_image)
         file.add_command(label="Save", command=self.menu_cmd.save)
         file.add_command(label="Save as", command=self.menu_cmd.save_as)
         file.add_separator()  # Tabs Options
@@ -43,6 +43,8 @@ class MainMenu(tk.Frame):
         edit.add_command(label="Redo", command=self.menu_cmd.redo_image)
         edit.add_separator()
         edit.add_command(label="Duplicate", command=self.menu_cmd.duplicate)
+        edit.add_command(label="Convert to RGB", command=self.menu_cmd.gray_2_rgb)
+        edit.add_command(label="Convert to Gray", command=self.menu_cmd.rgb_2_gray)
 
         # view = tk.Menu(self.menu, tearoff=0)
         # view.add_command(label="Full screen")

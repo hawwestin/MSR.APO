@@ -26,7 +26,7 @@ class MenuCmd:
 
     """
 
-    def __init__(self, main_window: tk.Tk):
+    def __init__(self, main_window):
         self.main_window = main_window
 
     @staticmethod
@@ -89,18 +89,13 @@ class MenuCmd:
     def open_grey_image(self):
         self._open_img(False)
 
-    def load_image(self):
-        path = filedialog.askopenfilename()
-        if len(path) > 0:
-            tab = self._current_tab()
-            tab.vision.path = path
-            if tab.vision.color == 1:
-                self._open_img(color=True)
-            else:
-                self._open_img(color=False)
-            self.main_window.rename_tab(os.path.splitext(path)[0])
+    def reload_image(self):
+        tab = self._current_tab()
+        if tab.vision.path is None:
+            tab.vision.path = filedialog.askopenfilename()
 
-            tab.refresh()
+        tab.open_image(tab.vision.path)
+        tab.refresh()
 
     @staticmethod
     def not_implemented():
@@ -215,3 +210,30 @@ class MenuCmd:
     def morphologic(self):
         tab = self._current_tab()
         morphology.Morphology(tab)
+
+    def gray_2_rgb(self):
+        self.color_convert(True)
+
+    def rgb_2_gray(self):
+        self.color_convert(False)
+
+    def color_convert(self, color):
+        tab = self._current_tab()
+        if tab.vision.color is cv2.IMREAD_COLOR and not color:
+            """
+            color to gray
+            """
+            tab.vision.color_convert(False)
+            tab.vision.color = cv2.IMREAD_GRAYSCALE
+            self.main_window.status_message.set("Image was convert to Gray")
+        elif tab.vision.color is not cv2.IMREAD_COLOR and color:
+            """
+            gray to color
+            """
+            tab.vision.color_convert(True)
+            tab.vision.color = cv2.IMREAD_COLOR
+            self.main_window.status_message.set("Image was convert to RGB")
+        else:
+            self.main_window.status_message.set("Color was not changed")
+
+        tab.refresh()

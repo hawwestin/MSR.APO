@@ -575,3 +575,9 @@ class Vision:
                 done = True
 
         self.cvImage_tmp.image = skel
+
+    def color_convert(self, color=False):
+        if color:
+            self.cvImage.image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_GRAY2RGB)
+        else:
+            self.cvImage.image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_RGB2GRAY)
