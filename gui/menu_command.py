@@ -127,12 +127,6 @@ class MenuCmd:
         self.popupmsg("APO Made by\nMichał Robaszewski\n2016-2018\nVersion {}".format(app_config.__VERSION__))
         # simpledialog.SimpleDialog(master=self.main_window, text="APO Made by\nMichał Robaszewski\n2016/2017")
 
-    def picker(self):
-        tab_id = self.main_window.notebook.select()
-        print(tab_id)
-        # id = self.main_window.notebook.index("current")
-        TabPicture.gallery[tab_id].vision.color_picker()
-
     def hist_equ(self):
         tab = self._current_tab()
         histEq.OperationHistEQ(tab)

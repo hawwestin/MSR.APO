@@ -43,7 +43,6 @@ class MainMenu(tk.Frame):
         edit.add_command(label="Redo", command=self.menu_cmd.redo_image)
         edit.add_separator()
         edit.add_command(label="Duplicate", command=self.menu_cmd.duplicate)
-        edit.add_command(label="Color picker", command=self.menu_cmd.picker)
 
         # view = tk.Menu(self.menu, tearoff=0)
         # view.add_command(label="Full screen")
