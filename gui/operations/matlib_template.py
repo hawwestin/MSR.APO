@@ -10,7 +10,7 @@ from matplotlib.pyplot import Figure
 from app_config import resolution
 from gui.histogram import Histogram
 from gui.operations import computer_vision
-from gui.tabpicture import TabPicture, TabColorPicture, TabGreyPicture
+from gui.tabpicture import TabPicture
 from gui.img_matrix import ImgMatrix
 
 
@@ -129,11 +129,7 @@ class MatLibTemplate:
             name = tk.StringVar()
             name.set("*" + self.tab_bg.name.get())
             tab_frame = self.tab_bg.main_window.new_tab(name.get())
-            if self.tab_bg.vision.color is True:
-                tab_pic = TabColorPicture(tab_frame, self.tab_bg.main_window, name)
-            else:
-                tab_pic = TabGreyPicture(tab_frame, self.tab_bg.main_window, name)
-
+            tab_pic = TabPicture(tab_frame, self.tab_bg.main_window, name)
             self.operation_command(True)
             tab_pic.vision = copy.copy(self.vision_result)
             tab_pic.refresh()
@@ -150,6 +146,7 @@ class MatLibTemplate:
 
         def preview():
             self.operation_command()
+            self.vision_result.preview()
 
         def _exit():
             self.tab_bg.vision.cvImage_tmp.image = None

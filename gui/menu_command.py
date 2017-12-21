@@ -12,7 +12,7 @@ from gui.operations.filters import morphology
 
 import app_config
 from .operations.computer_vision import *
-from .tabpicture import TabColorPicture, TabGreyPicture, TabPicture
+from .tabpicture import TabPicture
 
 matplotlib.use("TkAgg")
 LARGE_FONT = app_config.LARGE_FONT
@@ -29,6 +29,14 @@ class MenuCmd:
     def __init__(self, main_window):
         self.main_window = main_window
 
+    def color_mode(self) -> bool:
+        """
+        
+        :return: True If Img is in Color 
+        """
+        tab = self._current_tab()
+        return tab.vision.color
+
     @staticmethod
     def client_exit():
         exit()
@@ -41,7 +49,6 @@ class MenuCmd:
         :return: TabPicture object of current selected tab
         """
         tab_id = self.main_window.notebook.select()
-        print(tab_id)
         return TabPicture.gallery.get(tab_id, None)
 
     def _open_img(self, color=True):
@@ -57,11 +64,8 @@ class MenuCmd:
             name = tk.StringVar()
             name.set(os.path.split(path)[1])
             tab_frame = self.main_window.new_tab(name.get())
-            if color is True:
-                tab_pic = TabColorPicture(tab_frame, self.main_window, name)
-            else:
-                tab_pic = TabGreyPicture(tab_frame, self.main_window, name)
-
+            tab_pic = TabPicture(tab_frame, self.main_window, name)
+            tab_pic.vision.color = color
             tab_pic.open_image(path)
             tab_pic.refresh()
 
@@ -75,11 +79,8 @@ class MenuCmd:
 
         name = tk.StringVar(value=tab.name.get())
         tab_frame = self.main_window.new_tab(name.get())
-        if tab.vision.color == 1:
-            tab_pic = TabColorPicture(tab_frame, self.main_window, name)
-        else:
-            tab_pic = TabGreyPicture(tab_frame, self.main_window, name)
-
+        tab_pic = TabPicture(tab_frame, self.main_window, name)
+        tab_pic.vision.color = tab.vision.color
         tab_pic.open_image(tab.vision.path)
         tab_pic.refresh()
 
@@ -177,7 +178,8 @@ class MenuCmd:
         name = tk.StringVar()
         name.set("New.jpg")
         tab_frame = self.main_window.new_tab(name.get())
-        tab_pic = TabGreyPicture(tab_frame, self.main_window, name)
+        tab_pic = TabPicture(tab_frame, self.main_window, name)
+        tab_pic.vision.color = False
         tab_pic.vision.new_rand_img()
         tab_pic.vision.path = path
         # tab_pic.open_image(path)
@@ -212,28 +214,26 @@ class MenuCmd:
         morphology.Morphology(tab)
 
     def gray_2_rgb(self):
-        self.color_convert(True)
+        self._color_convert(True)
 
     def rgb_2_gray(self):
-        self.color_convert(False)
+        self._color_convert(False)
 
-    def color_convert(self, color):
+    def _color_convert(self, color):
         tab = self._current_tab()
-        if tab.vision.color is cv2.IMREAD_COLOR and not color:
+        if tab.vision.color and not color:
             """
             color to gray
             """
             tab.vision.color_convert(False)
-            tab.vision.color = cv2.IMREAD_GRAYSCALE
-            self.main_window.status_message.set("Image was convert to Gray")
-        elif tab.vision.color is not cv2.IMREAD_COLOR and color:
+            self.main_window.update_status("Image was convert to Gray")
+        elif not tab.vision.color and color:
             """
             gray to color
             """
             tab.vision.color_convert(True)
-            tab.vision.color = cv2.IMREAD_COLOR
-            self.main_window.status_message.set("Image was convert to RGB")
+            self.main_window.update_status("Image was convert to RGB")
         else:
-            self.main_window.status_message.set("Color was not changed")
+            self.main_window.update_status("Color was not changed")
 
         tab.refresh()

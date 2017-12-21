@@ -13,10 +13,19 @@ class MainMenu(tk.Frame):
         tk.Frame.__init__(self, parent_frame)
         self.tkController = main_window
         self.menu = tk.Menu(self.tkController)
+        self.points = tk.Menu(self.menu, tearoff=0)
         self.tkController.config(menu=self.menu)
 
         self._menucmd = self.tkController.command
         self.menu_bar()
+
+        self.bind_all('<<NotebookTabChanged>>', func=self.color_mode)
+
+    def color_mode(self, x=None):
+        if not self.menu_cmd.color_mode():
+            self.points.entryconfig("Progowanie adaptacyjne", state="normal")
+        else:
+            self.points.entryconfig("Progowanie adaptacyjne", state="disabled")
 
     @property
     def menu_cmd(self) -> MenuCmd:
@@ -51,14 +60,13 @@ class MainMenu(tk.Frame):
         # view.add_command(label="tab num", command=self._menucmd.img_list)
         # self.menu.add_cascade(label="View", menu=view)
 
-        points = tk.Menu(self.menu, tearoff=0)
-        points.add_command(label="Negacja", command=self.menu_cmd.negation)
-        points.add_command(label="Binaryzacja", command=self.menu_cmd.light_threshold)
-        points.add_command(label="Dwu argumentowe metody",
+        self.points.add_command(label="Negacja", command=self.menu_cmd.negation)
+        self.points.add_command(label="Binaryzacja", command=self.menu_cmd.light_threshold)
+        self.points.add_command(label="Dwu argumentowe metody",
                            command=self.menu_cmd.progowanie_z_zachowaniem)
-        points.add_command(label="Redukcja poziomów szarości", command=self.menu_cmd.redukcja_p_s)
-        points.add_command(label="Progowanie adaptacyjne", command=self.menu_cmd.adaptive_light_threshold)
-        points.add_command(label="Uniwersalna operacja jednopunktowa", command=self.menu_cmd.uop)
+        self.points.add_command(label="Redukcja poziomów szarości", command=self.menu_cmd.redukcja_p_s)
+        self.points.add_command(label="Progowanie adaptacyjne", command=self.menu_cmd.adaptive_light_threshold)
+        self.points.add_command(label="Uniwersalna operacja jednopunktowa", command=self.menu_cmd.uop)
 
         kernels = tk.Menu(self.menu, tearoff=0)
         kernels.add_command(label="Uniwersalne filtry", command=self.menu_cmd.filter)
@@ -66,12 +74,12 @@ class MainMenu(tk.Frame):
 
         operation = tk.Menu(self.menu, tearoff=0)
         operation.add_command(label="Equalizacja Histogram", command=self.menu_cmd.hist_equ)
-        operation.add_cascade(label="Metody Punktowe", menu=points)
+        operation.add_cascade(label="Jednopunktowe", menu=self.points)
         operation.add_command(label="Arytmetyczne", command=self.menu_cmd.arithmetics)
         operation.add_command(label="Logiczne", command=self.menu_cmd.logic_all)
         operation.add_cascade(label="Sąsiedztwa", menu=kernels)
-        operation.add_command(label="Hough", command=self.menu_cmd.hough)
         operation.add_command(label="Morfologiczne", command=self.menu_cmd.morphologic)
+        operation.add_command(label="Hough", command=self.menu_cmd.hough)
         # operation.add_command(label="Korekcja")
         # operation.add_cascade(label="Segmentacja")
         # operation.add_cascade(label="Stegangorafia")

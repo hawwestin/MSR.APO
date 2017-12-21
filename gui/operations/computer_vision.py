@@ -70,16 +70,26 @@ class Vision:
 
     def __init__(self):
         self.path = None
-        self.color = None
+        self._color = None
 
         # Actual
         self.cvImage = MemoImageData()
         # temp
         self.cvImage_tmp = SingleImageData()
 
+    @property
+    def color(self):
+        if len(cv2.split(self.cvImage.image)) < 1:
+            return self._color
+        return len(cv2.split(self.cvImage.image)) > 1
+
+    @color.setter
+    def color(self, value):
+        self._color = value
+
     def open_image(self, path):
         self.path = path
-        if self.color is cv2.IMREAD_COLOR:
+        if self.color:
             self.cvImage.image = cv2.imread(self.path, cv2.IMREAD_COLOR)
             self.cvImage.image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_BGR2RGB)
         else:
@@ -116,6 +126,7 @@ class Vision:
         :param C: It is just a constant which is subtracted from the mean or weighted mean calculated.
         :return:
         """
+        # todo iterate over all Image color array and merge them after operation.
         self.cvImage_tmp.image = cv2.adaptiveThreshold(self.cvImage.image, 255,
                                                        adaptiveMethod,
                                                        thresholdType,

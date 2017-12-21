@@ -4,7 +4,7 @@ from tkinter import ttk
 
 from app_config import resolution
 from gui.operations.computer_vision import Vision
-from gui.tabpicture import TabPicture, TabColorPicture, TabGreyPicture
+from gui.tabpicture import TabPicture
 from img_utils.scrolled_canvas import ScrolledCanvas
 
 
@@ -111,15 +111,11 @@ class CanvasTemplate:
             name = tk.StringVar()
             name.set("*" + self.tab_bg.name.get())
             tab_frame = self.tab_bg.main_window.new_tab(name.get())
-            if self.tab_bg.vision.color is True:
-                tab_pic = TabColorPicture(tab_frame, self.tab_bg.main_window, name)
-            else:
-                tab_pic = TabGreyPicture(tab_frame, self.tab_bg.main_window, name)
-
-            self.operation_command(False)
+            tab_pic = TabPicture(tab_frame, self.tab_bg.main_window, name)
+            self.operation_command()
 
             self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
-            tab_pic.vision = self.vision_result
+            tab_pic.vision = copy.copy(self.vision_result)
             tab_pic.refresh()
             self.vision_result = Vision()
             self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
@@ -133,7 +129,8 @@ class CanvasTemplate:
             self.refresh_panel_img()
 
         def preview():
-            self.operation_command(True)
+            self.operation_command()
+            self.vision_result.preview()
 
         def _exit():
             self.tab_bg.vision.cvImage_tmp.image = None
@@ -189,7 +186,7 @@ class CanvasTemplate:
         """
         pass
 
-    def operation_command(self, preview):
+    def operation_command(self):
         """
         Mock method to be filled by concrete operation.
         :param preview:

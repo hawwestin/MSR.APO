@@ -94,6 +94,7 @@ class OperationTemplate:
 
         def preview():
             self.operation_command()
+            self.tab.vision.preview()
 
         def _exit():
             self.tab.vision.cvImage_tmp.image = None

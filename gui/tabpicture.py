@@ -108,6 +108,7 @@ class TabPicture:
     def refresh(self):
         self.set_panel_img()
         self.histogram(image=self.vision.cvImage.image)
+        self.main_window.main_menu.color_mode()
 
     def set_panel_img(self):
         """
@@ -122,15 +123,3 @@ class TabPicture:
     def popup_image(self):
         plt.imshow(self.tkImage, cmap='Greys', interpolation='bicubic')
         plt.show()
-
-
-class TabColorPicture(TabPicture):
-    def __init__(self, tab_frame, main_window, name):
-        super().__init__(tab_frame, main_window, name)
-        self.vision.color = 1
-
-
-class TabGreyPicture(TabPicture):
-    def __init__(self, tab_frame, main_window, name):
-        super().__init__(tab_frame, main_window, name)
-        self.vision.color = 0

@@ -23,11 +23,10 @@ class LogicOperations(CanvasTemplate):
                                      *self.OPERATIONS.keys())
         om_operation.pack(side=tk.LEFT, anchor='nw')
 
-    def operation_command(self, preview):
+    def operation_command(self):
         place = self.can.coords('img_f')
 
         self.OPERATIONS[self.operation_name.get()](self.tab_bg.vision.cvImage.image,
                                                        self.tab_fg.vision.cvImage.image,
                                                        place)
-        if preview:
-            self.vision_result.preview()
+
