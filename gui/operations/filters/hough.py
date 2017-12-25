@@ -48,13 +48,13 @@ class Hough(MatLibTemplate):
         self.window.mainloop()
 
     def operation_options(self):
-        self.lf_bottom.configure(text='Opcje')
+        self.options_panned_frame.configure(text='Opcje')
 
-        acc = tk.Button(self.lf_bottom, text="Show probabilistic Hough space\nSlow",
+        acc = tk.Button(self.options_panned_frame, text="Show probabilistic Hough space\nSlow",
                         command=self.vision_result.hough_accumulator)
         acc.pack(side=tk.TOP, anchor='nw')
 
-        probabilist = tk.Checkbutton(self.lf_bottom, variable=self.prob, text='Probabilistc Hough')
+        probabilist = tk.Checkbutton(self.options_panned_frame, variable=self.prob, text='Probabilistc Hough')
         probabilist.pack(side=tk.TOP, anchor='nw')
 
     def controls(self):
@@ -68,6 +68,7 @@ class Hough(MatLibTemplate):
             else:
                 return True
 
+        # todo move controls to left side Paned window .
         label_1 = tk.Label(self.plugins, text="dolny próg szarości")
         label_1.pack(side=tk.LEFT, padx=2)
 

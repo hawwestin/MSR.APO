@@ -83,8 +83,8 @@ class Filter(MatLibTemplate):
 
         self.np_kernel = Filter.KERNELS.get(self.operation_name.get())
 
-        self.kernel_options = tk.Frame(self.lf_bottom)
-        self.kernel_grid = tk.Frame(self.lf_bottom)
+        self.kernel_options = tk.Frame(self.options_panned_frame)
+        self.kernel_grid = tk.Frame(self.options_panned_frame)
         self.table = EntryTable(self.kernel_grid, Filter.Kernel_Size.get(self.kernel_size.get()))
 
         self.kernel_panel()
@@ -104,7 +104,7 @@ class Filter(MatLibTemplate):
         om_border = tk.OptionMenu(self.kernel_options, self.border_type,
                                   *computer_vision.borderType.keys())
 
-        b_preview = tk.Button(self.lf_bottom, text="Preview", command=self.operation_command)
+        b_preview = tk.Button(self.options_panned_frame, text="Preview", command=self.operation_command)
 
         om_kernel.pack(side=tk.LEFT, padx=2, anchor='nw')
         om_operation_name.pack(side=tk.LEFT, padx=2, anchor='nw')

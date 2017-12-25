@@ -17,13 +17,13 @@ class Smoothing(MatLibTemplate):
         self.window.mainloop()
 
     def control(self):
-        l_kernel = tk.Label(self.lf_bottom, text="Kernel size")
-        l_border = tk.Label(self.lf_bottom, text="Border type")
-        om_kernel = tk.OptionMenu(self.lf_bottom, self.kernel_size,
+        l_kernel = tk.Label(self.options_panned_frame, text="Kernel size")
+        l_border = tk.Label(self.options_panned_frame, text="Border type")
+        om_kernel = tk.OptionMenu(self.options_panned_frame, self.kernel_size,
                                   *MatLibTemplate.Kernel_Size.keys())
         self.kernel_size.trace("w", lambda *args: self.operation_command())
 
-        om_border = tk.OptionMenu(self.lf_bottom, self.border_type,
+        om_border = tk.OptionMenu(self.options_panned_frame, self.border_type,
                                   *computer_vision.borderType.keys())
         self.border_type.trace("w", lambda *args: self.operation_command())
 

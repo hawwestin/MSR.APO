@@ -82,9 +82,9 @@ class MatLibTemplate:
         self.panel_back = tk.Label(master=lf_top)
         self.panel_back.pack()
 
-        self.lf_bottom = tk.LabelFrame(master=self.panels, text='Filter')
-        self.lf_bottom.pack()
-        self.left_panned_window.add(self.lf_bottom, minsize=100)
+        self.options_panned_frame = tk.LabelFrame(master=self.panels, text='Filter')
+        self.options_panned_frame.pack()
+        self.left_panned_window.add(self.options_panned_frame, minsize=100)
 
         self.lf_result = tk.LabelFrame(master=self.panels, text='Result')
         self.lf_result.pack()
