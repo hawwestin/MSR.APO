@@ -98,6 +98,13 @@ class Morphology(MatLibTemplate):
 
     def operation_validate(self) -> bool:
         if self.iterations.get() is '':
+            self.status_message.set("Unsuported iteration value")
+            return False
+        if self.operation_name.get() == "Szkeiletyzacja" and Morphology.Kernel_Size.get(self.kernel_size.get()) < (3,3):
+            self.status_message.set("Skeletonization possible with kernel at least 3X3")
+            return False
+        if self.operation_name.get() == "Szkeiletyzacja" and self.vision_result.color:
+            self.status_message.set("Skeletonization possible ONLY with gray scale image")
             return False
 
         return True
@@ -109,7 +116,6 @@ class Morphology(MatLibTemplate):
         :return:
         """
         if not self.operation_validate():
-            self.status_message.set("Unsuported options value")
             return
         self.status_message.set("*")
         operation = self.operations[self.operation_name.get()]
