@@ -35,7 +35,10 @@ class MenuCmd:
         :return: True If Img is in Color 
         """
         tab = self._current_tab()
-        return tab.vision.color
+        if tab is not None:
+            return tab.vision.color
+        else:
+            return False
 
     @staticmethod
     def client_exit():

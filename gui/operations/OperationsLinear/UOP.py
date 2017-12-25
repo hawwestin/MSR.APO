@@ -13,7 +13,7 @@ class UOPOperation(OperationTemplate):
     bins = list(range(0, 256))
 
     def __init__(self, tab: TabPicture):
-        self.fig = Figure()
+        self.fig = Figure(tight_layout=True)
         self.fig_subplot = self.fig.add_subplot(111)
         self.lut_canvas = None
         self.draw = False
