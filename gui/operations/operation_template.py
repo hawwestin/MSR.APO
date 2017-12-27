@@ -4,14 +4,14 @@ from tkinter import ttk
 from gui.histogram import Histogram
 from gui.operations.computer_vision import Vision
 from gui.tabpicture import TabPicture
-from app_config import resolution
+import app_config
 
 
 class OperationTemplate:
     def __init__(self, name, tab: TabPicture):
         self.window = tk.Toplevel()
         self.window.title(name)
-        self.window.geometry(resolution)
+        self.window.geometry(app_config.operations_window_resolution)
 
         self.tab = tab
         self.size = (300, 700)

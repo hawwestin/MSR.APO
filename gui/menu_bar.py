@@ -88,7 +88,6 @@ class MainMenu(tk.Frame):
 
         help = tk.Menu(self.menu, tearoff=0)
         help.add_command(label="Info", command=self.menu_cmd.info)
-        help.add_command(label="debug", command=self.tkController.tab_index)
 
         self.menu.add_cascade(label="File", menu=file)
         self.menu.add_cascade(label="Edit", menu=edit)

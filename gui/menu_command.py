@@ -62,10 +62,14 @@ class MenuCmd:
         :param color: bool
         :return:
         """
-        path = filedialog.askopenfilename()
+        if app_config.image_path is not None:
+            path = filedialog.askopenfilename(initialdir=app_config.image_path)
+        else:
+            path = filedialog.askopenfilename()
         if len(path) > 0:
             name = tk.StringVar()
             name.set(os.path.split(path)[1])
+            app_config.image_path = os.path.split(path)[0]
             tab_frame = self.main_window.new_tab(name.get())
             tab_pic = TabPicture(tab_frame, self.main_window, name)
             tab_pic.vision.color = color
@@ -96,7 +100,7 @@ class MenuCmd:
     def reload_image(self):
         tab = self._current_tab()
         if tab.vision.path is None:
-            tab.vision.path = filedialog.askopenfilename()
+            tab.vision.path = filedialog.askopenfilename(initialdir=app_config.image_path)
 
         tab.open_image(tab.vision.path)
         tab.refresh()
@@ -115,13 +119,6 @@ class MenuCmd:
         b1.pack(side=tk.BOTTOM, pady=20)
         popup.mainloop()
 
-    def img_list(self):
-        print(self.main_window.notebook.index("current"))
-        print(self.main_window.notebook.index("end"))
-        print(self.main_window.notebook.tab(self.main_window.notebook.index("current")))
-        print(self.main_window.notebook.tabs())
-        print(self.main_window.notebook.select())
-
     def info(self):
         self.popupmsg("APO Made by\nMichał Robaszewski\n2016-2018\nVersion {}".format(app_config.__VERSION__))
         # simpledialog.SimpleDialog(master=self.main_window, text="APO Made by\nMichał Robaszewski\n2016/2017")
@@ -136,8 +133,9 @@ class MenuCmd:
 
     def save_as(self):
         tab = self._current_tab()
-        path = filedialog.asksaveasfilename()
-        tab.vision.save(path)
+        path = filedialog.asksaveasfilename(initialdir=app_config.image_path)
+        if path != '':
+            tab.vision.save(path)
 
     def negation(self):
         tab = self._current_tab()

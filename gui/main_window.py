@@ -8,13 +8,14 @@ from .menu_command import MenuCmd
 from gui.menu_bar import MainMenu
 from gui.style import StyleGuide
 from gui.tabpicture import TabPicture
+import app_config
 
 
 class MainWindow(tk.Tk):
     # parameters that you want to send through the Frame class.
     def __init__(self, *args, **kwargs):
         """
-        Self its TK and Controler -> parent is a Frame
+        Main Window of application. Holds TabPicture instances in tk.notebook
         :param args:
         :param kwargs:
         """
@@ -38,6 +39,8 @@ class MainWindow(tk.Tk):
         self.notebook = ttk.Notebook(self)
         self.notebook.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
+        self.bind('<Configure>', self.resize)
+
     def new_tab(self, tab_name):
         """
         Create a new frame and add it to notebook collection.
@@ -60,23 +63,6 @@ class MainWindow(tk.Tk):
         else:
             self.notebook.tab(tab, text=name)
 
-    def tabs(self):
-        print(self.notebook.tabs())
-
-    def tab_index(self):
-        '''
-        Diagnostic method to adjust tab selection unique value
-        :return:
-        '''
-        print("end " + str(self.notebook.index("end")))
-        print("current " + str(self.notebook.index("current")))
-        print("tab id " + str(self.notebook.select()))
-        print("text " + str(self.notebook.tab(self.notebook.select(), "text")))
-        print("tab select " + str(self.notebook.tab(self.notebook.select())))
-        print("tab data " + str(self.notebook.tab(self.notebook.index("current"))))
-        print("tabs " + str(self.notebook.tabs()))  # same as gallery.keys()
-        print(TabPicture.gallery.keys())
-
     def close_Current_tab(self):
         id = self.notebook.select()
         del TabPicture.gallery[id]
@@ -86,3 +72,6 @@ class MainWindow(tk.Tk):
     def update_status(self, text):
         self.status_message.set(text)
         self.update_idletasks()
+
+    def resize(self, _):
+        app_config.main_window_resolution = self.winfo_geometry()

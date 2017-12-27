@@ -7,7 +7,7 @@ import matplotlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.pyplot import Figure
 
-from app_config import resolution
+import app_config
 from gui.histogram import Histogram
 from gui.operations import computer_vision
 from gui.tabpicture import TabPicture
@@ -30,7 +30,7 @@ class MatLibTemplate:
     def __init__(self, name, tab: TabPicture):
         self.window = tk.Toplevel()
         self.window.title(name)
-        self.window.geometry(resolution)
+        self.window.geometry(app_config.operations_window_resolution)
 
         self.tab_bg = tab
         self.vision_result = computer_vision.Vision()

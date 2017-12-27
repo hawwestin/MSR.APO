@@ -2,7 +2,7 @@ import copy
 import tkinter as tk
 from tkinter import ttk
 
-from app_config import resolution
+import app_config
 from gui.operations.computer_vision import Vision
 from gui.tabpicture import TabPicture
 from img_utils.scrolled_canvas import ScrolledCanvas
@@ -12,7 +12,7 @@ class CanvasTemplate:
     def __init__(self, name, tab: TabPicture):
         self.window = tk.Toplevel()
         self.window.title(name)
-        self.window.geometry(resolution)
+        self.window.geometry(app_config.operations_window_resolution)
 
         self.tab_bg = tab
         self.tab_fg = None
@@ -110,6 +110,7 @@ class CanvasTemplate:
         def confirm():
             name = tk.StringVar()
             name.set("*" + self.tab_bg.name.get())
+            # todo make a tab init method in other class .
             tab_frame = self.tab_bg.main_window.new_tab(name.get())
             tab_pic = TabPicture(tab_frame, self.tab_bg.main_window, name)
             self.operation_command()
