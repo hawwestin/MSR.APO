@@ -6,8 +6,8 @@ import app_config
 app = MainWindow()
 if os.path.isfile('config.cfg'):
     with open('config.cfg', 'r+') as f:
-        # config = f.read()
-        config = json.load(f)
+        config = f.read()
+        # config = json.load(f)
         if len(config) > 0:
             config = json.loads(config)
             app_config.main_window_resolution = config["resolution"]

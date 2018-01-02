@@ -18,6 +18,7 @@ matplotlib.use("TkAgg")
 LARGE_FONT = app_config.LARGE_FONT
 NORM_FONT = app_config.NORM_FONT
 SMALL_FONT = app_config.SMALL_FONT
+SUPPORTED_FILES = [('jpg', '*.jpg'), ('png', '*.png'), ('bmp', '*.bmp')]
 
 
 class MenuCmd:
@@ -63,9 +64,9 @@ class MenuCmd:
         :return:
         """
         if app_config.image_path is not None:
-            path = filedialog.askopenfilename(initialdir=app_config.image_path)
+            path = filedialog.askopenfilename(initialdir=app_config.image_path, filetypes=SUPPORTED_FILES)
         else:
-            path = filedialog.askopenfilename()
+            path = filedialog.askopenfilename(filetypes=SUPPORTED_FILES)
         if len(path) > 0:
             name = tk.StringVar()
             name.set(os.path.split(path)[1])
@@ -100,7 +101,7 @@ class MenuCmd:
     def reload_image(self):
         tab = self._current_tab()
         if tab.vision.path is None:
-            tab.vision.path = filedialog.askopenfilename(initialdir=app_config.image_path)
+            tab.vision.path = filedialog.askopenfilename(initialdir=app_config.image_path, filetypes=SUPPORTED_FILES)
 
         tab.open_image(tab.vision.path)
         tab.refresh()
