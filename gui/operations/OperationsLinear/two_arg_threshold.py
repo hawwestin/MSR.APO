@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 
 from gui.operations.operation_template import OperationTemplate
@@ -64,5 +65,6 @@ class TwoArgLightThreshold(OperationTemplate):
                     self.status_message.set("*")
                     if persist:
                         self.tab.persist_tmp()
-        except:
+        except Exception as ex:
+            logging.exception(ex)
             self.status_message.set("Operation have Failed check given options!")

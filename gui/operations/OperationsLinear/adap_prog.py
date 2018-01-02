@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 
 import cv2
@@ -96,5 +97,6 @@ class OperationAdaptiveThreshold(OperationTemplate):
                         self.refresh()
                 else:
                     self.status_message.set("Rozmiar bloku musi być liczbą nieparzysta i większą od 1")
-        except:
+        except Exception as ex:
+            logging.exception(ex)
             self.status_message.set("Operation have Failed check given options!")

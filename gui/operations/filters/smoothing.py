@@ -1,4 +1,5 @@
 import copy
+import logging
 import tkinter as tk
 
 from gui.operations import computer_vision
@@ -45,5 +46,6 @@ class Smoothing(MatLibTemplate):
             self.draw_result()
             if persist:
                 self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
-        except:
+        except Exception as ex:
+            logging.exception(ex)
             self.status_message.set("Operation have Failed check given options!")

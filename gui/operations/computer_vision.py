@@ -1,5 +1,4 @@
 import copy
-from pprint import pprint
 from tkinter import filedialog
 
 import cv2

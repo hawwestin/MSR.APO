@@ -1,6 +1,7 @@
 """
 Binaryzacja
 """
+import logging
 import tkinter as tk
 
 import cv2
@@ -24,14 +25,22 @@ class OperationLightThreshold(OperationTemplate):
 
     def control_plugin(self):
         def threshold(x):
-            self.tab.vision.global_prog(float(x),
-                                        OperationLightThreshold.thresholdTypeOptions[
-                                            tto_v.get()])
-            self.refresh()
+            try:
+                self.tab.vision.global_prog(float(x),
+                                            OperationLightThreshold.thresholdTypeOptions[
+                                                tto_v.get()])
+                self.refresh()
+            except Exception as ex:
+                logging.exception(ex)
+                self.status_message.set("Operation have Failed check given options!")
 
         def threshold_bind():
-            self.tab.vision.global_prog(float(scale.get()), OperationLightThreshold.thresholdTypeOptions[tto_v.get()])
-            self.refresh()
+            try:
+                self.tab.vision.global_prog(float(scale.get()), OperationLightThreshold.thresholdTypeOptions[tto_v.get()])
+                self.refresh()
+            except Exception as ex:
+                logging.exception(ex)
+                self.status_message.set("Operation have Failed check given options!")
 
         self.operations = {"threshold": lambda x: threshold(x),
                            "threshold_bind": threshold_bind}
@@ -58,5 +67,6 @@ class OperationLightThreshold(OperationTemplate):
         try:
             if persist:
                 self.tab.persist_tmp()
-        except:
+        except Exception as ex:
+            logging.exception(ex)
             self.status_message.set("Operation have Failed check given options!")

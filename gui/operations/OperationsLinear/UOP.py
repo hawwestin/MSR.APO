@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import ttk
 
@@ -118,5 +119,6 @@ class UOPOperation(OperationTemplate):
             self.refresh()
             if persist:
                 self.tab.persist_tmp()
-        except:
+        except Exception as ex:
+            logging.exception(ex)
             self.status_message.set("Operation have Failed check given options!")

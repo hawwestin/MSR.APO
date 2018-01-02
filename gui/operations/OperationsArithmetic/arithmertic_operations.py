@@ -1,3 +1,5 @@
+import logging
+
 from gui.operations.canvas_template import CanvasTemplate
 from gui.tabpicture import TabPicture
 import tkinter as tk
@@ -56,5 +58,6 @@ class ArithmeticOperations(CanvasTemplate):
                 operation(img_place=img_place,
                           rect_place=rect_place,
                           weight=(self.weight_img_1.get(), self.weight_img_2.get()))
-        except:
+        except Exception as ex:
+            logging.exception(ex)
             self.status_message.set("Operation have Failed check given options!")

@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 
 from gui.operations.operation_template import OperationTemplate
@@ -55,5 +56,6 @@ class OperationHistEQ(OperationTemplate):
             if persist:
                 self.tab.persist_tmp()
                 self.refresh()
-        except:
+        except Exception as ex:
+            logging.exception(ex)
             self.status_message.set("Operation have Failed check given options!")

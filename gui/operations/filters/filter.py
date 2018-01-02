@@ -1,6 +1,7 @@
 import copy
 import tkinter as tk
 import numpy as np
+import logging
 
 from gui.operations import computer_vision
 from gui.operations.matlib_template import MatLibTemplate
@@ -136,12 +137,14 @@ class Filter(MatLibTemplate):
         :return:
         """
         try:
-
             self.vision_result.filter(kernel=self.table.get_values(),
                                       border_type=self.border_type.get())
             self.img_result = self.vision_result.cvImage_tmp.image
             self.draw_result()
             if persist:
                 self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
-        except Exception:
+        except Exception as ex:
+            logging.exception(ex)
             self.status_message.set("Operation have Failed check given options!")
+        else:
+            logging.info("Filter operation Succeed")

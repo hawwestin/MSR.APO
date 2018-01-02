@@ -1,5 +1,7 @@
+import logging
 import tkinter as tk
 import os
+from tkinter import filedialog
 
 import matplotlib
 
@@ -11,7 +13,7 @@ from gui.operations.filters import hough
 from gui.operations.filters import morphology
 
 import app_config
-from .operations.computer_vision import *
+from .operations.computer_vision import Vision
 from .tabpicture import TabPicture
 
 matplotlib.use("TkAgg")
@@ -142,7 +144,8 @@ class MenuCmd:
         tab = self._current_tab()
         try:
             tab.vision.negation()
-        except:
+        except Exception as ex:
+            logging.exception(ex)
             self.main_window.update_status("Operation have Failed check given options!")
         tab.refresh()
 

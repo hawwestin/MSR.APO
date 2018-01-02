@@ -28,6 +28,8 @@ X   Informacja o dopuszczalnym zakresie zmian poziomów szarości.
 
 -   Optymalny zakres parametrów z punktu widzenia dokładności aproksymacji
 """
+import logging
+
 from gui.operations.matlib_template import MatLibTemplate
 import copy
 import tkinter as tk
@@ -124,7 +126,8 @@ class Hough(MatLibTemplate):
                     self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
 
             self.draw_result()
-        except:
+        except Exception as ex:
+            logging.exception(ex)
             self.status_message.set("Operation have Failed check given options!")
 
 

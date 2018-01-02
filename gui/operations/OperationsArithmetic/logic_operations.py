@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 
 from gui.operations.canvas_template import CanvasTemplate
@@ -30,5 +31,6 @@ class LogicOperations(CanvasTemplate):
             self.OPERATIONS[self.operation_name.get()](self.tab_bg.vision.cvImage.image,
                                                        self.tab_fg.vision.cvImage.image,
                                                        place)
-        except:
+        except Exception as ex:
+            logging.exception(ex)
             self.status_message.set("Operation have Failed check given options!")
