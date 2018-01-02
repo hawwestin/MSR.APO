@@ -113,7 +113,10 @@ class UOPOperation(OperationTemplate):
         self.lut_canvas.show()
 
     def operation_command(self, persist=False):
-        self.tab.vision.tone_curve(self.lut)
-        self.refresh()
-        if persist:
-            self.tab.persist_tmp()
+        try:
+            self.tab.vision.tone_curve(self.lut)
+            self.refresh()
+            if persist:
+                self.tab.persist_tmp()
+        except:
+            self.status_message.set("Operation have Failed check given options!")

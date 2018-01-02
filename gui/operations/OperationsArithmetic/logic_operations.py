@@ -24,9 +24,11 @@ class LogicOperations(CanvasTemplate):
         om_operation.pack(side=tk.LEFT, anchor='nw')
 
     def operation_command(self):
-        place = self.can.coords('img_f')
+        try:
+            place = self.can.coords('img_f')
 
-        self.OPERATIONS[self.operation_name.get()](self.tab_bg.vision.cvImage.image,
+            self.OPERATIONS[self.operation_name.get()](self.tab_bg.vision.cvImage.image,
                                                        self.tab_fg.vision.cvImage.image,
                                                        place)
-
+        except:
+            self.status_message.set("Operation have Failed check given options!")

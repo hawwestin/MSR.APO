@@ -49,8 +49,11 @@ class OperationHistEQ(OperationTemplate):
         self.operation_name.set(sorted(self.operations.keys())[0])
 
     def operation_command(self, persist=False):
-        operation = self.operations[self.operation_name.get()]
-        operation()
-        if persist:
-            self.tab.persist_tmp()
-            self.refresh()
+        try:
+            operation = self.operations[self.operation_name.get()]
+            operation()
+            if persist:
+                self.tab.persist_tmp()
+                self.refresh()
+        except:
+            self.status_message.set("Operation have Failed check given options!")

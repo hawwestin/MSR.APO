@@ -38,9 +38,12 @@ class Smoothing(MatLibTemplate):
         :param persist:
         :return:
         """
-        self.vision_result.blur(MatLibTemplate.Kernel_Size.get(self.kernel_size.get()),
-                                border_type=self.border_type.get())
-        self.img_result = self.vision_result.cvImage_tmp.image
-        self.draw_result()
-        if persist:
-            self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
+        try:
+            self.vision_result.blur(MatLibTemplate.Kernel_Size.get(self.kernel_size.get()),
+                                    border_type=self.border_type.get())
+            self.img_result = self.vision_result.cvImage_tmp.image
+            self.draw_result()
+            if persist:
+                self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
+        except:
+            self.status_message.set("Operation have Failed check given options!")

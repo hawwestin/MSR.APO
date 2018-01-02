@@ -53,13 +53,16 @@ class TwoArgLightThreshold(OperationTemplate):
         self.operation_command()
 
     def operation_command(self, persist=False):
-        if self.p1.get() != "" and self.p2.get() != "":
-            if int(self.p1.get()) == int(self.p2.get()):
-                self.status_message.set("p1 and p2 can't by equal")
-            else:
-                operation = self.operations[self.operation_name.get()]
-                operation(int(self.p1.get()), int(self.p2.get()))
-                self.refresh()
-                self.status_message.set("*")
-                if persist:
-                    self.tab.persist_tmp()
+        try:
+            if self.p1.get() != "" and self.p2.get() != "":
+                if int(self.p1.get()) == int(self.p2.get()):
+                    self.status_message.set("p1 and p2 can't by equal")
+                else:
+                    operation = self.operations[self.operation_name.get()]
+                    operation(int(self.p1.get()), int(self.p2.get()))
+                    self.refresh()
+                    self.status_message.set("*")
+                    if persist:
+                        self.tab.persist_tmp()
+        except:
+            self.status_message.set("Operation have Failed check given options!")

@@ -42,16 +42,19 @@ class ArithmeticOperations(CanvasTemplate):
         om_choose.pack(side=tk.LEFT, padx=20, after=entry_2)
 
     def operation_command(self):
-        img_place = self.can.coords('img_f')
-        rect_place = self.can.coords('rect')
-        operation = self.operations[self.operation_name.get()]
+        try:
+            img_place = self.can.coords('img_f')
+            rect_place = self.can.coords('rect')
+            operation = self.operations[self.operation_name.get()]
 
-        if self.tab_fg is not None:
-            operation(source=self.tab_fg.vision.cvImage.image,
-                      img_place=img_place,
-                      rect_place=rect_place,
-                      weight=(self.weight_img_1.get(), self.weight_img_2.get()))
-        else:
-            operation(img_place=img_place,
-                      rect_place=rect_place,
-                      weight=(self.weight_img_1.get(), self.weight_img_2.get()))
+            if self.tab_fg is not None:
+                operation(source=self.tab_fg.vision.cvImage.image,
+                          img_place=img_place,
+                          rect_place=rect_place,
+                          weight=(self.weight_img_1.get(), self.weight_img_2.get()))
+            else:
+                operation(img_place=img_place,
+                          rect_place=rect_place,
+                          weight=(self.weight_img_1.get(), self.weight_img_2.get()))
+        except:
+            self.status_message.set("Operation have Failed check given options!")

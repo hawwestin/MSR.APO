@@ -140,7 +140,10 @@ class MenuCmd:
 
     def negation(self):
         tab = self._current_tab()
-        tab.vision.negation()
+        try:
+            tab.vision.negation()
+        except:
+            self.main_window.update_status("Operation have Failed check given options!")
         tab.refresh()
 
     def light_threshold(self):

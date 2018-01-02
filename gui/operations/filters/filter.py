@@ -135,9 +135,13 @@ class Filter(MatLibTemplate):
         :param persist:
         :return:
         """
-        self.vision_result.filter(kernel=self.table.get_values(),
-                                  border_type=self.border_type.get())
-        self.img_result = self.vision_result.cvImage_tmp.image
-        self.draw_result()
-        if persist:
-            self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
+        try:
+
+            self.vision_result.filter(kernel=self.table.get_values(),
+                                      border_type=self.border_type.get())
+            self.img_result = self.vision_result.cvImage_tmp.image
+            self.draw_result()
+            if persist:
+                self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
+        except Exception:
+            self.status_message.set("Operation have Failed check given options!")

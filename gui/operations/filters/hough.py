@@ -104,25 +104,28 @@ class Hough(MatLibTemplate):
 
     def operation_command(self, persist=False):
         try:
-            if self.prob.get():
-                lines, self.img_result = self.vision_result.houghProbabilistic(self.th1.get(),
-                                                                               self.th2.get(),
-                                                                               self.th3.get(),
-                                                                               self.apertureSize.get())
+            try:
+                if self.prob.get():
+                    lines, self.img_result = self.vision_result.houghProbabilistic(self.th1.get(),
+                                                                                   self.th2.get(),
+                                                                                   self.th3.get(),
+                                                                                   self.apertureSize.get())
+                else:
+                    lines, self.img_result = self.vision_result.hough(self.th1.get(),
+                                                                      self.th2.get(),
+                                                                      self.th3.get(),
+                                                                      self.apertureSize.get())
+                self.status_message.set("Count of liens found in picture {}".format(lines))
+            except TypeError:
+                self.status_message.set("Any lines have been found on given image with current threshold")
+                self.img_result = self.tab_bg.vision.cvImage.image
             else:
-                lines, self.img_result = self.vision_result.hough(self.th1.get(),
-                                                                  self.th2.get(),
-                                                                  self.th3.get(),
-                                                                  self.apertureSize.get())
-            self.status_message.set("Count of liens found in picture {}".format(lines))
-        except TypeError:
-            self.status_message.set("Any lines have been found on given image with current threshold")
-            self.img_result = self.tab_bg.vision.cvImage.image
-        else:
-            if persist:
-                self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
+                if persist:
+                    self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
 
-        self.draw_result()
+            self.draw_result()
+        except:
+            self.status_message.set("Operation have Failed check given options!")
 
 
 if __name__ == '__main__':

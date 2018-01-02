@@ -55,5 +55,8 @@ class OperationLightThreshold(OperationTemplate):
         tto_v.set('Binary')
 
     def operation_command(self, persist=False):
-        if persist:
-            self.tab.persist_tmp()
+        try:
+            if persist:
+                self.tab.persist_tmp()
+        except:
+            self.status_message.set("Operation have Failed check given options!")

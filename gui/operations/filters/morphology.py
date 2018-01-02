@@ -115,15 +115,19 @@ class Morphology(MatLibTemplate):
         :param persist:
         :return:
         """
-        if not self.operation_validate():
-            return
-        self.status_message.set("*")
-        operation = self.operations[self.operation_name.get()]
+        try:
+            if not self.operation_validate():
+                return
+            self.status_message.set("*")
+            operation = self.operations[self.operation_name.get()]
 
-        operation(kernel=self.table.get_values(),
-                  border_type=self.border_type.get(),
-                  iterations=int(self.iterations.get()))
-        self.img_result = self.vision_result.cvImage_tmp.image
-        self.draw_result()
-        if persist:
-            self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
+            operation(kernel=self.table.get_values(),
+                      border_type=self.border_type.get(),
+                      iterations=int(self.iterations.get()))
+            self.img_result = self.vision_result.cvImage_tmp.image
+            self.draw_result()
+            if persist:
+                self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
+        except:
+            self.status_message.set("Operation have Failed check given options!")
+            

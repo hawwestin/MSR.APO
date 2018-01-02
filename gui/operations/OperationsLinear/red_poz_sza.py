@@ -24,8 +24,12 @@ class OperationLightLeveling(OperationTemplate):
         sl.set(127)
 
     def operation_command(self, persist=False):
-        self.tab.vision.rps(int(self.scale_value.get()))
-        self.refresh()
-        if persist:
-            self.tab.persist_tmp()
+        try:
+            self.tab.vision.rps(int(self.scale_value.get()))
+            self.refresh()
+            if persist:
+                self.tab.persist_tmp()
+        except:
+            self.status_message.set("Operation have Failed check given options!")
+
 

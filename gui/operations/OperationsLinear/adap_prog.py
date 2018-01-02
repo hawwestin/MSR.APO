@@ -82,16 +82,19 @@ class OperationAdaptiveThreshold(OperationTemplate):
         self.tto_v.set(sorted(OperationAdaptiveThreshold.thresholdTypeOptions.keys())[0])
 
     def operation_command(self, persist=False):
-        if self.block.get() != "" and self.constant.get() != "":
-            if int(self.block.get()) > 1:
-                self.tab.vision.adaptive_prog(OperationAdaptiveThreshold.adaptiveMethodOptions[self.amo_v.get()],
-                                              OperationAdaptiveThreshold.thresholdTypeOptions[self.tto_v.get()],
-                                              blockSize=int(self.block.get()),
-                                              C=int(self.constant.get()))
-                self.refresh()
-                self.status_message.set("*")
-                if persist:
-                    self.tab.persist_tmp()
+        try:
+            if self.block.get() != "" and self.constant.get() != "":
+                if int(self.block.get()) > 1:
+                    self.tab.vision.adaptive_prog(OperationAdaptiveThreshold.adaptiveMethodOptions[self.amo_v.get()],
+                                                  OperationAdaptiveThreshold.thresholdTypeOptions[self.tto_v.get()],
+                                                  blockSize=int(self.block.get()),
+                                                  C=int(self.constant.get()))
                     self.refresh()
-            else:
-                self.status_message.set("Rozmiar bloku musi być liczbą nieparzysta i większą od 1")
+                    self.status_message.set("*")
+                    if persist:
+                        self.tab.persist_tmp()
+                        self.refresh()
+                else:
+                    self.status_message.set("Rozmiar bloku musi być liczbą nieparzysta i większą od 1")
+        except:
+            self.status_message.set("Operation have Failed check given options!")
