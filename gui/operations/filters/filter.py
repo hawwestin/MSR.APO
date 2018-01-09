@@ -98,8 +98,8 @@ class Filter(MatLibTemplate):
 
         self.kernel_options_1 = tk.Frame(self.options_panned_frame)
         self.kernel_options_2 = tk.Frame(self.options_panned_frame)
-        self.kernel_grid = tk.Frame(self.kernel_options_1)
-        self.kernel_grid_2 = tk.Frame(self.kernel_options_2)
+        self.kernel_grid = tk.Frame(self.options_panned_frame)
+        self.kernel_grid_2 = tk.Frame(self.options_panned_frame)
 
         self.table = EntryTable(self.kernel_grid, Filter.Kernel_Size.get(self.kernel_size.get()))
         self.table_2 = EntryTable(self.kernel_grid_2, Filter.Kernel_Size.get(self.kernel_size_2.get()))
@@ -119,10 +119,10 @@ class Filter(MatLibTemplate):
         self.operation_name_2.trace("w", lambda *args: self.kernel_from_list(self.table_2, self.bundle_2))
         self.border_type_2.trace('w', lambda *args: self.operation_command())
 
-        self.kernel_options_1.pack(side=tk.TOP)
+        self.kernel_options_1.pack(side=tk.TOP, anchor='nw')
         self.kernel_grid.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
-        self.phase.pack(side=tk.TOP)
-        self.kernel_options_2.pack(side=tk.TOP)
+        self.phase.pack(side=tk.TOP, anchor='n')
+        self.kernel_options_2.pack(side=tk.TOP, anchor='nw')
         self.kernel_grid_2.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
 
         self.draw_kernel_grid(self.table, self.bundle_1)
@@ -134,18 +134,29 @@ class Filter(MatLibTemplate):
         self.window.mainloop()
 
     def kernel_panel(self, master, vars: tuple):
+        l_kernel = tk.Label(master, text="Wielkość rdzenia")
         om_kernel = tk.OptionMenu(master, vars[0],
                                   *Filter.Kernel_Size.keys())
 
+        l_operation_name = tk.Label(master, text="Typ Operacji")
         om_operation_name = tk.OptionMenu(master, vars[1],
                                           *sorted(Filter.KERNELS.keys()))
 
+        l_border_type = tk.Label(master, text="Pixele brzegowe")
         om_border = tk.OptionMenu(master, vars[2],
                                   *computer_vision.borderType.keys())
 
-        om_kernel.pack(side=tk.LEFT, padx=2, anchor='nw')
-        om_operation_name.pack(side=tk.LEFT, padx=2, anchor='nw')
-        om_border.pack(side=tk.LEFT, padx=2, anchor='nw')
+        l_operation_name.grid(row=0, column=0, sticky='nw')
+        l_border_type.grid(row=1, column=0, sticky='nw')
+        l_kernel.grid(row=2, column=0, sticky='nw')
+
+        om_operation_name.grid(row=0, column=1, sticky='nw')
+        om_border.grid(row=1, column=1, sticky='nw')
+        om_kernel.grid(row=2, column=1, sticky='nw')
+
+        # om_kernel.pack(side=tk.LEFT, padx=2, anchor='nw')
+        # om_operation_name.pack(side=tk.LEFT, padx=2, anchor='nw')
+        # om_border.pack(side=tk.LEFT, padx=2, anchor='nw')
 
     def draw_kernel_grid(self, table: EntryTable, vars: tuple, values=None):
         table.size = Filter.Kernel_Size.get(vars[0].get())
