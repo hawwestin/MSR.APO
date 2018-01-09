@@ -26,7 +26,7 @@ class Filter(MatLibTemplate):
                                                 [-2, 4, -2],
                                                 [1, -2, 1]])),
                "Laplasjan Detekcja Krawędzi C": ("3x3", np.array([[0, -1, 0],
-                                                                  [-1, 5, -1],
+                                                                  [-1, 4, -1],
                                                                   [0, -1, 0]])),
                "Wygładzanie a": ("3x3", np.array([[1, 1, 1],
                                                   [1, 2, 1],
@@ -68,6 +68,9 @@ class Filter(MatLibTemplate):
                "Prewitta W": ("3x3", np.array([[1, 1, -1],
                                                [1, -2, -1],
                                                [1, 1, -1]])),
+               "HP2": ("3x3", np.array([[1, -2, 1],
+                                        [-2, 5, -2],
+                                        [1, -2, 1]])),
                "Prewitta NW": ("3x3", np.array([[1, 1, 1],
                                                 [1, -2, -1],
                                                 [1, -1, -1]]))
@@ -78,54 +81,81 @@ class Filter(MatLibTemplate):
 
         self.raw_kernel = None
         self.np_kernel = None
+        self.operation_name_2 = tk.StringVar()
+        self.kernel_size_2 = tk.StringVar()
+        self.border_type_2 = tk.StringVar()
+
+        self.bundle_1 = (self.kernel_size, self.operation_name, self.border_type)
+        self.bundle_2 = (self.kernel_size_2, self.operation_name_2, self.border_type_2)
 
         self.operation_name.set(list(Filter.KERNELS.keys())[0])
         self.kernel_size.set(list(Filter.Kernel_Size.keys())[0])
+        self.operation_name_2.set(list(Filter.KERNELS.keys())[0])
+        self.kernel_size_2.set(list(Filter.Kernel_Size.keys())[0])
+        self.border_type_2.set(list(computer_vision.borderType.keys())[0])
 
         self.np_kernel = Filter.KERNELS.get(self.operation_name.get())
 
-        self.kernel_options = tk.Frame(self.options_panned_frame)
-        self.kernel_grid = tk.Frame(self.options_panned_frame)
-        self.table = EntryTable(self.kernel_grid, Filter.Kernel_Size.get(self.kernel_size.get()))
+        self.kernel_options_1 = tk.Frame(self.options_panned_frame)
+        self.kernel_options_2 = tk.Frame(self.options_panned_frame)
+        self.kernel_grid = tk.Frame(self.kernel_options_1)
+        self.kernel_grid_2 = tk.Frame(self.kernel_options_2)
 
-        self.kernel_panel()
+        self.table = EntryTable(self.kernel_grid, Filter.Kernel_Size.get(self.kernel_size.get()))
+        self.table_2 = EntryTable(self.kernel_grid_2, Filter.Kernel_Size.get(self.kernel_size_2.get()))
+
+        self.phase_var = tk.StringVar()
+        self.phase_var.set(0)
+        self.phase = tk.Checkbutton(self.options_panned_frame, variable=self.phase_var, text="Druga Faza")
+
+        self.kernel_panel(self.kernel_options_1, self.bundle_1)
+        self.kernel_panel(self.kernel_options_2, self.bundle_2)
+
+        self.kernel_size.trace("w", lambda *args: self.draw_kernel_grid(self.table, self.bundle_1))
+        self.operation_name.trace("w", lambda *args: self.kernel_from_list(self.table, self.bundle_1))
         self.border_type.trace('w', lambda *args: self.operation_command())
+
+        self.kernel_size_2.trace("w", lambda *args: self.draw_kernel_grid(self.table_2, self.bundle_2))
+        self.operation_name_2.trace("w", lambda *args: self.kernel_from_list(self.table_2, self.bundle_2))
+        self.border_type_2.trace('w', lambda *args: self.operation_command())
+
+        self.kernel_options_1.pack(side=tk.TOP)
+        self.kernel_grid.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
+        self.phase.pack(side=tk.TOP)
+        self.kernel_options_2.pack(side=tk.TOP)
+        self.kernel_grid_2.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
+
+        self.draw_kernel_grid(self.table, self.bundle_1)
+        self.draw_kernel_grid(self.table_2, self.bundle_2)
+
+        b_preview = tk.Button(self.options_panned_frame, text="Preview", command=self.operation_command)
+        b_preview.pack(side=tk.BOTTOM, padx=2, anchor='s')
 
         self.window.mainloop()
 
-    def kernel_panel(self):
-        om_kernel = tk.OptionMenu(self.kernel_options, self.kernel_size,
+    def kernel_panel(self, master, vars: tuple):
+        om_kernel = tk.OptionMenu(master, vars[0],
                                   *Filter.Kernel_Size.keys())
-        self.kernel_size.trace("w", lambda *args: self.draw_kernel_grid())
 
-        om_operation_name = tk.OptionMenu(self.kernel_options, self.operation_name,
+        om_operation_name = tk.OptionMenu(master, vars[1],
                                           *sorted(Filter.KERNELS.keys()))
-        self.operation_name.trace("w", lambda *args: self.kernel_from_list())
 
-        om_border = tk.OptionMenu(self.kernel_options, self.border_type,
+        om_border = tk.OptionMenu(master, vars[2],
                                   *computer_vision.borderType.keys())
-
-        b_preview = tk.Button(self.options_panned_frame, text="Preview", command=self.operation_command)
 
         om_kernel.pack(side=tk.LEFT, padx=2, anchor='nw')
         om_operation_name.pack(side=tk.LEFT, padx=2, anchor='nw')
         om_border.pack(side=tk.LEFT, padx=2, anchor='nw')
-        b_preview.pack(side=tk.BOTTOM, padx=2, anchor='s')
 
-        self.kernel_options.pack(side=tk.TOP)
-        self.kernel_grid.pack(side=tk.TOP, anchor='center', expand=True, fill=tk.BOTH)
+    def draw_kernel_grid(self, table: EntryTable, vars: tuple, values=None):
+        table.size = Filter.Kernel_Size.get(vars[0].get())
+        table.draw(values)
 
-        self.draw_kernel_grid()
-
-    def draw_kernel_grid(self, values=None):
-        self.table.size = Filter.Kernel_Size.get(self.kernel_size.get())
-        self.table.draw(values)
-
-    def kernel_from_list(self):
-        kernel = Filter.KERNELS.get(self.operation_name.get(), None)
+    def kernel_from_list(self, table, vars):
+        kernel = Filter.KERNELS.get(vars[1].get(), None)
         if kernel is not None:
-            self.kernel_size.set(kernel[0])
-            self.draw_kernel_grid(kernel[1])
+            vars[0].set(kernel[0])
+            self.draw_kernel_grid(table, vars, kernel[1])
             self.operation_command()
         else:
             self.status_message.set('Kernel not found!')
@@ -138,7 +168,12 @@ class Filter(MatLibTemplate):
         """
         try:
             self.vision_result.filter(kernel=self.table.get_values(),
-                                      border_type=self.border_type.get())
+                                      border_type=self.border_type.get(),
+                                      image=self.vision_result.cvImage.image)
+            if int(self.phase_var.get()) == 1:
+                self.vision_result.filter(kernel=self.table_2.get_values(),
+                                          border_type=self.border_type_2.get(),
+                                          image=self.vision_result.cvImage_tmp.image)
             self.img_result = self.vision_result.cvImage_tmp.image
             self.draw_result()
             if persist:

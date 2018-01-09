@@ -393,7 +393,7 @@ class Vision:
                         self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]])
         self.img_paste(source=self.cvImage_tmp.image[y[0]:y[1], x[0]:x[1]], img_place=place)
 
-    def filter(self, kernel, border_type):
+    def filter(self, kernel, border_type, image):
         """
         Apply given kernel on current cvImage.image and store new in cvImage_tmp.image.
 
@@ -402,8 +402,10 @@ class Vision:
         :param border_type:
         :return:
         """
-        self.cvImage_tmp.image = cv2.filter2D(self.cvImage.image, -1, kernel, self.cvImage_tmp.image,
-                                              borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
+        tmp = cv2.filter2D(image, -1, kernel, self.cvImage_tmp.image,
+                           borderType=borderType.get(border_type, cv2.BORDER_DEFAULT))
+
+        self.cvImage_tmp.image = copy.copy(tmp)
 
     def blur(self, kernel, border_type):
         self.cvImage_tmp.image = cv2.blur(src=self.cvImage.image, ksize=kernel,
