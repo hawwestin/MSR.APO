@@ -1,11 +1,12 @@
 import tkinter as tk
-from tkinter import ttk
 
 import matplotlib
 import matplotlib.pyplot as plt
 
 from gui.histogram import Histogram
 from gui.operations.computer_vision import Vision
+from gui.image_frame import ImageFrame
+import app_config
 
 matplotlib.use("TkAgg")
 
@@ -25,23 +26,34 @@ class TabPicture:
         """
         Master Key must match menu_command _current tab politics
         """
+        ###############
+        # vars
+        ###############
         self.id = tab_frame._w
         TabPicture.gallery[self.id] = self
-
         self.name = name
-
-        self.vision = Vision()
-        self.size = (500, 600)
-
         self.tkImage = None
+        res = int(app_config.main_window_resolution[:int(app_config.main_window_resolution.index('x'))])/2
 
-        self.panel = None
-        self.panel = ttk.Label(self.tab_frame)
-        self.panel.pack(side=tk.LEFT, padx=10, pady=10, expand=True)
+        ###############
+        # Panels
+        ###############
+        self.pann = tk.PanedWindow(self.tab_frame, handlesize=10, showhandle=True, handlepad=12, sashwidth=3)
+        self.pann.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        self.panel_hist = tk.Frame(master=tab_frame)
-        self.panel_hist.pack(side=tk.RIGHT, expand=True, after=self.panel)
+        self.image_frame = tk.Frame(self.pann)
+        self.image_frame.pack(expand=True, fill=tk.BOTH)
+        self.pann.add(self.image_frame, width=res, minsize=100)
+        self.panel_hist = tk.Frame(self.pann)
+        self.panel_hist.pack(expand=True, fill=tk.BOTH)
+        self.pann.add(self.panel_hist, width=res, minsize=100)
+
+        ###############
+        # Class
+        ###############
+        self.vision = Vision()
         self.histogram = Histogram(self.panel_hist)
+        self.image_canvas = ImageFrame(self.image_frame)
 
     def __len__(self):
         return TabPicture.gallery.__len__()
@@ -63,7 +75,6 @@ class TabPicture:
         :return:
         '''
         return what == self.id or what in self.name.get()
-
 
     @staticmethod
     def search(finder):
@@ -106,8 +117,8 @@ class TabPicture:
         plt.show()
 
     def refresh(self):
-        self.set_panel_img()
         self.histogram(image=self.vision.cvImage.image)
+        self.set_panel_img()
         self.main_window.main_menu.color_mode()
 
     def set_panel_img(self):
@@ -116,9 +127,7 @@ class TabPicture:
         Kazde okienko to nowy obiekt.
         Undowanie na tablicach ? może pod spodem baze danych machnac
         """
-        self.tkImage = Vision.resize_tk_image(self.vision.cvImage.image, self.size)
-        self.panel.configure(image=self.tkImage)
-        self.panel.image = self.tkImage
+        self.image_canvas(self.vision.cvImage.image)
 
     def popup_image(self):
         plt.imshow(self.tkImage, cmap='Greys', interpolation='bicubic')
