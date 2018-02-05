@@ -1,0 +1,11 @@
+cx-Freeze==5.1.1
+cycler==0.10.0
+matplotlib==2.0.2
+numpy==1.13.1
+olefile==0.45.1
+opencv-python==3.2.0.8
+Pillow==4.2.1
+pyparsing==2.2.0
+python-dateutil==2.6.1
+pytz==2017.3
+six==1.11.0
