@@ -172,13 +172,14 @@ class MenuCmd:
     def undo_image(self):
         tab = self._current_tab()
         tab.vision.cvImage.undo(self.main_window.status_message)
-        tab.vision.tkImage = Vision.resize_tk_image(tab.vision.cvImage.image, tab.size)
+        tab.vision.tkImage = tab.vision.cvImage.tk_image
         tab.refresh()
 
     def redo_image(self):
         tab = self._current_tab()
         tab.vision.cvImage.redo(self.main_window.status_message)
-        tab.vision.tkImage = Vision.resize_tk_image(tab.vision.cvImage.image, tab.size)
+        tab.vision.tkImage = tab.vision.cvImage.tk_image
+        # tab.vision.tkImage = Vision.resize_tk_image(tab.vision.cvImage.image, tab.size)
         tab.refresh()
 
     def new_img(self):

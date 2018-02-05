@@ -1,17 +1,12 @@
 import copy
 import tkinter as tk
 from tkinter import ttk
-import numpy as np
-
-import matplotlib
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-from matplotlib.pyplot import Figure
 
 import app_config
 from gui.histogram import Histogram
 from gui.operations import computer_vision
 from gui.tabpicture import TabPicture
-from gui.img_matrix import ImgMatrix
+from gui.image_frame import ImageFrame
 
 
 class MatLibTemplate:
@@ -99,26 +94,9 @@ class MatLibTemplate:
         self.hist_frame = tk.Frame(self.result_tabs)
         self.hist_frame.pack(fill=tk.BOTH, expand=1)
         self.result_tabs.add(self.hist_frame, text="Hiastogram")
-        # self.excel_frame = tk.Frame(self.result_tabs)
-        # self.excel_frame.pack(fill=tk.BOTH, expand=1)
-        # self.result_tabs.add(self.excel_frame, text="Tablica Akumulatorów")
 
-        self.fig = Figure(tight_layout=True)
-        self.fig_subplot = self.fig.add_subplot(111)
-
-        self.ml_canvas = FigureCanvasTkAgg(self.fig, self.img_frame)
-        self.ml_canvas.show()
-        self.ml_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True, anchor='nw')
-        self.toolbar = NavigationToolbar2TkAgg(self.ml_canvas, self.img_frame)
-        self.toolbar.update()
-
+        self.image_canvas = ImageFrame(self.img_frame)
         self.histogram = Histogram(self.hist_frame)
-
-        # xx = self.img_result.shape
-        # self.matrix = ImgMatrix(self.excel_frame)
-        # self.matrix(image=self.img_result)
-        # self.tkTable = EntryTable(self.excel_frame, self.img_result.shape)
-        # self.tkTable.draw(np.zeros(self.img_result.shape))
 
         self.widget_buttons()
 
@@ -177,17 +155,9 @@ class MatLibTemplate:
 
         :return:
         """
-        # FIXME With no clearing subplot ram is rising in usages!!!
-        # self.fig_subplot.clear()
-        self.fig_subplot.imshow(self.img_result,
-                                cmap='gray',
-                                interpolation='none',
-                                vmin=0,
-                                vmax=255,
-                                aspect='equal')
-        self.toolbar.draw()
+        self.image_canvas(self.img_result)
         self.histogram(image=self.img_result)
-        # self.matrix(image=self.img_result)
+
 
     def operation_command(self, persist=False):
         """

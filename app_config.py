@@ -1,4 +1,4 @@
-__VERSION__ = "1.01"
+__VERSION__ = "1.02"
 
 LARGE_FONT = ("Verdana", 12)
 NORM_FONT = ("Helvetica", 10)
