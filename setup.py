@@ -4,27 +4,35 @@ http://cx-freeze.readthedocs.io/en/latest/index.html
 Command to run:
 python setup.py bdist_msi
 """
-import cx_Freeze
+from cx_Freeze import setup, Executable
 import sys
-import cv2
-import tkinter
-import numpy
-import matplotlib
-import PIL
 import app_config
-import sample_img
+import os.path
+
+PYTHON_INSTALL_DIR = os.path.dirname(os.path.dirname(os.__file__))
+os.environ['TCL_LIBRARY'] = os.path.join(PYTHON_INSTALL_DIR, 'tcl', 'tcl8.6')
+os.environ['TK_LIBRARY'] = os.path.join(PYTHON_INSTALL_DIR, 'tcl', 'tk8.6')
 
 base = None
 
 if sys.platform == 'win32':
     base = "Win32GUI"
 
-executables = [cx_Freeze.Executable("gui\main.py", base=base, shortcutName="APO_{}".format(app_config.__VERSION__))]
+build_exe_options = {
+    "packages": ["tkinter", "matplotlib", "numpy", "cv2"],
+    "include_files": [
+        os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tk86t.dll'),
+        os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tcl86t.dll')
+    ]
+    # , "include_files":["clienticon.ico"]
+}
 
-cx_Freeze.setup(
+shortcutName = "APO_{}".format(app_config.__VERSION__)
+executables = [Executable("gui\main.py", base=base, shortcutName=shortcutName), ]
+
+setup(
     name="APO",
-    options={"build_exe": {"packages": ["tkinter", "matplotlib", "numpy", "cv2"]}},
-    # , "include_files":["clienticon.ico"]}},
+    options=dict(build_exe=build_exe_options),
     version=app_config.__VERSION__,
     description="APO RobaszewLab17_18",
     executables=executables
