@@ -124,7 +124,7 @@ class MatLibTemplate:
 
         def preview():
             self.operation_command()
-            self.vision_result.preview()
+            # self.vision_result.preview()
 
         def _exit():
             self.tab_bg.vision.cvImage_tmp.image = None
