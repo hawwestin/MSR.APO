@@ -99,9 +99,9 @@ class Hough(MatLibTemplate):
         entry_4.configure(validate='key', validatecommand=(vcmd, '%d', '%S'))
         entry_4.pack(side=tk.LEFT)
 
-        self.th1.set(50)
-        self.th2.set(150)
-        self.th3.set(200)
+        self.th1.set(0)
+        self.th2.set(255)
+        self.th3.set(100)
         self.apertureSize.set(3)
 
     def operation_command(self, persist=False):
