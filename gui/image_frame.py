@@ -3,6 +3,7 @@ import matplotlib
 import matplotlib.patches as patches
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
+from gui.operations.computer_vision import MemoImageData
 
 
 class ImageFrame:
@@ -31,18 +32,26 @@ class ImageFrame:
         self._start = 0
         self._stop = 0
 
-        self.fig.canvas.mpl_connect('button_press_event', self.start_rect_tracker)
-        self.fig.canvas.mpl_connect('button_release_event', self.stop_rect_tracker)
+        # self.fig.canvas.mpl_connect('button_press_event', self.start_rect_tracker)
+        # self.fig.canvas.mpl_connect('button_release_event', self.stop_rect_tracker)
 
-    def __call__(self, image, *args, **kwargs):
+    def __call__(self, image: MemoImageData, *args, **kwargs):
         self.image = image
         # FIXME With no clearing subplot ram is rising in usages!!!
-        self.fig_subplot.imshow(self.image,
+        # if not image.color:
+        self.fig_subplot.imshow(self.image.image,
                                 cmap='gray',  # todo new params
                                 interpolation='none',
                                 vmin=0,
                                 vmax=255,
                                 aspect='equal')
+        # else:
+        #     self.fig_subplot.imshow(self.image.image,
+        #                             cmap='hsv',  # todo new params
+        #                             interpolation='none',
+        #                             vmin=0,
+        #                             vmax=255,
+        #                             aspect='equal')
         self.toolbar.draw()
 
     def start_rect_tracker(self, event):

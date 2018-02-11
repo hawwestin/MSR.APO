@@ -28,6 +28,7 @@ class OperationLightLeveling(OperationTemplate):
         try:
             self.tab.vision.rps(int(self.scale_value.get()))
             self.refresh()
+            self.status_message.set("*")
             if persist:
                 self.tab.persist_tmp()
         except Exception as ex:

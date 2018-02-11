@@ -31,6 +31,10 @@ borderType = {
 
 
 class MemoImageData(Repeater):
+    def __init__(self):
+        super().__init__()
+        self._color = None
+
     @property
     def image(self):
         return self.current()
@@ -43,10 +47,21 @@ class MemoImageData(Repeater):
     def tk_image(self):
         return ImageTk.PhotoImage(Image.fromarray(self.image))
 
+    @property
+    def color(self):
+        if len(cv2.split(self.image)) < 1:
+            return self._color
+        return len(cv2.split(self.image)) > 1
+
+    @color.setter
+    def color(self, value):
+        self._color = value
+
 
 class SingleImageData:
     def __init__(self):
         self._item = None
+        self._color = None
 
     @property
     def image(self):
@@ -60,6 +75,16 @@ class SingleImageData:
     def tk_image(self):
         return ImageTk.PhotoImage(Image.fromarray(self.image))
 
+    @property
+    def color(self):
+        if len(cv2.split(self.image)) < 1:
+            return self._color
+        return len(cv2.split(self.image)) > 1
+
+    @color.setter
+    def color(self, value):
+        self._color = value
+
 
 class Vision:
     """
@@ -69,28 +94,17 @@ class Vision:
 
     def __init__(self):
         self.path = None
-        self._color = None
 
         # Actual
         self.cvImage = MemoImageData()
         # temp
         self.cvImage_tmp = SingleImageData()
 
-    @property
-    def color(self):
-        if len(cv2.split(self.cvImage.image)) < 1:
-            return self._color
-        return len(cv2.split(self.cvImage.image)) > 1
-
-    @color.setter
-    def color(self, value):
-        self._color = value
-
     def open_image(self, path):
         self.path = path
-        if self.color:
-            self.cvImage.image = cv2.imread(self.path, cv2.IMREAD_COLOR)
-            self.cvImage.image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_BGR2RGB)
+        if self.cvImage.color:
+            tmp_image = cv2.imread(self.path, cv2.IMREAD_COLOR)
+            self.cvImage.image = cv2.cvtColor(tmp_image, cv2.COLOR_BGR2RGB)
         else:
             self.cvImage.image = cv2.imread(self.path, cv2.IMREAD_GRAYSCALE)
 

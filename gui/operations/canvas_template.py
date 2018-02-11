@@ -176,9 +176,9 @@ class CanvasTemplate:
             self.panel_front.image = self.tk_img_foreground
 
         self.can.update_idletasks()
-        # self.img_result = ImageTk.PhotoImage(Image.fromarray(self.tab.vision.cvImage.image))
-        # self.panel_result.configure(image=self.img_result)
-        # self.panel_result.image = self.img_result
+        # self.cv_img_result = ImageTk.PhotoImage(Image.fromarray(self.tab.vision.cvImage.image))
+        # self.panel_result.configure(image=self.cv_img_result)
+        # self.panel_result.image = self.cv_img_result
 
     def control_plugin(self):
         """

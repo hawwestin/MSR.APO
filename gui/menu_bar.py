@@ -54,6 +54,7 @@ class MainMenu(tk.Frame):
         edit.add_command(label="Duplicate", command=self.menu_cmd.duplicate)
         edit.add_command(label="Convert to RGB", command=self.menu_cmd.gray_2_rgb)
         edit.add_command(label="Convert to Gray", command=self.menu_cmd.rgb_2_gray)
+        edit.add_command(label="Refresh Image", command=self.menu_cmd.reload_image)
 
         # view = tk.Menu(self.menu, tearoff=0)
         # view.add_command(label="Full screen")

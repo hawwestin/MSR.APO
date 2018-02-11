@@ -119,15 +119,9 @@ class TabPicture:
     def refresh(self):
         self.histogram(image=self.vision.cvImage.image)
         self.set_panel_img()
-        self.main_window.main_menu.color_mode()
 
     def set_panel_img(self):
-        """
-        Logic : odpalenie okna z obrazkiem ktore  ma wlasne Menu do operacji.
-        Kazde okienko to nowy obiekt.
-        Undowanie na tablicach ? może pod spodem baze danych machnac
-        """
-        self.image_canvas(self.vision.cvImage.image)
+        self.image_canvas(self.vision.cvImage)
 
     def popup_image(self):
         plt.imshow(self.tkImage, cmap='Greys', interpolation='bicubic')

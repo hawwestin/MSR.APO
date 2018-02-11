@@ -39,7 +39,7 @@ class MenuCmd:
         """
         tab = self._current_tab()
         if tab is not None:
-            return tab.vision.color
+            return tab.vision.cvImage.color
         else:
             return False
 
@@ -75,7 +75,7 @@ class MenuCmd:
             app_config.image_path = os.path.split(path)[0]
             tab_frame = self.main_window.new_tab(name.get())
             tab_pic = TabPicture(tab_frame, self.main_window, name)
-            tab_pic.vision.color = color
+            tab_pic.vision.cvImage.color = color
             tab_pic.open_image(path)
             tab_pic.refresh()
 
@@ -90,7 +90,7 @@ class MenuCmd:
         name = tk.StringVar(value=tab.name.get())
         tab_frame = self.main_window.new_tab(name.get())
         tab_pic = TabPicture(tab_frame, self.main_window, name)
-        tab_pic.vision.color = tab.vision.color
+        tab_pic.vision.cvImage.color = tab.vision.color
         tab_pic.open_image(tab.vision.path)
         tab_pic.refresh()
 
@@ -106,6 +106,10 @@ class MenuCmd:
             tab.vision.path = filedialog.askopenfilename(initialdir=app_config.image_path, filetypes=SUPPORTED_FILES)
 
         tab.open_image(tab.vision.path)
+        tab.refresh()
+
+    def refresh_image(self):
+        tab = self._current_tab()
         tab.refresh()
 
     @staticmethod
@@ -172,13 +176,13 @@ class MenuCmd:
     def undo_image(self):
         tab = self._current_tab()
         tab.vision.cvImage.undo(self.main_window.status_message)
-        tab.vision.tkImage = tab.vision.cvImage.tk_image
+        # tab.vision.tkImage = tab.vision.cvImage.tk_image
         tab.refresh()
 
     def redo_image(self):
         tab = self._current_tab()
         tab.vision.cvImage.redo(self.main_window.status_message)
-        tab.vision.tkImage = tab.vision.cvImage.tk_image
+        # tab.vision.tkImage = tab.vision.cvImage.tk_image
         # tab.vision.tkImage = Vision.resize_tk_image(tab.vision.cvImage.image, tab.size)
         tab.refresh()
 
@@ -188,7 +192,7 @@ class MenuCmd:
         name.set("New.jpg")
         tab_frame = self.main_window.new_tab(name.get())
         tab_pic = TabPicture(tab_frame, self.main_window, name)
-        tab_pic.vision.color = False
+        tab_pic.vision.cvImage.color = False
         tab_pic.vision.new_rand_img()
         tab_pic.vision.path = path
         # tab_pic.open_image(path)
@@ -230,13 +234,13 @@ class MenuCmd:
 
     def _color_convert(self, color):
         tab = self._current_tab()
-        if tab.vision.color and not color:
+        if tab.vision.cvImage.color and not color:
             """
             color to gray
             """
             tab.vision.color_convert(False)
             self.main_window.update_status("Image was convert to Gray")
-        elif not tab.vision.color and color:
+        elif not tab.vision.cvImage.color and color:
             """
             gray to color
             """

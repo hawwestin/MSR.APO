@@ -67,6 +67,7 @@ class OperationLightThreshold(OperationTemplate):
         try:
             if persist:
                 self.tab.persist_tmp()
+            self.status_message.set("*")
         except Exception as ex:
             logging.exception(ex)
             self.status_message.set("Operation have Failed check given options!")

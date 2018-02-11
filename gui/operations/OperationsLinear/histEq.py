@@ -53,6 +53,7 @@ class OperationHistEQ(OperationTemplate):
         try:
             operation = self.operations[self.operation_name.get()]
             operation()
+            self.status_message.set("*")
             if persist:
                 self.tab.persist_tmp()
                 self.refresh()

@@ -117,6 +117,7 @@ class UOPOperation(OperationTemplate):
         try:
             self.tab.vision.tone_curve(self.lut)
             self.refresh()
+            self.status_message.set("*")
             if persist:
                 self.tab.persist_tmp()
         except Exception as ex:
