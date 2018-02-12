@@ -101,7 +101,8 @@ class Morphology(MatLibTemplate):
         if self.iterations.get() is '':
             self.status_message.set("Unsuported iteration value")
             return False
-        if self.operation_name.get() == "Szkeiletyzacja" and Morphology.Kernel_Size.get(self.kernel_size.get()) < (3,3):
+        if self.operation_name.get() == "Szkeiletyzacja" and Morphology.Kernel_Size.get(self.kernel_size.get()) < (
+                3, 3):
             self.status_message.set("Skeletonization possible with kernel at least 3X3")
             return False
         if self.operation_name.get() == "Szkeiletyzacja" and self.vision_result.cvImage.color:
@@ -125,11 +126,10 @@ class Morphology(MatLibTemplate):
             operation(kernel=self.table.get_values(),
                       border_type=self.border_type.get(),
                       iterations=int(self.iterations.get()))
-            self.img_result = self.vision_result.cvImage_tmp.image
+            self.cv_img_result = self.vision_result.cvImage_tmp
             self.draw_result()
             if persist:
                 self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
         except Exception as ex:
             logging.exception(ex)
             self.status_message.set("Operation have Failed check given options!")
-            

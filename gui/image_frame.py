@@ -41,7 +41,7 @@ class ImageFrame:
         # if not image.color:
         self.fig_subplot.imshow(self.image.image,
                                 cmap='gray',  # todo new params
-                                interpolation='none',
+                                interpolation='bicubic',
                                 vmin=0,
                                 vmax=255,
                                 aspect='equal')

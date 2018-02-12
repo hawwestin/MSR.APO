@@ -489,8 +489,8 @@ class Vision:
             y1 = int(y0 + self.cvImage_tmp.image.shape[0] * 1.5 * a)
             x2 = int(x0 - self.cvImage_tmp.image.shape[1] * 1.5 * (-b))
             y2 = int(y0 - self.cvImage_tmp.image.shape[0] * 1.5 * a)
-            print("rho {}, theta {}, a {}, b {}, x0 {}, y0 {}, x1 {}, x2 {}, y1 {}, y2 {}".format(rho, theta, a, b, x0,
-                                                                                                  y0, x1, x2, y1, y2))
+            # print("rho {}, theta {}, a {}, b {}, x0 {}, y0 {}, x1 {}, x2 {}, y1 {}, y2 {}".format(rho, theta, a, b, x0,
+            #                                                                                       y0, x1, x2, y1, y2))
             cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), color, thickness=thickness)
 
         return len(lines), self.cvImage_tmp.image
