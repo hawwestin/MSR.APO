@@ -30,9 +30,9 @@ class MatLibTemplate:
         self.tab_bg = tab
         self.vision_result = computer_vision.Vision()
         self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
+        self.vision_result.cvImage_tmp.image = copy.copy(self.tab_bg.vision.cvImage_tmp.image)
         self.size = (300, 300)
         self.tk_img_background = None
-        self.cv_img_result = self.tab_bg.vision.cvImage
 
         self.operation_name = tk.StringVar()
         self.kernel_size = tk.StringVar()
@@ -147,7 +147,8 @@ class MatLibTemplate:
         self.tk_img_background = computer_vision.Vision.resize_tk_image(self.tab_bg.vision.cvImage.image, self.size)
         self.panel_back.configure(image=self.tk_img_background)
         self.panel_back.image = self.tk_img_background
-        self.cv_img_result = self.tab_bg.vision.cvImage
+        self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
+        self.vision_result.cvImage_tmp.image = copy.copy(self.tab_bg.vision.cvImage.image)
         self.draw_result()
 
     def draw_result(self):
@@ -155,8 +156,8 @@ class MatLibTemplate:
 
         :return:
         """
-        self.image_canvas(self.cv_img_result)
-        self.histogram(image=self.cv_img_result.image)
+        self.image_canvas(self.vision_result.cvImage_tmp)
+        self.histogram(image=self.vision_result.cvImage_tmp.image)
 
 
     def operation_command(self, persist=False):

@@ -60,16 +60,6 @@ class Hough(MatLibTemplate):
         probabilist.pack(side=tk.TOP, anchor='nw')
 
     def controls(self):
-        # todo validate whole input not last digit.
-        def check_entry(why, what):
-            if int(why) >= 0:
-                if 3 <= int(what) <= 7 and int(what) % 2 == 1:
-                    return True
-                else:
-                    return False
-            else:
-                return True
-
         # todo move controls to left side Paned window .
         label_1 = tk.Label(self.plugins, text="dolny próg szarości")
         label_1.pack(side=tk.LEFT, padx=2)
@@ -92,12 +82,11 @@ class Hough(MatLibTemplate):
         label_4 = tk.Label(self.plugins, text="apertureSize \nwartości (3, 5, 7) :")
         label_4.pack(side=tk.LEFT, padx=2)
 
-        entry_4 = tk.Entry(self.plugins,
-                           textvariable=self.apertureSize,
-                           width=10)
-        vcmd = entry_4.register(check_entry)
-        entry_4.configure(validate='key', validatecommand=(vcmd, '%d', '%S'))
-        entry_4.pack(side=tk.LEFT)
+        om_aperture_size = tk.OptionMenu(self.plugins,
+                                         self.apertureSize,
+                                         *[3, 5, 7])
+
+        om_aperture_size.pack(side=tk.LEFT, padx=2)
 
         self.th1.set(0)
         self.th2.set(255)
@@ -108,19 +97,19 @@ class Hough(MatLibTemplate):
         try:
             try:
                 if self.prob.get():
-                    lines, self.cv_img_result.image = self.vision_result.houghProbabilistic(self.th1.get(),
-                                                                                            self.th2.get(),
-                                                                                            self.th3.get(),
-                                                                                            self.apertureSize.get())
+                    lines, self.vision_result.cvImage_tmp.image = self.vision_result.houghProbabilistic(self.th1.get(),
+                                                                                                        self.th2.get(),
+                                                                                                        self.th3.get(),
+                                                                                                        self.apertureSize.get())
                 else:
-                    lines, self.cv_img_result.image = self.vision_result.hough(self.th1.get(),
-                                                                               self.th2.get(),
-                                                                               self.th3.get(),
-                                                                               self.apertureSize.get())
+                    lines, self.vision_result.cvImage_tmp.image = self.vision_result.hough(self.th1.get(),
+                                                                                           self.th2.get(),
+                                                                                           self.th3.get(),
+                                                                                           self.apertureSize.get())
                 self.status_message.set("Count of liens found in picture {}".format(lines))
             except TypeError:
                 self.status_message.set("Any lines have been found on given image with current threshold")
-                self.cv_img_result = self.tab_bg.vision.cvImage
+                self.vision_result.cvImage = copy.copy(self.tab_bg.vision.cvImage)
             else:
                 if persist:
                     self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)

@@ -465,7 +465,7 @@ class Vision:
 
         for line in lines:
             x1, y1, x2, y2 = line[0]
-            cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), color, thickness=thickness)
 
         return len(lines), self.cvImage_tmp.image
 
