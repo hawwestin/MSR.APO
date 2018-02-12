@@ -24,8 +24,12 @@ class MainMenu(tk.Frame):
     def color_mode(self, x=None):
         if not self.menu_cmd.color_mode():
             self.points.entryconfig("Progowanie adaptacyjne", state="normal")
+            self.operation.entryconfig("Logiczne", state="normal")
+            self.operation.entryconfig("Arytmetyczne", state="normal")
         else:
             self.points.entryconfig("Progowanie adaptacyjne", state="disabled")
+            self.operation.entryconfig("Logiczne", state="disabled")
+            self.operation.entryconfig("Arytmetyczne", state="disabled")
 
     @property
     def menu_cmd(self) -> MenuCmd:
@@ -54,6 +58,7 @@ class MainMenu(tk.Frame):
         edit.add_command(label="Duplicate", command=self.menu_cmd.duplicate)
         edit.add_command(label="Convert to RGB", command=self.menu_cmd.gray_2_rgb)
         edit.add_command(label="Convert to Gray", command=self.menu_cmd.rgb_2_gray)
+        edit.add_command(label="Refresh Image", command=self.menu_cmd.reload_image)
 
         # view = tk.Menu(self.menu, tearoff=0)
         # view.add_command(label="Full screen")
@@ -72,14 +77,14 @@ class MainMenu(tk.Frame):
         kernels.add_command(label="Uniwersalne filtry", command=self.menu_cmd.filter)
         kernels.add_command(label="Blurowanie", command=self.menu_cmd.smooth)
 
-        operation = tk.Menu(self.menu, tearoff=0)
-        operation.add_command(label="Equalizacja Histogram", command=self.menu_cmd.hist_equ)
-        operation.add_cascade(label="Jednopunktowe", menu=self.points)
-        operation.add_command(label="Arytmetyczne", command=self.menu_cmd.arithmetics)
-        operation.add_command(label="Logiczne", command=self.menu_cmd.logic_all)
-        operation.add_cascade(label="Sąsiedztwa", menu=kernels)
-        operation.add_command(label="Morfologiczne", command=self.menu_cmd.morphologic)
-        operation.add_command(label="Hough", command=self.menu_cmd.hough)
+        self.operation = tk.Menu(self.menu, tearoff=0)
+        self.operation.add_command(label="Equalizacja Histogram", command=self.menu_cmd.hist_equ)
+        self.operation.add_cascade(label="Jednopunktowe", menu=self.points)
+        self.operation.add_command(label="Arytmetyczne", command=self.menu_cmd.arithmetics)
+        self.operation.add_command(label="Logiczne", command=self.menu_cmd.logic_all)
+        self.operation.add_cascade(label="Sąsiedztwa", menu=kernels)
+        self.operation.add_command(label="Morfologiczne", command=self.menu_cmd.morphologic)
+        self.operation.add_command(label="Hough", command=self.menu_cmd.hough)
         # operation.add_command(label="Korekcja")
         # operation.add_cascade(label="Segmentacja")
         # operation.add_cascade(label="Stegangorafia")
@@ -91,7 +96,7 @@ class MainMenu(tk.Frame):
 
         self.menu.add_cascade(label="File", menu=file)
         self.menu.add_cascade(label="Edit", menu=edit)
-        self.menu.add_cascade(label="Operation", menu=operation)
+        self.menu.add_cascade(label="Operation", menu=self.operation)
         self.menu.add_cascade(label="Help", menu=help)
 
         self.tkController.config(menu=self.menu)
