@@ -249,4 +249,5 @@ class MenuCmd:
         else:
             self.main_window.update_status("Color was not changed")
 
+        self.main_window.main_menu.color_mode()
         tab.refresh()
