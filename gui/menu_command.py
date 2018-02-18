@@ -187,14 +187,14 @@ class MenuCmd:
         tab.refresh()
 
     def new_img(self):
-        path = filedialog.asksaveasfilename()
+        # path = filedialog.asksaveasfilename()
         name = tk.StringVar()
         name.set("New.jpg")
         tab_frame = self.main_window.new_tab(name.get())
         tab_pic = TabPicture(tab_frame, self.main_window, name)
         tab_pic.vision.cvImage.color = False
         tab_pic.vision.new_rand_img()
-        tab_pic.vision.path = path
+        # tab_pic.vision.path = path
         # tab_pic.open_image(path)
         tab_pic.refresh()
 

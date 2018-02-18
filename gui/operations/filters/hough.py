@@ -118,7 +118,7 @@ class Hough(MatLibTemplate):
         entry_3.pack(side=tk.LEFT, padx=2)
 
         self.th3.set(300)
-        self.target.set(200)
+        self.target.set(5)
 
     def operation_command(self, persist=False):
         try:
@@ -152,8 +152,8 @@ class Hough(MatLibTemplate):
             except TypeError as ex:
                 logging.exception(ex)
                 self.status_message.set("Any lines have been found on given image with current threshold")
-                self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
-                self.vision_result.cvImage_tmp.image = copy.copy(self.tab_bg.vision.cvImage_tmp.image)
+                # self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
+                # self.vision_result.cvImage_tmp.image = copy.copy(self.tab_bg.vision.cvImage_tmp.image)
             else:
                 if persist:
                     self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)

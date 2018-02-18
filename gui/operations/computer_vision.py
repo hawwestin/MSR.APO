@@ -248,7 +248,7 @@ class Vision:
         return ImageTk.PhotoImage(resize)
 
     def new_rand_img(self):
-        image = np.random.randint(0, 256, 120000).reshape(300, 400)
+        image = np.random.randint(0, 256, 480000).reshape(600, 800)
         self.cvImage.image = image.astype('uint8')
 
     def uop(self, gamma: float, brightness: int, contrast: float):
@@ -493,9 +493,10 @@ class Vision:
         tmp_thresh = threshold.get()
         lines_object = hough(grey, tmp_thresh)
         lines = 0 if lines_object is None else len(lines_object)
+        killer = 0
         # lines = 1 if lines is None else lines
         while lines < target[0] or target[2] < lines:
-            x = int(np.math.fabs(lines - target[1])/2)
+            x = int(np.math.fabs(lines - target[1]) / 2)
             print(x)
             # if len(lines) > target[1]:  # Fast up
             #     thresh_delta = int(len(lines) / target[1]) * 2
@@ -506,9 +507,13 @@ class Vision:
                 tmp_thresh += x
             else:
                 tmp_thresh -= x
+                if tmp_thresh <= 0:
+                    tmp_thresh = 1
             threshold.set(tmp_thresh)
             lines_object = hough(grey, tmp_thresh)
             lines = 0 if lines_object is None else len(lines_object)
+            if lines == 0 and tmp_thresh == 1:
+                raise TypeError("Lines Not Found")
             print("lines found {} with min.ack.value {}".format(lines, tmp_thresh))
 
         return lines_object
@@ -548,7 +553,6 @@ class Vision:
         left_target = int(target - target * 0.3)
         max_target = int(target + target * 0.3)
         return self.aprox_hough(grey, threshold=threshold, target=(left_target, target, max_target), hough=hough_liner)
-
 
     def draw_lines_hough(self, image, lines, color=(0, 255, 0), thickness=2):
         hough_image = SingleImageData()

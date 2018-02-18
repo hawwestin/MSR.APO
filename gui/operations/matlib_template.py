@@ -111,8 +111,8 @@ class MatLibTemplate:
             self.operation_command(True)
             tab_pic.vision = copy.copy(self.vision_result)
             tab_pic.refresh()
-            self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
-            self.vision_result.cvImage_tmp.image = copy.copy(self.tab_bg.vision.cvImage.image)
+            # self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
+            # self.vision_result.cvImage_tmp.image = copy.copy(self.tab_bg.vision.cvImage.image)
 
         def undo():
             self.tab_bg.vision.cvImage.undo(self.status_message)
