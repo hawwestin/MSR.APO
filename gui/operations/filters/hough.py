@@ -45,6 +45,7 @@ class Hough(MatLibTemplate):
         self.target = tk.IntVar()
         self.apertureSize = tk.IntVar()
         self.prob = tk.BooleanVar()
+        self.canny = tk.BooleanVar()
 
         self.operation_options()
         self.controls()
@@ -52,6 +53,9 @@ class Hough(MatLibTemplate):
 
     def operation_options(self):
         self.options_panned_frame.configure(text='Opcje')
+
+        probabilist = tk.Checkbutton(self.options_panned_frame, variable=self.canny, text='Progowanie wstęne')
+        probabilist.pack(side=tk.TOP, anchor='nw')
 
         label_1 = tk.Label(self.options_panned_frame, text="dolny próg szarości")
         label_1.pack(side=tk.TOP, pady=2, anchor='nw')
@@ -81,9 +85,22 @@ class Hough(MatLibTemplate):
                         command=self.vision_result.hough_accumulator)
         acc.pack(side=tk.BOTTOM, anchor='nw')
 
+        def options():
+            if not self.canny.get():
+                cb_state = state = tk.DISABLED
+            else:
+                state = tk.NORMAL
+                cb_state = "readonly"
+            entry_1.configure(state=state)
+            entry_2.configure(state=state)
+            om_aperture_size.configure(state=state)
+
         self.th1.set(0)
         self.th2.set(256)
         self.apertureSize.set(3)
+        self.canny.trace("w", lambda *args: options())
+        self.canny.set(False)
+        self.prob.set(True)
 
     def controls(self):
         # todo move controls to left side Paned window .
@@ -100,31 +117,43 @@ class Hough(MatLibTemplate):
         entry_3 = tk.Entry(self.plugins, textvariable=self.th3, width=10)
         entry_3.pack(side=tk.LEFT, padx=2)
 
-        self.th3.set(100)
+        self.th3.set(300)
         self.target.set(200)
 
     def operation_command(self, persist=False):
         try:
             try:
-                if self.prob.get():
-                    lines, self.vision_result.cvImage_tmp.image, threshold = self.vision_result.houghProbabilistic(
+                if self.canny.get():
+                    print("canny")
+                    edges = self.vision_result.canny(
+                        image=self.vision_result.cvImage.image,
                         threshold1=self.th1.get(),
                         threshold2=self.th2.get(),
-                        threshold3=self.th3,
-                        apertureSize=self.apertureSize.get(),
-                        target=self.target.get())
+                        apertureSize=self.apertureSize.get())
                 else:
-                    lines, self.vision_result.cvImage_tmp.image, threshold = self.vision_result.hough(
-                        threshold1=self.th1.get(),
-                        threshold2=self.th2.get(),
-                        threshold3=self.th3,
-                        apertureSize=self.apertureSize.get(),
+                    edges = copy.copy(self.vision_result.cvImage.image)
+                if self.prob.get():
+                    lines = self.vision_result.houghProbabilistic(
+                        image=edges,
+                        threshold=self.th3,
                         target=self.target.get())
-                self.status_message.set("Count of liens found in picture {}".format(lines))
-                self.th3.set(threshold)
-            except TypeError:
+                    self.vision_result.cvImage_tmp.image = self.vision_result.draw_lines_hp(
+                        self.vision_result.cvImage.image,
+                        lines)
+                else:
+                    lines = self.vision_result.hough(
+                        image=edges,
+                        threshold=self.th3,
+                        target=self.target.get())
+                    self.vision_result.cvImage_tmp.image = self.vision_result.draw_lines_hough(
+                        self.vision_result.cvImage.image,
+                        lines)
+                self.status_message.set("Count of liens found in picture {}".format(len(lines)))
+            except TypeError as ex:
+                logging.exception(ex)
                 self.status_message.set("Any lines have been found on given image with current threshold")
-                self.vision_result.cvImage = copy.copy(self.tab_bg.vision.cvImage)
+                self.vision_result.cvImage.image = copy.copy(self.tab_bg.vision.cvImage.image)
+                self.vision_result.cvImage_tmp.image = copy.copy(self.tab_bg.vision.cvImage_tmp.image)
             else:
                 if persist:
                     self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)

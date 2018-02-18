@@ -466,19 +466,10 @@ class Vision:
                        vmax=255)
         plt.show()
 
-    def houghProbabilistic(self, threshold3, threshold1=50, threshold2=150, apertureSize=3, color=(0, 255, 0),
-                           thickness=2, target=100):
-        self.cvImage_tmp.image = copy.copy(self.cvImage.image)
-        # if self.cvImage_tmp.color:
-        #     grey = cv2.cvtColor(self.cvImage_tmp.image, cv2.COLOR_BGR2GRAY)
-        # else:
-        #     grey = self.cvImage_tmp.image
-        # edges = self.adaptive_prog(image=grey)
-        edges = cv2.Canny(self.cvImage_tmp.image, threshold1, threshold2, apertureSize=apertureSize, L2gradient=True)
-
-        # self.preview(edges)
-        # todo rho and theta as method params.
+    def houghProbabilistic(self, image, threshold, target=100):
         def hough_liner(edges, thresh):
+            if thresh < 0:
+                raise TypeError
             return cv2.HoughLinesP(image=edges,
                                    rho=1,
                                    theta=np.pi / 180,
@@ -486,30 +477,63 @@ class Vision:
                                    minLineLength=20,
                                    maxLineGap=10)
 
-        tmp_thresh = threshold3.get()
+        hough_image = SingleImageData()
+        hough_image.image = copy.copy(image)
+
+        if hough_image.color:
+            grey = cv2.cvtColor(hough_image.image, cv2.COLOR_BGR2GRAY)
+        else:
+            grey = hough_image.image
+
         left_target = int(target - target * 0.3)
         max_target = int(target + target * 0.3)
-        lines = hough_liner(edges, tmp_thresh)
-        while max_target < len(lines) or len(lines) < left_target:
-            thresh_delta = int(len(lines) / target) + 1
-            if len(lines) > target:
-                tmp_thresh += thresh_delta
-            else:
-                tmp_thresh -= thresh_delta
-            print("lines found {} with min.ack.value {}".format(len(lines), tmp_thresh))
-            threshold3.set(tmp_thresh)
-            lines = hough_liner(edges, tmp_thresh)
+        return self.aprox_hough(grey, threshold=threshold, target=(left_target, target, max_target), hough=hough_liner)
 
+    def aprox_hough(self, grey, threshold, target: tuple, hough):
+        tmp_thresh = threshold.get()
+        lines_object = hough(grey, tmp_thresh)
+        lines = 0 if lines_object is None else len(lines_object)
+        # lines = 1 if lines is None else lines
+        while lines < target[0] or target[2] < lines:
+            x = int(np.math.fabs(lines - target[1])/2)
+            print(x)
+            # if len(lines) > target[1]:  # Fast up
+            #     thresh_delta = int(len(lines) / target[1]) * 2
+            # else:  # Fast Down
+            #     thresh_delta = int(target[1] / len(lines)) * 2
+
+            if lines > target[1]:
+                tmp_thresh += x
+            else:
+                tmp_thresh -= x
+            threshold.set(tmp_thresh)
+            lines_object = hough(grey, tmp_thresh)
+            lines = 0 if lines_object is None else len(lines_object)
+            print("lines found {} with min.ack.value {}".format(lines, tmp_thresh))
+
+        return lines_object
+
+    def draw_lines_hp(self, image, lines, color=(0, 255, 0), thickness=2):
+        hough_image = SingleImageData()
+        hough_image.image = copy.copy(image)
         for line in lines:
             x1, y1, x2, y2 = line[0]
-            cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), color, thickness=thickness)
+            cv2.line(hough_image.image, (x1, y1), (x2, y2), color, thickness=thickness)
 
-        return len(lines), self.cvImage_tmp.image, tmp_thresh
+        return hough_image.image
 
-    def hough(self, threshold3, threshold1=50, threshold2=150, apertureSize=3, color=(0, 255, 0), thickness=2,
-              target=100):
-        self.cvImage_tmp.image = copy.copy(self.cvImage.image)
-        edges = cv2.Canny(self.cvImage_tmp.image, threshold1, threshold2, apertureSize=apertureSize, L2gradient=True)
+    def canny(self, image, threshold1=50, threshold2=150, apertureSize=3):
+        return cv2.Canny(image, threshold1, threshold2, apertureSize=apertureSize, L2gradient=True)
+
+    def hough(self, image, threshold, target=100):
+        hough_image = SingleImageData()
+        hough_image.image = copy.copy(image)
+        # self.cvImage_tmp.image = copy.copy(self.cvImage.image)
+
+        if hough_image.color:
+            grey = cv2.cvtColor(hough_image.image, cv2.COLOR_BGR2GRAY)
+        else:
+            grey = hough_image.image
 
         # todo rho and theta as method params.
 
@@ -521,33 +545,27 @@ class Vision:
                                   theta=np.pi / 180,
                                   threshold=thresh)
 
-        tmp_thresh = threshold3.get()
         left_target = int(target - target * 0.3)
         max_target = int(target + target * 0.3)
-        lines = hough_liner(edges, tmp_thresh)
-        while max_target < len(lines) or len(lines) < left_target:
-            thresh_delta = int(len(lines)/target)+1
-            if len(lines) > target:
-                tmp_thresh += thresh_delta
-            else:
-                tmp_thresh -= thresh_delta
-            print("lines found {} with min.ack.value {}".format(len(lines), tmp_thresh))
-            threshold3.set(tmp_thresh)
-            lines = hough_liner(edges, tmp_thresh)
+        return self.aprox_hough(grey, threshold=threshold, target=(left_target, target, max_target), hough=hough_liner)
 
+
+    def draw_lines_hough(self, image, lines, color=(0, 255, 0), thickness=2):
+        hough_image = SingleImageData()
+        hough_image.image = copy.copy(image)
         for line in lines:
             rho, theta = line[0]
             a = np.cos(theta)
             b = np.sin(theta)
             x0 = a * rho
             y0 = b * rho
-            x1 = int(x0 + self.cvImage_tmp.image.shape[1] * 1.5 * (-b))
-            y1 = int(y0 + self.cvImage_tmp.image.shape[0] * 1.5 * a)
-            x2 = int(x0 - self.cvImage_tmp.image.shape[1] * 1.5 * (-b))
-            y2 = int(y0 - self.cvImage_tmp.image.shape[0] * 1.5 * a)
-            cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), color, thickness=thickness)
+            x1 = int(x0 + hough_image.image.shape[1] * 1.5 * (-b))
+            y1 = int(y0 + hough_image.image.shape[0] * 1.5 * a)
+            x2 = int(x0 - hough_image.image.shape[1] * 1.5 * (-b))
+            y2 = int(y0 - hough_image.image.shape[0] * 1.5 * a)
+            cv2.line(hough_image.image, (x1, y1), (x2, y2), color, thickness=thickness)
 
-        return len(lines), self.cvImage_tmp.image, tmp_thresh
+        return hough_image.image
 
     def hough_accumulator(self):
         # Rho and Theta ranges
