@@ -1,3 +1,4 @@
+import copy
 import logging
 import tkinter as tk
 import os
@@ -76,6 +77,7 @@ class MenuCmd:
             tab_frame = self.main_window.new_tab(name.get())
             tab_pic = TabPicture(tab_frame, self.main_window, name)
             tab_pic.vision.cvImage.color = color
+            tab_pic.vision.cvImage.path = path
             tab_pic.open_image(path)
             tab_pic.refresh()
 
@@ -90,8 +92,9 @@ class MenuCmd:
         name = tk.StringVar(value=tab.name.get())
         tab_frame = self.main_window.new_tab(name.get())
         tab_pic = TabPicture(tab_frame, self.main_window, name)
-        tab_pic.vision.cvImage.color = tab.vision.color
-        tab_pic.open_image(tab.vision.path)
+        tab_pic.vision.cvImage = tab.vision.cvImage.duplicate()
+        tab_pic.vision.cvImage_tmp = tab.vision.cvImage_tmp.duplicate()
+        # tab_pic.open_image(tab.vision.cvImage.path)
         tab_pic.refresh()
 
     def open_color_image(self):
@@ -102,10 +105,10 @@ class MenuCmd:
 
     def reload_image(self):
         tab = self._current_tab()
-        if tab.vision.path is None:
-            tab.vision.path = filedialog.askopenfilename(initialdir=app_config.image_path, filetypes=SUPPORTED_FILES)
+        if tab.vision.cvImage.path is None:
+            tab.vision.cvImage.path = filedialog.askopenfilename(initialdir=app_config.image_path, filetypes=SUPPORTED_FILES)
 
-        tab.open_image(tab.vision.path)
+        tab.open_image(tab.vision.cvImage.path)
         tab.refresh()
 
     def refresh_image(self):

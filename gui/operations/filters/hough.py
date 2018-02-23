@@ -133,7 +133,7 @@ class Hough(MatLibTemplate):
                 else:
                     edges = copy.copy(self.vision_result.cvImage.image)
                 if self.prob.get():
-                    lines = self.vision_result.houghProbabilistic(
+                    lines = self.vision_result.hough_probabilistic(
                         image=edges,
                         threshold=self.th3,
                         target=self.target.get())

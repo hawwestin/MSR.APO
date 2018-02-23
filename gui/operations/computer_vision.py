@@ -34,6 +34,7 @@ class MemoImageData(Repeater):
     def __init__(self):
         super().__init__()
         self._color = None
+        self.path = None
 
     @property
     def image(self):
@@ -62,11 +63,18 @@ class MemoImageData(Repeater):
     def color(self, value):
         self._color = value
 
+    def duplicate(self):
+        tmp = MemoImageData()
+        tmp.image = copy.copy(self.image)
+        tmp.path = self.path
+        return tmp
+
 
 class SingleImageData:
     def __init__(self):
         self._item = None
         self._color = None
+        self.path = None
 
     @property
     def image(self):
@@ -90,6 +98,11 @@ class SingleImageData:
     def color(self, value):
         self._color = value
 
+    def duplicate(self):
+        tmp = SingleImageData()
+        tmp.image = copy.copy(self.image)
+        tmp.path = self.path
+        return tmp
 
 class Vision:
     """
@@ -98,7 +111,7 @@ class Vision:
     """
 
     def __init__(self):
-        self.path = None
+        # self.path = None
 
         # Actual
         self.cvImage = MemoImageData()
@@ -106,12 +119,12 @@ class Vision:
         self.cvImage_tmp = SingleImageData()
 
     def open_image(self, path):
-        self.path = path
+        self.cvImage.path = path
         if self.cvImage.color:
-            tmp_image = cv2.imread(self.path, cv2.IMREAD_COLOR)
+            tmp_image = cv2.imread(self.cvImage.path, cv2.IMREAD_COLOR)
             self.cvImage.image = cv2.cvtColor(tmp_image, cv2.COLOR_BGR2RGB)
         else:
-            self.cvImage.image = cv2.imread(self.path, cv2.IMREAD_GRAYSCALE)
+            self.cvImage.image = cv2.imread(self.cvImage.path, cv2.IMREAD_GRAYSCALE)
 
     def color_convertion(self, img):
         """
@@ -222,13 +235,17 @@ class Vision:
         self.cvImage_tmp.image = clahe.apply(self.cvImage.image)
 
     def save(self, path=None):
-        if path is not None:
-            cv2.imwrite(path, self.cvImage.image)
-        elif self.path is not None:
-            cv2.imwrite(self.path, self.cvImage.image)
+        if self.cvImage.color:
+            image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_BGR2RGB)
         else:
-            self.path = filedialog.asksaveasfilename()
-            cv2.imwrite(self.path, self.cvImage.image)
+            image = self.cvImage.image
+        if path is not None:
+            cv2.imwrite(path, image)
+        elif self.cvImage.path is not None:
+            cv2.imwrite(self.cvImage.path, image)
+        else:
+            self.cvImage.path = filedialog.asksaveasfilename()
+            cv2.imwrite(self.cvImage.path, image)
 
     @staticmethod
     def resize_tk_image(image, size=None):
@@ -466,7 +483,7 @@ class Vision:
                        vmax=255)
         plt.show()
 
-    def houghProbabilistic(self, image, threshold, target=100):
+    def hough_probabilistic(self, image, threshold, target=100):
         def hough_liner(edges, thresh):
             if thresh < 0:
                 raise TypeError
@@ -680,6 +697,6 @@ class Vision:
 
     def color_convert(self, color=False):
         if color:
-            self.cvImage.image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_GRAY2RGB)
+            self.cvImage.image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_GRAY2BGR)
         else:
             self.cvImage.image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_BGR2GRAY)
