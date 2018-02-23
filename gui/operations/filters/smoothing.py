@@ -42,7 +42,6 @@ class Smoothing(MatLibTemplate):
         try:
             self.vision_result.blur(MatLibTemplate.Kernel_Size.get(self.kernel_size.get()),
                                     border_type=self.border_type.get())
-            self.cv_img_result = self.vision_result.cvImage_tmp
             self.draw_result()
             if persist:
                 self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)

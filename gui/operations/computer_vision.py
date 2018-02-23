@@ -34,6 +34,7 @@ class MemoImageData(Repeater):
     def __init__(self):
         super().__init__()
         self._color = None
+        self.path = None
 
     @property
     def image(self):
@@ -49,6 +50,11 @@ class MemoImageData(Repeater):
 
     @property
     def color(self):
+        """
+        :return: True if Color
+        """
+        # print(cv2.split(self.image))
+        # print(len(cv2.split(self.image)))
         if len(cv2.split(self.image)) < 1:
             return self._color
         return len(cv2.split(self.image)) > 1
@@ -57,11 +63,18 @@ class MemoImageData(Repeater):
     def color(self, value):
         self._color = value
 
+    def duplicate(self):
+        tmp = MemoImageData()
+        tmp.image = copy.copy(self.image)
+        tmp.path = self.path
+        return tmp
+
 
 class SingleImageData:
     def __init__(self):
         self._item = None
         self._color = None
+        self.path = None
 
     @property
     def image(self):
@@ -85,6 +98,11 @@ class SingleImageData:
     def color(self, value):
         self._color = value
 
+    def duplicate(self):
+        tmp = SingleImageData()
+        tmp.image = copy.copy(self.image)
+        tmp.path = self.path
+        return tmp
 
 class Vision:
     """
@@ -93,7 +111,7 @@ class Vision:
     """
 
     def __init__(self):
-        self.path = None
+        # self.path = None
 
         # Actual
         self.cvImage = MemoImageData()
@@ -101,12 +119,12 @@ class Vision:
         self.cvImage_tmp = SingleImageData()
 
     def open_image(self, path):
-        self.path = path
+        self.cvImage.path = path
         if self.cvImage.color:
-            tmp_image = cv2.imread(self.path, cv2.IMREAD_COLOR)
+            tmp_image = cv2.imread(self.cvImage.path, cv2.IMREAD_COLOR)
             self.cvImage.image = cv2.cvtColor(tmp_image, cv2.COLOR_BGR2RGB)
         else:
-            self.cvImage.image = cv2.imread(self.path, cv2.IMREAD_GRAYSCALE)
+            self.cvImage.image = cv2.imread(self.cvImage.path, cv2.IMREAD_GRAYSCALE)
 
     def color_convertion(self, img):
         """
@@ -122,8 +140,9 @@ class Vision:
     def global_prog(self, thresh, thresholdType=cv2.THRESH_BINARY):
         ret, self.cvImage_tmp.image = cv2.threshold(self.cvImage.image, thresh, 255, thresholdType)
 
-    def adaptive_prog(self, adaptiveMethod=cv2.ADAPTIVE_THRESH_MEAN_C, thresholdType=cv2.THRESH_BINARY, blockSize=11,
-                      C=2):
+    def adaptive_prog(self, image=None, adaptiveMethod=cv2.ADAPTIVE_THRESH_MEAN_C, thresholdType=cv2.THRESH_BINARY,
+                      blockSize=7,
+                      C=3):
         """
         Adaptive Thresholding
 
@@ -140,11 +159,20 @@ class Vision:
         :return:
         """
         # todo iterate over all Image color array and merge them after operation.
-        self.cvImage_tmp.image = cv2.adaptiveThreshold(self.cvImage.image, 255,
-                                                       adaptiveMethod,
-                                                       thresholdType,
-                                                       blockSize,
-                                                       C)
+        if image is None:
+            return cv2.adaptiveThreshold(self.cvImage.image,
+                                         255,
+                                         adaptiveMethod,
+                                         thresholdType,
+                                         blockSize,
+                                         C)
+        else:
+            return cv2.adaptiveThreshold(image,
+                                         255,
+                                         adaptiveMethod,
+                                         thresholdType,
+                                         blockSize,
+                                         C)
 
     def rps(self, num):
         # redukcja poziomow szarosci
@@ -207,13 +235,17 @@ class Vision:
         self.cvImage_tmp.image = clahe.apply(self.cvImage.image)
 
     def save(self, path=None):
-        if path is not None:
-            cv2.imwrite(path, self.cvImage.image)
-        elif self.path is not None:
-            cv2.imwrite(self.path, self.cvImage.image)
+        if self.cvImage.color:
+            image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_BGR2RGB)
         else:
-            self.path = filedialog.asksaveasfilename()
-            cv2.imwrite(self.path, self.cvImage.image)
+            image = self.cvImage.image
+        if path is not None:
+            cv2.imwrite(path, image)
+        elif self.cvImage.path is not None:
+            cv2.imwrite(self.cvImage.path, image)
+        else:
+            self.cvImage.path = filedialog.asksaveasfilename()
+            cv2.imwrite(self.cvImage.path, image)
 
     @staticmethod
     def resize_tk_image(image, size=None):
@@ -233,7 +265,7 @@ class Vision:
         return ImageTk.PhotoImage(resize)
 
     def new_rand_img(self):
-        image = np.random.randint(0, 256, 120000).reshape(300, 400)
+        image = np.random.randint(0, 256, 480000).reshape(600, 800)
         self.cvImage.image = image.astype('uint8')
 
     def uop(self, gamma: float, brightness: int, contrast: float):
@@ -451,49 +483,110 @@ class Vision:
                        vmax=255)
         plt.show()
 
-    def houghProbabilistic(self, threshold1=50, threshold2=150, threshold3=200, apertureSize=3, color=(0, 255, 0),
-                           thickness=2):
-        self.cvImage_tmp.image = copy.copy(self.cvImage.image)
-        edges = cv2.Canny(self.cvImage_tmp.image, threshold1, threshold2, apertureSize=apertureSize)
-        # todo rho and theta as method params.
-        lines = cv2.HoughLinesP(image=edges,
-                                rho=1,
-                                theta=np.pi / 180,
-                                threshold=threshold3,
-                                minLineLength=20,
-                                maxLineGap=10)
+    def hough_probabilistic(self, image, threshold, target=100):
+        def hough_liner(edges, thresh):
+            if thresh < 0:
+                raise TypeError
+            return cv2.HoughLinesP(image=edges,
+                                   rho=1,
+                                   theta=np.pi / 180,
+                                   threshold=thresh,
+                                   minLineLength=20,
+                                   maxLineGap=10)
 
+        hough_image = SingleImageData()
+        hough_image.image = copy.copy(image)
+
+        if hough_image.color:
+            grey = cv2.cvtColor(hough_image.image, cv2.COLOR_BGR2GRAY)
+        else:
+            grey = hough_image.image
+
+        left_target = int(target - target * 0.3)
+        max_target = int(target + target * 0.3)
+        return self.aprox_hough(grey, threshold=threshold, target=(left_target, target, max_target), hough=hough_liner)
+
+    def aprox_hough(self, grey, threshold, target: tuple, hough):
+        tmp_thresh = threshold.get()
+        lines_object = hough(grey, tmp_thresh)
+        lines = 0 if lines_object is None else len(lines_object)
+        killer = 0
+        # lines = 1 if lines is None else lines
+        while lines < target[0] or target[2] < lines:
+            x = int(np.math.fabs(lines - target[1]) / 2)
+            print(x)
+            # if len(lines) > target[1]:  # Fast up
+            #     thresh_delta = int(len(lines) / target[1]) * 2
+            # else:  # Fast Down
+            #     thresh_delta = int(target[1] / len(lines)) * 2
+
+            if lines > target[1]:
+                tmp_thresh += x
+            else:
+                tmp_thresh -= x
+                if tmp_thresh <= 0:
+                    tmp_thresh = 1
+            threshold.set(tmp_thresh)
+            lines_object = hough(grey, tmp_thresh)
+            lines = 0 if lines_object is None else len(lines_object)
+            if lines == 0 and tmp_thresh == 1:
+                raise TypeError("Lines Not Found")
+            print("lines found {} with min.ack.value {}".format(lines, tmp_thresh))
+
+        return lines_object
+
+    def draw_lines_hp(self, image, lines, color=(0, 255, 0), thickness=2):
+        hough_image = SingleImageData()
+        hough_image.image = copy.copy(image)
         for line in lines:
             x1, y1, x2, y2 = line[0]
-            cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.line(hough_image.image, (x1, y1), (x2, y2), color, thickness=thickness)
 
-        return len(lines), self.cvImage_tmp.image
+        return hough_image.image
 
-    def hough(self, threshold1=50, threshold2=150, threshold3=200, apertureSize=3, color=(0, 255, 0), thickness=2):
-        self.cvImage_tmp.image = copy.copy(self.cvImage.image)
-        edges = cv2.Canny(self.cvImage_tmp.image, threshold1, threshold2, apertureSize=apertureSize)
+    def canny(self, image, threshold1=50, threshold2=150, apertureSize=3):
+        return cv2.Canny(image, threshold1, threshold2, apertureSize=apertureSize, L2gradient=True)
+
+    def hough(self, image, threshold, target=100):
+        hough_image = SingleImageData()
+        hough_image.image = copy.copy(image)
+        # self.cvImage_tmp.image = copy.copy(self.cvImage.image)
+
+        if hough_image.color:
+            grey = cv2.cvtColor(hough_image.image, cv2.COLOR_BGR2GRAY)
+        else:
+            grey = hough_image.image
+
         # todo rho and theta as method params.
 
-        lines = cv2.HoughLines(image=edges,
-                               rho=1,
-                               theta=np.pi / 180,
-                               threshold=threshold3)
+        def hough_liner(edges, thresh):
+            if thresh < 0:
+                raise TypeError
+            return cv2.HoughLines(image=edges,
+                                  rho=1,
+                                  theta=np.pi / 180,
+                                  threshold=thresh)
 
+        left_target = int(target - target * 0.3)
+        max_target = int(target + target * 0.3)
+        return self.aprox_hough(grey, threshold=threshold, target=(left_target, target, max_target), hough=hough_liner)
+
+    def draw_lines_hough(self, image, lines, color=(0, 255, 0), thickness=2):
+        hough_image = SingleImageData()
+        hough_image.image = copy.copy(image)
         for line in lines:
             rho, theta = line[0]
             a = np.cos(theta)
             b = np.sin(theta)
             x0 = a * rho
             y0 = b * rho
-            x1 = int(x0 + self.cvImage_tmp.image.shape[1] * 1.5 * (-b))
-            y1 = int(y0 + self.cvImage_tmp.image.shape[0] * 1.5 * a)
-            x2 = int(x0 - self.cvImage_tmp.image.shape[1] * 1.5 * (-b))
-            y2 = int(y0 - self.cvImage_tmp.image.shape[0] * 1.5 * a)
-            # print("rho {}, theta {}, a {}, b {}, x0 {}, y0 {}, x1 {}, x2 {}, y1 {}, y2 {}".format(rho, theta, a, b, x0,
-            #                                                                                       y0, x1, x2, y1, y2))
-            cv2.line(self.cvImage_tmp.image, (x1, y1), (x2, y2), color, thickness=thickness)
+            x1 = int(x0 + hough_image.image.shape[1] * 1.5 * (-b))
+            y1 = int(y0 + hough_image.image.shape[0] * 1.5 * a)
+            x2 = int(x0 - hough_image.image.shape[1] * 1.5 * (-b))
+            y2 = int(y0 - hough_image.image.shape[0] * 1.5 * a)
+            cv2.line(hough_image.image, (x1, y1), (x2, y2), color, thickness=thickness)
 
-        return len(lines), self.cvImage_tmp.image
+        return hough_image.image
 
     def hough_accumulator(self):
         # Rho and Theta ranges
@@ -604,6 +697,6 @@ class Vision:
 
     def color_convert(self, color=False):
         if color:
-            self.cvImage.image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_GRAY2RGB)
+            self.cvImage.image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_GRAY2BGR)
         else:
-            self.cvImage.image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_RGB2GRAY)
+            self.cvImage.image = cv2.cvtColor(self.cvImage.image, cv2.COLOR_BGR2GRAY)

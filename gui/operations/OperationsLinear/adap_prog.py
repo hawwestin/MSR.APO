@@ -86,10 +86,11 @@ class OperationAdaptiveThreshold(OperationTemplate):
         try:
             if self.block.get() != "" and self.constant.get() != "":
                 if int(self.block.get()) > 1:
-                    self.tab.vision.adaptive_prog(OperationAdaptiveThreshold.adaptiveMethodOptions[self.amo_v.get()],
-                                                  OperationAdaptiveThreshold.thresholdTypeOptions[self.tto_v.get()],
-                                                  blockSize=int(self.block.get()),
-                                                  C=int(self.constant.get()))
+                    self.tab.vision.cvImage_tmp.image = self.tab.vision.adaptive_prog(
+                        adaptiveMethod=OperationAdaptiveThreshold.adaptiveMethodOptions[self.amo_v.get()],
+                        thresholdType=OperationAdaptiveThreshold.thresholdTypeOptions[self.tto_v.get()],
+                        blockSize=int(self.block.get()),
+                        C=int(self.constant.get()))
                     self.refresh()
                     self.status_message.set("*")
                     if persist:

@@ -126,7 +126,6 @@ class Morphology(MatLibTemplate):
             operation(kernel=self.table.get_values(),
                       border_type=self.border_type.get(),
                       iterations=int(self.iterations.get()))
-            self.cv_img_result = self.vision_result.cvImage_tmp
             self.draw_result()
             if persist:
                 self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)

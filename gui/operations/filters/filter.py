@@ -185,7 +185,6 @@ class Filter(MatLibTemplate):
                 self.vision_result.filter(kernel=self.table_2.get_values(),
                                           border_type=self.border_type_2.get(),
                                           image=self.vision_result.cvImage_tmp.image)
-            self.cv_img_result = self.vision_result.cvImage_tmp
             self.draw_result()
             if persist:
                 self.vision_result.cvImage.image = copy.copy(self.vision_result.cvImage_tmp.image)
