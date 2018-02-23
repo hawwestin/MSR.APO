@@ -146,6 +146,6 @@ ENV/
 # mypy
 .mypy_cache/
 .idea/
-doc/
 sample_img/
 /.sync/
+gui/config.cfg

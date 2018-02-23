@@ -16,6 +16,7 @@ from gui.operations.filters import morphology
 import app_config
 from .operations.computer_vision import Vision
 from .tabpicture import TabPicture
+import gui.utilities
 
 matplotlib.use("TkAgg")
 LARGE_FONT = app_config.LARGE_FONT
@@ -106,7 +107,8 @@ class MenuCmd:
     def reload_image(self):
         tab = self._current_tab()
         if tab.vision.cvImage.path is None:
-            tab.vision.cvImage.path = filedialog.askopenfilename(initialdir=app_config.image_path, filetypes=SUPPORTED_FILES)
+            tab.vision.cvImage.path = filedialog.askopenfilename(initialdir=app_config.image_path,
+                                                                 filetypes=SUPPORTED_FILES)
 
         tab.open_image(tab.vision.cvImage.path)
         tab.refresh()
@@ -119,18 +121,10 @@ class MenuCmd:
     def not_implemented():
         print("not implemented")
 
-    def popupmsg(self, msg):
-        popup = tk.Tk()
-        popup.wm_title("Info")
-        # popup.geometry("240x180")
-        label = tk.Label(popup, text=msg, font=NORM_FONT, justify=tk.CENTER)
-        label.pack(pady=20, padx=20)
-        b1 = tk.Button(popup, text="ok", command=popup.destroy)
-        b1.pack(side=tk.BOTTOM, pady=20)
-        popup.mainloop()
-
     def info(self):
-        self.popupmsg("APO Made by\nMichał Robaszewski\n2016-2018\nVersion {}".format(app_config.__VERSION__))
+        msg = "APO\n\nAutor\nMichał Robaszewski\n\nProwadzący\ndr inż. Marek Doros\n\nAlgorytmu przetwarzania obrazów " \
+              "2016-2018\n\nWersja programu {}".format(app_config.__VERSION__)
+        gui.utilities.popup_message_box(msg)
         # simpledialog.SimpleDialog(master=self.main_window, text="APO Made by\nMichał Robaszewski\n2016/2017")
 
     def hist_equ(self):
