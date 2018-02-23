@@ -88,7 +88,7 @@ treelist
 open_color_image
 open_gray_image
 reload_image
-popupmsg
+popup_message_box
 img_list
 in_hist
 out_hist
